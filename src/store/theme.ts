@@ -28,6 +28,16 @@ export const useThemeStore = defineStore({
   actions: {
     toggleThemeColor() {
       this.darkTheme = !this.darkTheme
+      this.updateHtmlClass()
+    },
+    updateHtmlClass() {
+      const htmlElement = document.documentElement
+
+      if (this.darkTheme) {
+        htmlElement.classList.add('dark')
+      } else {
+        htmlElement.classList.remove('dark')
+      }
     }
   }
 })

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import whiteLogo from '@/assets/img/logo-white.svg'
 import darkLogo from '@/assets/img/logo-dark.svg'
+import logoSalis from '@/assets/logo.png'
 import { computed } from 'vue'
 import { useThemeStore } from '@/store/theme'
 const store = useThemeStore()
@@ -10,7 +11,7 @@ const logo = computed(() => {
 </script>
 
 <template>
-  <Image :src="logo" alt="Logo Image" />
+  <Image :src="logoSalis" alt="Logo Image" />
 </template>
 
 <style></style>

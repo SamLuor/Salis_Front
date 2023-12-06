@@ -11,11 +11,14 @@
       </div>
       <AppFooter />
     </div>
-    <AppConfig :layoutMode="store.layoutMode" @layout-change="onLayoutChange" />
+    <AppConfig
+      :layout-mode="store.layoutMode"
+      @layout-change="onLayoutChange"
+    />
     <transition name="layout-mask">
       <div
-        class="layout-mask p-component-overlay"
         v-if="store.mobileMenuActive"
+        class="layout-mask p-component-overlay"
       ></div>
     </transition>
   </div>

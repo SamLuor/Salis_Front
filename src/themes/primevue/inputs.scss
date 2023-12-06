@@ -1,0 +1,45 @@
+.p-inputtext:enabled {
+  @apply bg-transparent dark:text-white dark:border-gray-400 focus:border-primary-principal focus:shadow-primary-700;
+}
+
+.p-inputtext:enabled:hover {
+  @apply border-primary-principal dark:border-secondary-500;
+}
+
+input.p-input::placeholder {
+  @apply dark:text-[var(--text-dark-white)];
+}
+
+.p-password {
+  @apply inline-flex flex-row-reverse;
+
+  .p-icon {
+    @apply right-4 w-5 h-5 dark:stroke-[var(--text-dark-white70)] dark:fill-[var(--text-dark-white70)];
+  }
+}
+
+.p-checkbox:not(.p-checkbox-disabled) {
+  .p-checkbox-box {
+    @apply bg-transparent focus:border-[var(--primary-color)] focus:shadow-[var(--primary-color)];
+
+    .p-focus {
+      @apply shadow-primary-700 dark:shadow-secondary-300 border-primary-principal dark:border-secondary-500;
+    }
+
+    &:hover {
+      @apply border-primary-principal dark:border-secondary-500;
+    }
+  }
+
+  .p-checkbox-box.p-highlight {
+    @apply bg-primary-principal dark:bg-secondary-500 border-primary-principal dark:border-secondary-500;
+
+    &:hover {
+      @apply bg-primary-principal dark:bg-secondary-500 border-primary-principal dark:border-secondary-500;
+    }
+
+    &:focus {
+      @apply border-primary-principal dark:border-secondary-500;
+    }
+  }
+}

@@ -9,17 +9,15 @@ const onMenuToggle = (event: any) => {
   <div class="layout-topbar">
     <router-link to="/" class="layout-topbar-logo">
       <LogoImage />
-      <span>SAKAI</span>
+      <p class="text-logo"></p>
     </router-link>
     <Button
-      class="p-link layout-menu-button layout-topbar-button"
+      class="p-link layout-menu-button layout-topbar-button bg-transparent"
       @click.prevent="onMenuToggle"
     >
       <i class="pi pi-bars"></i>
     </Button>
-
     <Button
-      class="p-link layout-topbar-menu-button layout-topbar-button"
       v-styleclass="{
         selector: '@next',
         enterClass: 'hidden',
@@ -28,24 +26,25 @@ const onMenuToggle = (event: any) => {
         leaveActiveClass: 'fadeout',
         hideOnOutsideClick: true
       }"
+      class="p-link layout-topbar-menu-button layout-topbar-button bg-transparent"
     >
       <i class="pi pi-ellipsis-v"></i>
     </Button>
     <ul class="layout-topbar-menu hidden lg:flex origin-top">
       <li>
-        <Button class="p-link layout-topbar-button">
+        <Button class="p-link layout-topbar-button bg-transparent">
           <i class="pi pi-calendar"></i>
           <span>Events</span>
         </Button>
       </li>
       <li>
-        <Button class="p-link layout-topbar-button">
+        <Button class="p-link layout-topbar-button bg-transparent">
           <i class="pi pi-cog"></i>
           <span>Settings</span>
         </Button>
       </li>
       <li>
-        <Button class="p-link layout-topbar-button">
+        <Button class="p-link layout-topbar-button bg-transparent">
           <i class="pi pi-user"></i>
           <span>Profile</span>
         </Button>

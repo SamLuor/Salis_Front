@@ -1,0 +1,7 @@
+.text-color-setted {
+  @apply dark:text-[var(--text-dark-white70)];
+}
+
+.sub-text-color-setted {
+  @apply dark:text-[var(--text-dark-gray)];
+}

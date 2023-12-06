@@ -22,8 +22,12 @@
         border-radius: 12px;
 
         img {
-            height: 2.5rem;
+            @apply w-20;
             margin-right: .5rem;
+        }
+
+        p.text-logo {
+            @apply font-semibold text-[#10324F];
         }
 
         &:focus {

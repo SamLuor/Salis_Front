@@ -1,0 +1,11 @@
+.container {
+  @apply bg-[var(--background-light-white70)] dark:bg-[var(--background-dark-blue)];
+}
+
+.sub-container {
+  @apply bg-[var(--background-light-white)] dark:bg-[var(--background-dark-blue70)];
+}
+
+.border-setted {
+  @apply border-gray-300 dark:border-gray-700;
+}
