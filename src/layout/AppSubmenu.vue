@@ -13,7 +13,10 @@
         role="none"
       >
         <template v-if="root">
-          <div class="layout-menuitem-root-text" :aria-label="item.label">
+          <div
+            class="layout-menuitem-root-text text-section"
+            :aria-label="item.label"
+          >
             {{ item.label }}
           </div>
           <appsubmenu
@@ -24,15 +27,20 @@
         <template v-else>
           <router-link
             v-if="item.to"
+            v-ripple
             :to="item.to"
-            :class="[item.class, 'p-ripple', { 'p-disabled': item.disabled }]"
+            :class="[
+              item.class,
+              'p-ripple',
+              { 'p-disabled': item.disabled },
+              'menu-item-tailwind'
+            ]"
             :style="item.style"
-            @click="onMenuItemClick($event, item, i)"
             :target="item.target"
             :aria-label="item.label"
             exact
             role="menuitem"
-            v-ripple
+            @click="onMenuItemClick($event, item, i)"
           >
             <i :class="item.icon"></i>
             <span>{{ item.label }}</span>
@@ -44,14 +52,14 @@
           </router-link>
           <a
             v-if="!item.to"
+            v-ripple
             :href="item.url || '#'"
             :style="item.style"
             :class="[item.class, 'p-ripple', { 'p-disabled': item.disabled }]"
-            @click="onMenuItemClick($event, item, i)"
             :target="item.target"
             :aria-label="item.label"
             role="menuitem"
-            v-ripple
+            @click="onMenuItemClick($event, item, i)"
           >
             <i :class="item.icon"></i>
             <span>{{ item.label }}</span>
@@ -71,10 +79,10 @@
         </template>
       </li>
       <li
-        class="p-menu-separator"
-        :style="item.style"
         v-if="visible(item) && item.separator"
         :key="'separator' + i"
+        class="p-menu-separator"
+        :style="item.style"
         role="separator"
       ></li>
     </template>
@@ -82,7 +90,7 @@
 </template>
 <script>
 export default {
-  name: 'appsubmenu',
+  name: 'Appsubmenu',
   props: {
     items: Array,
     root: {
@@ -126,3 +134,14 @@ export default {
   }
 }
 </script>
+<style scoped>
+.text-section {
+  @apply dark:text-dark-white70;
+}
+.menu-item-tailwind {
+  @apply dark:text-dark-white70;
+}
+.menu-item-tailwind:hover {
+  @apply dark:text-light-black70;
+}
+</style>

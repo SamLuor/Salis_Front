@@ -1,12 +1,15 @@
 <script lang="ts" setup>
 import LogoImage from '@/components/LogoImage.vue'
+import { useThemeStore } from '@/store/theme'
+
+const themeStore = useThemeStore()
 const emit = defineEmits(['menu-toggle', 'topbar-menu-toggle'])
 const onMenuToggle = (event: any) => {
   emit('menu-toggle', event)
 }
 </script>
 <template>
-  <div class="layout-topbar">
+  <div class="layout-topbar sub-container">
     <router-link to="/" class="layout-topbar-logo">
       <LogoImage />
       <p class="text-logo"></p>
@@ -47,6 +50,21 @@ const onMenuToggle = (event: any) => {
         <Button class="p-link layout-topbar-button bg-transparent">
           <i class="pi pi-user"></i>
           <span>Profile</span>
+        </Button>
+      </li>
+      <li>
+        <Button
+          v-tooltip.left="tooltipConfig"
+          class="button-toggle-dark"
+          @click="themeStore.toggleThemeColor"
+        >
+          <i
+            :class="[
+              'text-lg pi',
+              { 'text-700 pi-sun': !themeStore.isDarkTheme },
+              { 'text-100 pi-moon': themeStore.isDarkTheme }
+            ]"
+          />
         </Button>
       </li>
     </ul>

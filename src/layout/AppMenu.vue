@@ -7,15 +7,11 @@
       @menuitem-click="onMenuItemClick"
       @keydown="onKeyDown"
     />
-    <a href="https://www.primefaces.org/primeblocks-vue" class="block mt-3">
-      <BannerImage />
-    </a>
   </div>
 </template>
 
 <script lang="ts" setup>
 import AppSubmenu from '@/layout/AppSubmenu.vue'
-import BannerImage from '@/components/BannerImage.vue'
 defineProps({ model: Array })
 const emit = defineEmits(['menuitem-click'])
 const onMenuItemClick = (event: any) => {

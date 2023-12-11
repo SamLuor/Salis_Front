@@ -1,7 +1,11 @@
 <template>
-  <div class="layout-wrapper" :class="containerClass" @click="onWrapperClick">
+  <div
+    class="layout-wrapper container"
+    :class="containerClass"
+    @click="onWrapperClick"
+  >
     <AppTopbar @menu-toggle="onMenuToggle" />
-    <div class="layout-sidebar" @click="onSidebarClick">
+    <div class="layout-sidebar sub-container" @click="onSidebarClick">
       <AppMenu :model="menu" @menuitem-click="onMenuItemClick" />
     </div>
 
@@ -22,20 +26,37 @@
       ></div>
     </transition>
   </div>
+  <Toast />
 </template>
 <script lang="ts" setup>
 import whiteLogo from '@/assets/img/logo-white.svg'
 import darkLogo from '@/assets/img/logo-dark.svg'
 import AppTopbar from '@/layout/AppTopbar.vue'
-import { computed, getCurrentInstance } from 'vue'
+import { computed, getCurrentInstance, inject, onMounted, ref } from 'vue'
 import AppMenu from '@/layout/AppMenu.vue'
 import AppConfig from '@/layout/AppConfig.vue'
 import AppFooter from '@/layout/AppFooter.vue'
+import Toast from 'primevue/toast'
 import { useThemeStore } from '@/store/theme'
-const app = getCurrentInstance()
+import { useToastRef } from './store/features'
+import { useToast } from 'primevue/usetoast'
 
+const app = getCurrentInstance()
 const store = useThemeStore()
+const toastStore = useToastRef()
+const toast = useToast()
+
 store.menuClick = true
+
+onMounted(() => {
+  const toastTest = inject('toast')
+  toastTest?.value.add({
+    severity: 'success',
+    summary: 'Success Message',
+    detail: 'Message Content',
+    life: 3000
+  })
+})
 
 const menu = [
   {
@@ -172,21 +193,6 @@ const menu = [
         ]
       }
     ]
-  },
-  {
-    label: 'Get Started',
-    items: [
-      {
-        label: 'Documentation',
-        icon: 'pi pi-fw pi-question',
-        command: () => {}
-      },
-      {
-        label: 'View Source',
-        icon: 'pi pi-fw pi-search',
-        command: () => {}
-      }
-    ]
   }
 ]
 const containerClass = computed(() => {
@@ -254,6 +260,10 @@ const onMenuItemClick = (event: any) => {
 const onLayoutChange = (layoutMode: string) => {
   store.layoutMode = layoutMode
 }
+
+onMounted(() => {
+  toastStore.setToast(toast)
+})
 </script>
 
 <style lang="scss">

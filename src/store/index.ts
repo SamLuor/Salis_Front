@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+/* import { defineStore } from 'pinia'
 
 interface MainState {
   user: null | string
@@ -20,4 +20,4 @@ export const useAuthStore = defineStore({
       this.user = name
     }
   }
-})
+}) */

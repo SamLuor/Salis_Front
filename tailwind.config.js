@@ -44,12 +44,10 @@ module.exports = {
           'dark-blue': 'var(--background-dark-blue)',
           'dark-blue70': 'var(--background-dark-blue70)'
         },
-        text: {
-          'light-black70': 'var(--text-light-black70)',
-          'light-gray': 'var(--text-light-gray)',
-          'dark-gray': 'var(--text-dark-gray)',
-          'dark-white70': 'var(--text-dark-white70)'
-        },
+        'light-black70': 'var(--text-light-black70)',
+        'light-gray': 'var(--text-light-gray)',
+        'dark-gray': 'var(--text-dark-gray)',
+        'dark-white70': 'var(--text-dark-white70)',
         warning: {
           light: 'var(--warning-light)',
           dark: 'var(--warning-dark)'
