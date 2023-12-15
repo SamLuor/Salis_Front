@@ -43,23 +43,12 @@ import { useToast } from 'primevue/usetoast'
 
 const app = getCurrentInstance()
 const store = useThemeStore()
-const toastStore = useToastRef()
 const toast = useToast()
 
 store.menuClick = true
 
-onMounted(() => {
-  const toastTest = inject('toast')
-  toastTest?.value.add({
-    severity: 'success',
-    summary: 'Success Message',
-    detail: 'Message Content',
-    life: 3000
-  })
-})
-
 const menu = [
-  {
+  /* {
     label: 'Home',
     items: [
       {
@@ -68,22 +57,22 @@ const menu = [
         to: '/'
       }
     ]
-  },
+  }, */
   {
-    label: 'UI Components',
+    label: 'Configurações de Acessos',
     icon: 'pi pi-fw pi-sitemap',
     items: [
-      { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', to: '/formlayout' },
+      /* { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', to: '/formlayout' },
       { label: 'Input', icon: 'pi pi-fw pi-check-square', to: '/input' },
       { label: 'Float Label', icon: 'pi pi-fw pi-bookmark', to: '/floatlabel' },
       {
         label: 'Invalid State',
         icon: 'pi pi-fw pi-exclamation-circle',
         to: '/invalidstate'
-      },
-      { label: 'Button', icon: 'pi pi-fw pi-mobile', to: '/button' },
-      { label: 'Table', icon: 'pi pi-fw pi-table', to: '/table' },
-      { label: 'List', icon: 'pi pi-fw pi-list', to: '/list' },
+      }, */
+      //{ label: 'Button', icon: 'pi pi-fw pi-mobile', to: '/button' },
+      { label: 'Users', icon: 'pi pi-fw pi-users', to: '/' }
+      /* { label: 'List', icon: 'pi pi-fw pi-list', to: '/list' },
       { label: 'Tree', icon: 'pi pi-fw pi-share-alt', to: '/tree' },
       { label: 'Panel', icon: 'pi pi-fw pi-tablet', to: '/panel' },
       { label: 'Overlay', icon: 'pi pi-fw pi-clone', to: '/overlay' },
@@ -92,10 +81,10 @@ const menu = [
       { label: 'Message', icon: 'pi pi-fw pi-comment', to: '/messages' },
       { label: 'File', icon: 'pi pi-fw pi-file', to: '/file' },
       { label: 'Chart', icon: 'pi pi-fw pi-chart-bar', to: '/chart' },
-      { label: 'Misc', icon: 'pi pi-fw pi-circle-off', to: '/misc' }
+      { label: 'Misc', icon: 'pi pi-fw pi-circle-off', to: '/misc' } */
     ]
-  },
-  {
+  }
+  /* {
     label: 'PrimeBlocks',
     items: [
       {
@@ -193,7 +182,7 @@ const menu = [
         ]
       }
     ]
-  }
+  } */
 ]
 const containerClass = computed(() => {
   return {
@@ -260,10 +249,6 @@ const onMenuItemClick = (event: any) => {
 const onLayoutChange = (layoutMode: string) => {
   store.layoutMode = layoutMode
 }
-
-onMounted(() => {
-  toastStore.setToast(toast)
-})
 </script>
 
 <style lang="scss">

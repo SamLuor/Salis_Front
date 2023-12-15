@@ -2,23 +2,30 @@ import { defineStore } from 'pinia'
 import SecureDataProcessor from '@/utils/SecureDataProcessor'
 import api from '@/api'
 import { handleError } from '@/utils/handleErrors'
+import router from '@/router'
 
 interface MainState {
   username: null | string
   token: null | string
   roles: string[] | null
+  options_company: any[] | string
 }
 
 const initializeState = (): MainState => {
-  const [storedToken, storedUser, storedRoles] = [
+  const [storedToken, storedUser, storedRoles, storeOptionsCompany] = [
     localStorage.getItem('@salis:token'),
     localStorage.getItem('@salis:user'),
-    localStorage.getItem('@salis:roles')
+    localStorage.getItem('@salis:roles'),
+    localStorage.getItem('@salis:options_company')
   ]
 
   return {
     username: storedUser !== null ? dataProcessor.decrypt(storedUser) : null,
     token: storedToken !== null ? dataProcessor.decrypt(storedToken) : null,
+    options_company:
+      storeOptionsCompany !== null
+        ? JSON.parse(dataProcessor.decrypt(storeOptionsCompany))
+        : [],
     roles:
       storedRoles !== null
         ? JSON.parse(dataProcessor.decrypt(storedRoles))
@@ -34,7 +41,8 @@ export const useAuthStore = defineStore({
   getters: {
     getUsername: (state) => state.username,
     getRoles: (state) => state.roles,
-    getToken: (state) => state.token
+    getToken: (state) => state.token,
+    getOptionsCompany: (state) => state.options_company
   },
   actions: {
     setUsername(username: string | null) {
@@ -64,22 +72,62 @@ export const useAuthStore = defineStore({
       }
       this.token = token
     },
+    setOptionsCompany(options: any[]) {
+      if (options) {
+        localStorage.setItem(
+          '@salis:options_company',
+          dataProcessor.encrypt(JSON.stringify(options))
+        )
+      } else {
+        localStorage.removeItem('@salis:options_company')
+      }
+      this.options_company = options
+    },
     async login(data: { email: string; password: string }) {
       const authService = api.auth
 
-      await authService
-        .login(data)
-        .then(({ username, token, roles }) => {
-          this.setUsername(username)
-          this.setToken(token)
-          this.setRoles(roles)
-        })
-        .catch((err: Error) => {
-          this.setUsername(null)
-          this.setToken(null)
-          this.setRoles(null)
-          handleError(err, err.message)
-        })
+      try {
+        const response = await authService.login(data)
+
+        if (response.data.access_token) {
+          this.setToken(response.data.access_token)
+          this.showOptionsCompany()
+          router.push('/select-company')
+        }
+      } catch (err) {
+        this.setToken(null)
+        handleError(err as Error, (err as Error).message)
+      }
+    },
+    async showOptionsCompany() {
+      const authService = api.auth
+
+      try {
+        const response = await authService.getOptionsCompany()
+
+        if (response.data) {
+          this.setOptionsCompany(response.data)
+        }
+      } catch (err) {
+        this.setToken(null)
+        handleError(err as Error, (err as Error).message)
+      }
+    },
+    async selectCompany(id: string) {
+      const authService = api.auth
+
+      try {
+        const response = await authService.loginWithCompany(id)
+        if (response.data.access_token) {
+          this.setToken(response.data.access_token)
+          router.push({ name: 'app' })
+        }
+      } catch (err) {
+        this.setToken(null)
+        handleError(err as Error, (err as Error).message)
+      } finally {
+        this.setOptionsCompany([])
+      }
     }
   }
 })

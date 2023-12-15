@@ -39,12 +39,7 @@ const onFormSubmit = handleSubmit(async (values) => {
 const tooltipConfig = computed(() => ({
   value: themeStore.isDarkTheme ? 'Dark Mode' : 'Light Mode',
   pt: {
-    arrow: {
-      style: {
-        borderBottomColor: 'var(--primary-color)'
-      }
-    },
-    text: 'font-semibold'
+    text: 'font-medium bg-primary'
   }
 }))
 </script>

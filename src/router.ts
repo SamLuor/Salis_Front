@@ -35,6 +35,9 @@ import LandingDemoViewVue from '@/views/example/LandingDemoView.vue'
 import ErrorViewVue from '@/views/example/ErrorView.vue'
 import NotFoundViewVue from '@/views/example/NotFoundView.vue'
 import AccessViewVue from '@/views/example/AccessView.vue'
+import SelectCompanyVue from './views/example/SelectCompany.vue'
+
+console.log('Hello')
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,11 +47,11 @@ const router = createRouter({
       name: 'app',
       component: App,
       children: [
-        {
+        /* {
           path: '',
           name: 'dashboard',
           component: DashboardViewVue
-        },
+        }, */
 
         {
           path: '/formlayout',
@@ -77,7 +80,7 @@ const router = createRouter({
         },
 
         {
-          path: '/table',
+          path: '',
           name: 'table',
           component: TableDemoViewVue
         },
@@ -180,6 +183,11 @@ const router = createRouter({
           component: IconsDemoViewVue
         }
       ]
+    },
+    {
+      path: '/select-company',
+      name: 'select-company',
+      component: SelectCompanyVue
     },
     {
       path: '/login',

@@ -5,5 +5,5 @@ export interface AuthProtocol {
   }: {
     email: string
     password: string
-  }): Promise<{ username: string; token: string; roles: string[] }>
+  }): Promise<{ data: { access_token: string }; message: string }>
 }
