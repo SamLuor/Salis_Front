@@ -9,7 +9,7 @@ import './themes/principal_theme.css'
 import './themes/primevue/index.scss'
 import './themes/layout/index.scss'
 
-import { createApp, reactive, ref } from 'vue'
+import { createApp, reactive } from 'vue'
 import App from './App.vue'
 import router from '@/router'
 import { createPinia } from 'pinia'

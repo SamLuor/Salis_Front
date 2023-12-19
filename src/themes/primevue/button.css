@@ -6,10 +6,14 @@
   @apply bg-primary-principal dark:bg-secondary-500 bg-opacity-70 border-transparent !important;
 }
 
-/* .p-button:enabled {
+.p-button:enabled {
   @apply hover:bg-opacity-50 hover:border-blue-700 hover:opacity-90 duration-300 transition-all;
-} */
+}
 
 .p-button.button-toggle-dark {
   @apply flex p-2.5 border border-gray-300 dark:border-gray-400 cursor-pointer rounded-lg bg-transparent dark:bg-transparent !important;
+}
+
+.p-button.action {
+  @apply bg-secondary-500 hover:brightness-50 py-[8px] px-[15px] !important;
 }

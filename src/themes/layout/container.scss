@@ -3,7 +3,11 @@
 }
 
 .sub-container {
-  @apply bg-[var(--background-light-white)] dark:bg-[var(--background-dark-blue70)];
+  @apply bg-primary-options-background-sub-container dark:bg-[var(--background-dark-blue70)];
+}
+
+.container-header {
+  @apply bg-primary-options-background-container-header dark:bg-primary-options-background-container-header-dark;
 }
 
 .border-setted {

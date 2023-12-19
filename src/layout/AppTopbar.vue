@@ -1,21 +1,27 @@
 <script lang="ts" setup>
-import LogoImage from '@/components/LogoImage.vue'
 import { useThemeStore } from '@/store/theme'
+import { computed } from 'vue'
 
 const themeStore = useThemeStore()
 const emit = defineEmits(['menu-toggle', 'topbar-menu-toggle'])
 const onMenuToggle = (event: any) => {
   emit('menu-toggle', event)
 }
+
+const tooltipConfig = computed(() => ({
+  value: themeStore.isDarkTheme ? 'Dark Mode' : 'Light Mode',
+  pt: {
+    text: 'font-medium bg-primary'
+  }
+}))
 </script>
 <template>
-  <div class="layout-topbar sub-container">
-    <router-link to="/" class="layout-topbar-logo">
-      <LogoImage />
-      <p class="text-logo"></p>
-    </router-link>
+  <div
+    class="layout-topbar container-header"
+    :class="[{ active: themeStore.staticMenuInactive }]"
+  >
     <Button
-      class="p-link layout-menu-button layout-topbar-button bg-transparent"
+      class="p-link toggle-side layout-menu-button layout-topbar-button bg-transparent"
       @click.prevent="onMenuToggle"
     >
       <i class="pi pi-bars"></i>
@@ -35,38 +41,36 @@ const onMenuToggle = (event: any) => {
     </Button>
     <ul class="layout-topbar-menu hidden lg:flex origin-top">
       <li>
-        <Button class="p-link layout-topbar-button bg-transparent">
-          <i class="pi pi-calendar"></i>
-          <span>Events</span>
-        </Button>
-      </li>
-      <li>
-        <Button class="p-link layout-topbar-button bg-transparent">
+        <Button class="p-link layout-topbar-button">
           <i class="pi pi-cog"></i>
           <span>Settings</span>
         </Button>
       </li>
       <li>
-        <Button class="p-link layout-topbar-button bg-transparent">
+        <Button class="p-link layout-topbar-button">
+          <i class="pi pi-envelope"></i>
+          <span>Events</span>
+        </Button>
+      </li>
+      <li>
+        <Button class="p-link layout-topbar-button">
           <i class="pi pi-user"></i>
           <span>Profile</span>
         </Button>
       </li>
-      <li>
-        <Button
-          v-tooltip.left="tooltipConfig"
-          class="button-toggle-dark"
-          @click="themeStore.toggleThemeColor"
-        >
-          <i
-            :class="[
-              'text-lg pi',
-              { 'text-700 pi-sun': !themeStore.isDarkTheme },
-              { 'text-100 pi-moon': themeStore.isDarkTheme }
-            ]"
-          />
-        </Button>
-      </li>
     </ul>
+    <Button
+      v-tooltip.left="tooltipConfig"
+      class="button-toggle-dark"
+      @click="themeStore.toggleThemeColor"
+    >
+      <i
+        :class="[
+          'text-lg pi',
+          { 'text-700 pi-sun': !themeStore.isDarkTheme },
+          { 'text-100 pi-moon': themeStore.isDarkTheme }
+        ]"
+      />
+    </Button>
   </div>
 </template>

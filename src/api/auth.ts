@@ -15,7 +15,8 @@ export default class AuthService implements AuthProtocol {
         return response.data
       })
       .catch((err) => {
-        handleError(err, err.message)
+        const { message } = err.response.data
+        handleError(err, message)
       })
   }
 
@@ -30,7 +31,9 @@ export default class AuthService implements AuthProtocol {
       })
   }
 
-  async getOptionsCompany(): Promise<{ data: [] }> {
+  async getOptionsCompany(): Promise<{
+    data: [{ text: string; value: string }]
+  }> {
     return await this.httpConfig
       .get('/option/empresas')
       .then((response) => {

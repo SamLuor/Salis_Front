@@ -8,7 +8,7 @@ interface MainState {
   username: null | string
   token: null | string
   roles: string[] | null
-  options_company: any[] | string
+  options_company: [{ text: string; value: string }] | []
 }
 
 const initializeState = (): MainState => {
@@ -72,7 +72,7 @@ export const useAuthStore = defineStore({
       }
       this.token = token
     },
-    setOptionsCompany(options: any[]) {
+    setOptionsCompany(options: [{ text: string; value: string }] | []) {
       if (options) {
         localStorage.setItem(
           '@salis:options_company',

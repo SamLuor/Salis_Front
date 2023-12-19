@@ -2,7 +2,7 @@ import type { AxiosError } from 'axios'
 import axios from 'axios'
 
 const handleError = (error: Error | AxiosError, message: string): Error => {
-  if (axios.isAxiosError(error)) {
+  if (axios.isAxiosError(error) && !message) {
     switch (error.response?.status) {
       case 401:
         throw new Error('Unauthorized')

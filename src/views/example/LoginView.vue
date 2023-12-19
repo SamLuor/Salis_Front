@@ -125,10 +125,7 @@ const tooltipConfig = computed(() => ({
                 class="w-full"
                 input-class="w-full"
                 :input-style="{ padding: '.7rem' }"
-                prompt-label="Digite sua senha"
-                weak-label="Fraca"
-                medium-label="Médio"
-                strong-label="Forte"
+                :feedback="false"
               />
               <small id="text-error" class="p-error">{{
                 errors.password || '&nbsp;'

@@ -14,7 +14,7 @@
       >
         <template v-if="root">
           <div
-            class="layout-menuitem-root-text text-section"
+            class="layout-menuitem-root-text text-color-defined"
             :aria-label="item.label"
           >
             {{ item.label }}
@@ -139,9 +139,12 @@ export default {
   @apply dark:text-dark-white70;
 }
 .menu-item-tailwind {
-  @apply dark:text-dark-white70;
+  @apply text-secondary-500 dark:text-dark-white70;
 }
 .menu-item-tailwind:hover {
   @apply dark:text-light-black70;
+}
+.layout-menu li a.router-link-exact-active {
+  @apply text-secondary-500 hover:bg-secondary-500 hover:text-primary-options-text-color;
 }
 </style>

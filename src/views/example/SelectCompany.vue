@@ -1,7 +1,7 @@
 <template>
   <div class="background-select">
     <div class="bar-header">
-      <img :src="LogoSalis" width="60" />
+      <img :src="LogoSalis" width="50" alt="logo" />
     </div>
     <div class="content-buttons-card">
       <div
@@ -10,7 +10,7 @@
         class="card-btn"
         @click="selectCompany(option.value)"
       >
-        <img :src="LogoSalis" width="100" />
+        <img :src="LogoSalis" width="100" alt="logo" />
         <h5 class="font-semibold text-primary-principal">{{ option.text }}</h5>
       </div>
     </div>
@@ -42,7 +42,7 @@ const selectCompany = async (id: string) => {
   @apply bg-background-light-white70 dark:bg-background-dark-blue70 w-screen h-screen flex flex-col justify-between;
 
   .bar-header {
-    @apply border-b border-transparent border-solid border-b-gray-300 dark:border-b-background-dark-blue;
+    @apply p-2 border-b border-transparent border-solid border-b-gray-300 dark:border-b-background-dark-blue;
   }
 
   .bar-footer {
