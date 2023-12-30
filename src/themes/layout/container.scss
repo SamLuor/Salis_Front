@@ -13,3 +13,7 @@
 .border-setted {
   @apply border-gray-300 dark:border-gray-700;
 }
+
+.container-filter {
+  @apply bg-background-light-white dark:bg-background-dark-blue70 border-b-0 border-t border-x border-solid  border-gray-200 dark:border-gray-600 rounded-t-lg;
+}

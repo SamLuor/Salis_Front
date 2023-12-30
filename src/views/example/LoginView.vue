@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, inject } from 'vue'
+import { ref, computed } from 'vue'
 import { useThemeStore } from '@/store/theme'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
@@ -17,7 +17,7 @@ const { handleSubmit, errors, defineComponentBinds, setFieldError } = useForm({
   validationSchema: toTypedSchema(schemaLogin)
 })
 
-const isLoading = ref<boolean>(false)
+//const isLoading = ref<boolean>(false)
 
 const email = defineComponentBinds('email')
 const password = defineComponentBinds('password')

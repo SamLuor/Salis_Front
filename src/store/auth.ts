@@ -3,13 +3,10 @@ import SecureDataProcessor from '@/utils/SecureDataProcessor'
 import api from '@/api'
 import { handleError } from '@/utils/handleErrors'
 import router from '@/router'
-
-interface MainState {
-  username: null | string
-  token: null | string
-  roles: string[] | null
-  options_company: [{ text: string; value: string }] | []
-}
+import type { UserMe } from '@/@types/auth'
+import { UserFactory } from '@/factories/UserFactory'
+import { MainState } from './@types/Auth'
+import { ConnectedOverlayScrollHandler } from 'primevue/utils'
 
 const initializeState = (): MainState => {
   const [storedToken, storedUser, storedRoles, storeOptionsCompany] = [
@@ -20,7 +17,8 @@ const initializeState = (): MainState => {
   ]
 
   return {
-    username: storedUser !== null ? dataProcessor.decrypt(storedUser) : null,
+    user:
+      storedUser !== null ? JSON.parse(dataProcessor.decrypt(storedUser)) : {},
     token: storedToken !== null ? dataProcessor.decrypt(storedToken) : null,
     options_company:
       storeOptionsCompany !== null
@@ -39,19 +37,26 @@ export const useAuthStore = defineStore({
   id: 'auth',
   state: initializeState,
   getters: {
-    getUsername: (state) => state.username,
+    getUsername: (state) => state.user.name,
+    getPermissions: (state) => state.user.permissions,
+    getIdUser: (state) => state.user.id,
+    getUserEmail: (state) => state.user.email,
     getRoles: (state) => state.roles,
     getToken: (state) => state.token,
     getOptionsCompany: (state) => state.options_company
   },
   actions: {
-    setUsername(username: string | null) {
-      if (username) {
-        localStorage.setItem('@salis:user', dataProcessor.encrypt(username))
+    setUser(user: UserMe) {
+      const userFactored = UserFactory(user)
+      if (user.name) {
+        localStorage.setItem(
+          '@salis:user',
+          dataProcessor.encrypt(JSON.stringify(userFactored))
+        )
       } else {
         localStorage.removeItem('@salis:user')
       }
-      this.username = username
+      this.user = userFactored
     },
     setRoles(roles: string[] | null) {
       if (roles) {
@@ -73,7 +78,7 @@ export const useAuthStore = defineStore({
       this.token = token
     },
     setOptionsCompany(options: [{ text: string; value: string }] | []) {
-      if (options) {
+      if (options.length > 0) {
         localStorage.setItem(
           '@salis:options_company',
           dataProcessor.encrypt(JSON.stringify(options))
@@ -84,7 +89,7 @@ export const useAuthStore = defineStore({
       this.options_company = options
     },
     async login(data: { email: string; password: string }) {
-      const authService = api.auth
+      const authService = api.Auth
 
       try {
         const response = await authService.login(data)
@@ -99,8 +104,23 @@ export const useAuthStore = defineStore({
         handleError(err as Error, (err as Error).message)
       }
     },
+    async logout() {
+      const authService = api.Auth
+
+      try {
+        await authService.logout()
+
+        this.setToken(null)
+        this.setUser({} as UserMe)
+        this.setOptionsCompany([])
+
+        router.push({ name: 'login' })
+      } catch (err) {
+        handleError(err as Error, (err as Error).message)
+      }
+    },
     async showOptionsCompany() {
-      const authService = api.auth
+      const authService = api.Auth
 
       try {
         const response = await authService.getOptionsCompany()
@@ -114,19 +134,31 @@ export const useAuthStore = defineStore({
       }
     },
     async selectCompany(id: string) {
-      const authService = api.auth
+      const authService = api.Auth
 
       try {
         const response = await authService.loginWithCompany(id)
         if (response.data.access_token) {
           this.setToken(response.data.access_token)
-          router.push({ name: 'app' })
+          await this.getMe()
+
+          router.push({ name: 'user' })
         }
       } catch (err) {
         this.setToken(null)
         handleError(err as Error, (err as Error).message)
       } finally {
         this.setOptionsCompany([])
+      }
+    },
+    async getMe() {
+      const authService = api.Auth
+      try {
+        const responseDataMe = await authService.getMe()
+        this.setUser(responseDataMe.data)
+      } catch (err) {
+        this.setUser({} as UserMe)
+        handleError(err as Error, (err as Error).message)
       }
     }
   }

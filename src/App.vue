@@ -26,13 +26,13 @@
       ></div>
     </transition>
   </div>
-  <Toast />
+  <Toast position="bottom-right" />
 </template>
 <script lang="ts" setup>
 import whiteLogo from '@/assets/img/logo-white.svg'
 import darkLogo from '@/assets/img/logo-dark.svg'
 import AppTopbar from '@/layout/AppTopbar.vue'
-import { computed, getCurrentInstance, inject, onMounted, ref } from 'vue'
+import { computed, getCurrentInstance } from 'vue'
 import AppMenu from '@/layout/AppMenu.vue'
 import AppConfig from '@/layout/AppConfig.vue'
 import AppFooter from '@/layout/AppFooter.vue'
@@ -40,12 +40,15 @@ import Toast from 'primevue/toast'
 import { useThemeStore } from '@/store/theme'
 import { useToastRef } from './store/features'
 import { useToast } from 'primevue/usetoast'
+import { useAuthStore } from './store/auth'
 
 const app = getCurrentInstance()
 const store = useThemeStore()
 const toast = useToast()
 
 store.menuClick = true
+
+const authStore = useAuthStore()
 
 const menu = [
   /* {
@@ -54,7 +57,7 @@ const menu = [
       {
         label: 'Dashboard',
         icon: 'pi pi-fw pi-home',
-        to: '/'
+        to: '/dashboard'
       }
     ]
   }, */
@@ -62,17 +65,34 @@ const menu = [
     label: 'Configurações de Acessos',
     icon: 'pi pi-fw pi-sitemap',
     items: [
-      /* { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', to: '/formlayout' },
+      { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', to: '/formlayout' },
       { label: 'Input', icon: 'pi pi-fw pi-check-square', to: '/input' },
       { label: 'Float Label', icon: 'pi pi-fw pi-bookmark', to: '/floatlabel' },
       {
         label: 'Invalid State',
         icon: 'pi pi-fw pi-exclamation-circle',
         to: '/invalidstate'
-      }, */
-      //{ label: 'Button', icon: 'pi pi-fw pi-mobile', to: '/button' },
-      { label: 'Users', icon: 'pi pi-fw pi-users', to: '/' }
-      /* { label: 'List', icon: 'pi pi-fw pi-list', to: '/list' },
+      },
+      { label: 'Button', icon: 'pi pi-fw pi-mobile', to: '/button' },
+      {
+        label: 'Usuários',
+        icon: 'pi pi-fw pi-users',
+        to: '/',
+        role: 'gerenciar usuários'
+      },
+      {
+        label: 'Empresas',
+        icon: 'pi pi-fw pi-building',
+        to: '/empresas',
+        role: 'gerenciar empresas'
+      },
+      {
+        label: 'Cargos',
+        icon: 'fa-solid fa-briefcase',
+        to: '/cargos',
+        role: 'gerenciar cargos'
+      },
+      { label: 'List', icon: 'pi pi-fw pi-list', to: '/list' },
       { label: 'Tree', icon: 'pi pi-fw pi-share-alt', to: '/tree' },
       { label: 'Panel', icon: 'pi pi-fw pi-tablet', to: '/panel' },
       { label: 'Overlay', icon: 'pi pi-fw pi-clone', to: '/overlay' },
@@ -81,108 +101,11 @@ const menu = [
       { label: 'Message', icon: 'pi pi-fw pi-comment', to: '/messages' },
       { label: 'File', icon: 'pi pi-fw pi-file', to: '/file' },
       { label: 'Chart', icon: 'pi pi-fw pi-chart-bar', to: '/chart' },
-      { label: 'Misc', icon: 'pi pi-fw pi-circle-off', to: '/misc' } */
-    ]
+      { label: 'Misc', icon: 'pi pi-fw pi-circle-off', to: '/misc' }
+    ].filter((route) => {
+      return authStore.user.permissions.some((role) => role.nome === route.role)
+    })
   }
-  /* {
-    label: 'PrimeBlocks',
-    items: [
-      {
-        label: 'Free Blocks',
-        icon: 'pi pi-fw pi-eye',
-        to: '/blocks',
-        badge: 'NEW'
-      },
-      {
-        label: 'All Blocks',
-        icon: 'pi pi-fw pi-globe',
-        url: 'https://www.primefaces.org/primeblocks-vue',
-        target: '_blank'
-      }
-    ]
-  },
-  {
-    label: 'Utilities',
-    items: [
-      { label: 'PrimeIcons', icon: 'pi pi-fw pi-prime', to: '/icons' },
-      {
-        label: 'PrimeFlex',
-        icon: 'pi pi-fw pi-desktop',
-        url: 'https://www.primefaces.org/primeflex/',
-        target: '_blank'
-      }
-    ]
-  },
-  {
-    label: 'Pages',
-    icon: 'pi pi-fw pi-clone',
-    items: [
-      { label: 'Crud', icon: 'pi pi-fw pi-user-edit', to: '/crud' },
-      { label: 'Timeline', icon: 'pi pi-fw pi-calendar', to: '/timeline' },
-      { label: 'Landing', icon: 'pi pi-fw pi-globe', to: '/landing' },
-      { label: 'Login', icon: 'pi pi-fw pi-sign-in', to: '/login' },
-      { label: 'Error', icon: 'pi pi-fw pi-times-circle', to: '/error' },
-      {
-        label: 'Not Found',
-        icon: 'pi pi-fw pi-exclamation-circle',
-        to: '/notfound'
-      },
-      { label: 'Access Denied', icon: 'pi pi-fw pi-lock', to: '/access' },
-      { label: 'Empty', icon: 'pi pi-fw pi-circle-off', to: '/empty' }
-    ]
-  },
-  {
-    label: 'Menu Hierarchy',
-    icon: 'pi pi-fw pi-search',
-    items: [
-      {
-        label: 'Submenu 1',
-        icon: 'pi pi-fw pi-bookmark',
-        items: [
-          {
-            label: 'Submenu 1.1',
-            icon: 'pi pi-fw pi-bookmark',
-            items: [
-              { label: 'Submenu 1.1.1', icon: 'pi pi-fw pi-bookmark' },
-              { label: 'Submenu 1.1.2', icon: 'pi pi-fw pi-bookmark' },
-              { label: 'Submenu 1.1.3', icon: 'pi pi-fw pi-bookmark' }
-            ]
-          },
-          {
-            label: 'Submenu 1.2',
-            icon: 'pi pi-fw pi-bookmark',
-            items: [
-              { label: 'Submenu 1.2.1', icon: 'pi pi-fw pi-bookmark' },
-              { label: 'Submenu 1.2.2', icon: 'pi pi-fw pi-bookmark' }
-            ]
-          }
-        ]
-      },
-      {
-        label: 'Submenu 2',
-        icon: 'pi pi-fw pi-bookmark',
-        items: [
-          {
-            label: 'Submenu 2.1',
-            icon: 'pi pi-fw pi-bookmark',
-            items: [
-              { label: 'Submenu 2.1.1', icon: 'pi pi-fw pi-bookmark' },
-              { label: 'Submenu 2.1.2', icon: 'pi pi-fw pi-bookmark' },
-              { label: 'Submenu 2.1.3', icon: 'pi pi-fw pi-bookmark' }
-            ]
-          },
-          {
-            label: 'Submenu 2.2',
-            icon: 'pi pi-fw pi-bookmark',
-            items: [
-              { label: 'Submenu 2.2.1', icon: 'pi pi-fw pi-bookmark' },
-              { label: 'Submenu 2.2.2', icon: 'pi pi-fw pi-bookmark' }
-            ]
-          }
-        ]
-      }
-    ]
-  } */
 ]
 const containerClass = computed(() => {
   return {
@@ -200,10 +123,9 @@ const containerClass = computed(() => {
       app?.appContext.config.globalProperties.$primevue.config.ripple === false
   }
 })
+
 defineEmits(['change-theme'])
 const onMenuToggle = () => {
-  console.log('toggle', store.menuClick)
-
   store.menuClick = true
 
   if (isDesktop()) {

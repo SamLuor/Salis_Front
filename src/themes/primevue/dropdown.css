@@ -1,0 +1,46 @@
+.p-dropdown {
+  @apply bg-transparent !important;
+}
+.p-dropdown-items-wrapper {
+  @apply bg-background-light-white70 dark:bg-background-dark-blue text-light-black70 dark:text-dark-white70 !important;
+}
+.p-dropdown-panel .p-dropdown-items .p-dropdown-empty-message {
+  @apply text-light-black70 dark:text-dark-white70 !important;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  @apply text-light-black70 dark:text-dark-white70;
+}
+
+.p-dropdown-panel
+  .p-dropdown-items
+  .p-dropdown-item:not(.p-highlight):not(.p-disabled):hover {
+  @apply dark:text-light-black70 !important;
+}
+
+.p-multiselect {
+  @apply bg-transparent border-gray-200 dark:border-gray-600 !important;
+}
+
+.p-multiselect-panel .p-multiselect-header {
+  @apply dark:bg-primary-options-background-container-header-dark !important;
+}
+.p-multiselect-panel {
+  @apply dark:bg-background-dark-blue70 dark:text-dark-white70 !important;
+}
+.p-multiselect-panel .p-multiselect-item {
+  @apply dark:text-dark-white70  !important;
+}
+.p-multiselect-panel .p-multiselect-item:hover {
+  @apply dark:text-light-black70 !important;
+}
+.p-multiselect .p-multiselect-token {
+  @apply dark:bg-background-dark-blue dark:text-dark-white70 !important;
+}
+.p-multiselect-item.p-highlight {
+  @apply dark:text-light-black70 !important;
+}
+
+.p-checkbox .p-checkbox-box .p-checkbox-icon {
+  @apply text-primary-principal dark:text-secondary-500 !important;
+}

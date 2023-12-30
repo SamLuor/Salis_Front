@@ -1,0 +1,34 @@
+.p-menu {
+  @apply border border-solid border-gray-300 dark:border-gray-600 !important;
+}
+
+.p-menu.p-menu-overlay {
+  @apply bg-background-light-white dark:bg-background-dark-blue70 !important;
+}
+.p-menu .p-menuitem-link {
+  @apply text-light-black70 dark:text-dark-gray !important;
+}
+
+.p-menu .p-menuitem-link:not(.p-disabled):hover {
+  @apply dark:text-dark-white70 dark:bg-background-dark-blue !important;
+}
+
+.p-menu .p-submenu-header {
+  @apply text-primary-options-background-sub-container bg-background-light-white dark:bg-background-dark-blue70 dark:text-secondary-500 !important;
+}
+
+.p-menu .p-menu-start {
+  @apply text-primary-principal dark:text-secondary-500;
+}
+
+.p-menu button:hover {
+  @apply dark:text-dark-white70 dark:bg-background-dark-blue !important;
+}
+
+.p-menu .p-menu-end .text {
+  @apply text-light-black70 dark:text-dark-white70;
+}
+
+.p-menu .p-menu-end .subtext {
+  @apply text-light-gray dark:text-dark-gray;
+}

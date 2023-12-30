@@ -1,0 +1,11 @@
+.confirm-delete {
+  @apply bg-background-light-white dark:bg-background-dark-blue70 dark:text-dark-white70 !important;
+}
+
+.confirm-delete .reject-button {
+  @apply bg-transparent border-red-400 text-red-400 hover:border-red-400 hover:bg-gray-100 hover:border-transparent !important;
+}
+
+.confirm-delete .accept-button {
+  @apply bg-red-400 hover:brightness-110 hover:bg-red-400 hover:border !important;
+}

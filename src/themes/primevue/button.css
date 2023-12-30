@@ -17,3 +17,30 @@
 .p-button.action {
   @apply bg-secondary-500 hover:brightness-50 py-[8px] px-[15px] !important;
 }
+
+.p-button.action-table {
+  @apply bg-transparent text-primary-principal dark:text-secondary-500 py-0 h-10 !important;
+}
+
+.p-button.action-table:hover {
+  @apply bg-gray-100 dark:bg-gray-700 !important;
+}
+
+.p-button.action-table:hover {
+  transform: scale(1.3);
+}
+
+.p-button.action-table .pi {
+  @apply text-lg;
+}
+
+.p-paginator-page {
+  @apply bg-transparent text-light-gray dark:text-dark-white70 !important;
+}
+
+.p-highlight {
+  @apply bg-primary-options-background-container text-primary-principal dark:text-secondary-500 !important;
+}
+.p-paginator-page.p-highlight {
+  @apply bg-primary-options-background-container dark:bg-primary-options-background-container-header-dark !important;
+}

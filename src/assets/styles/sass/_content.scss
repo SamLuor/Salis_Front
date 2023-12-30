@@ -5,8 +5,10 @@
   justify-content: space-between;
   padding: 5.5rem 0.5rem 0 0;
   transition: margin-left $transitionDuration;
+  overflow: hidden;
 }
 
 .layout-main {
   flex: 1 1 auto;
+  overflow: hidden;
 }

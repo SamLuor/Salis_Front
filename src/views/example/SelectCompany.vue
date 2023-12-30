@@ -23,16 +23,15 @@
 <script setup lang="ts">
 import LogoSalis from '@/assets/logo-fit.png'
 import { useAuthStore } from '@/store/auth'
+import { handleError } from '@/utils/handleErrors'
 
 const authStore = useAuthStore()
 
 const selectCompany = async (id: string) => {
   try {
-    const response = await authStore.selectCompany(id)
-
-    console.log(response)
+    await authStore.selectCompany(id)
   } catch (err) {
-    console.log(err)
+    handleError(err as Error, (err as Error).message)
   }
 }
 </script>

@@ -1,0 +1,9 @@
+.dialog-base {
+  @apply rounded-lg overflow-hidden !important;
+}
+.p-dialog .p-dialog-header {
+  @apply bg-background-light-white70 dark:bg-background-dark-blue70 text-light-black70 dark:text-dark-white70 !important;
+}
+.p-dialog .p-dialog-content {
+  @apply bg-background-light-white70 dark:bg-background-dark-blue70 text-light-black70 dark:text-dark-white70 !important;
+}

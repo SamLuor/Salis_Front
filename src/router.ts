@@ -36,8 +36,14 @@ import ErrorViewVue from '@/views/example/ErrorView.vue'
 import NotFoundViewVue from '@/views/example/NotFoundView.vue'
 import AccessViewVue from '@/views/example/AccessView.vue'
 import SelectCompanyVue from './views/example/SelectCompany.vue'
-
-console.log('Hello')
+import UsersTableVue from './views/example/UsersTable.vue'
+import CompanyViewVue from './views/example/CompanyView.vue'
+import NoPermissionView from './views/example/NoPermissionView.vue'
+import { useAuthStore } from './store/auth'
+import { storeToRefs } from 'pinia'
+import CompanyFormVue from './views/example/CompanyForm.vue'
+import PositionViewVue from './views/example/PositionView.vue'
+import PositionFormVue from './views/example/PositionForm.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,6 +52,9 @@ const router = createRouter({
       path: '/',
       name: 'app',
       component: App,
+      meta: {
+        guard: true
+      },
       children: [
         /* {
           path: '',
@@ -78,11 +87,86 @@ const router = createRouter({
           name: 'button',
           component: ButtonDemoViewVue
         },
-
         {
           path: '',
-          name: 'table',
-          component: TableDemoViewVue
+          name: 'user',
+          meta: {
+            role: 'gerenciar usuários'
+          },
+          component: UsersTableVue
+        },
+        {
+          path: 'empresas',
+          name: 'company',
+          meta: {
+            role: 'gerenciar empresas'
+          },
+          children: [
+            {
+              path: '',
+              name: 'company',
+              meta: {
+                role: 'gerenciar empresas'
+              },
+              component: CompanyViewVue
+            },
+            {
+              path: 'empresa/:id',
+              name: 'company-show',
+              meta: {
+                role: 'gerenciar empresas'
+              },
+              component: CompanyFormVue
+            },
+            {
+              path: 'empresa-form',
+              name: 'company-form',
+              meta: {
+                role: 'gerenciar empresas'
+              },
+              component: CompanyFormVue
+            }
+          ]
+        },
+        /* {
+          path: 'empresas/:id',
+          name: 'company-show',
+          meta: {
+            role: 'gerenciar empresas'
+          },
+          component: CompanyFormVue
+        },
+        {
+          path: 'empresas-form',
+          name: 'company-form',
+          meta: {
+            role: 'gerenciar empresas'
+          },
+          component: CompanyFormVue
+        }, */
+        {
+          path: 'cargos',
+          name: 'positions',
+          meta: {
+            role: 'gerenciar cargos'
+          },
+          component: PositionViewVue
+        },
+        {
+          path: 'cargos-form',
+          name: 'position-form',
+          meta: {
+            role: 'gerenciar cargos'
+          },
+          component: PositionFormVue
+        },
+        {
+          path: 'cargos/:id',
+          name: 'position-show',
+          meta: {
+            role: 'gerenciar cargos'
+          },
+          component: PositionFormVue
         },
         {
           path: '/list',
@@ -185,6 +269,14 @@ const router = createRouter({
       ]
     },
     {
+      path: '/no-permission',
+      name: 'no-permission',
+      meta: {
+        guard: true
+      },
+      component: NoPermissionView
+    },
+    {
       path: '/select-company',
       name: 'select-company',
       component: SelectCompanyVue
@@ -215,6 +307,38 @@ const router = createRouter({
       component: AccessViewVue
     }
   ]
+})
+
+router.beforeEach(async (to, _from, next) => {
+  const storeAuth = useAuthStore()
+  const { token, user } = storeToRefs(storeAuth)
+  const isRelesead = to.meta.role
+    ? user.value?.permissions?.some(
+        (permission) => permission.nome == to.meta.role
+      )
+    : true
+
+  if (token.value && user.value.name && to.name == 'login') {
+    next({ name: 'user' })
+  }
+
+  if (to.meta.guard) {
+    if (token.value && user.value.name) {
+      if (isRelesead) {
+        next()
+        return
+      } else {
+        next({ path: '/no-permission' })
+        return
+      }
+    } else {
+      next({ name: 'login' })
+    }
+  }
+
+  if (!to.meta.guard) {
+    next()
+  }
 })
 
 export default router

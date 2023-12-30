@@ -30,15 +30,14 @@
             v-ripple
             :to="item.to"
             :class="[
-              item.class,
               'p-ripple',
               { 'p-disabled': item.disabled },
-              'menu-item-tailwind'
+              'menu-item-tailwind',
+              { 'router-link-exact-active': isActive(item) }
             ]"
             :style="item.style"
             :target="item.target"
             :aria-label="item.label"
-            exact
             role="menuitem"
             @click="onMenuItemClick($event, item, i)"
           >
@@ -89,6 +88,8 @@
   </ul>
 </template>
 <script>
+import { useRoute } from 'vue-router'
+
 export default {
   name: 'Appsubmenu',
   props: {
@@ -104,6 +105,11 @@ export default {
     }
   },
   methods: {
+    isActive: (to) => {
+      if (useRoute().path.includes(to.label.toLowerCase())) {
+        return true
+      }
+    },
     onMenuItemClick(event, item, index) {
       if (item.disabled) {
         event.preventDefault()
@@ -139,12 +145,15 @@ export default {
   @apply dark:text-dark-white70;
 }
 .menu-item-tailwind {
-  @apply text-secondary-500 dark:text-dark-white70;
+  @apply text-dark-gray dark:text-dark-white70;
 }
 .menu-item-tailwind:hover {
-  @apply dark:text-light-black70;
+  @apply text-dark-white70 bg-primary-principal dark:text-dark-white70 dark:bg-secondary-500;
 }
 .layout-menu li a.router-link-exact-active {
-  @apply text-secondary-500 hover:bg-secondary-500 hover:text-primary-options-text-color;
+  @apply text-primary-600 dark:text-secondary-500 hover:text-primary-options-text-color;
+}
+.layout-menu li a.router-link-exact-active:hover {
+  @apply dark:text-dark-white70;
 }
 </style>

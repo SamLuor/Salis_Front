@@ -13,6 +13,7 @@
     "@vee-validate/zod": "^4.12.2",
     "@vueuse/core": "^10.7.0",
     "axios": "^1.6.2",
+    "brazilian-values": "^0.13.0",
     "chart.js": "^3.8.0",
     "core-js": "^3.23.3",
     "crypto-js": "^4.2.0",
