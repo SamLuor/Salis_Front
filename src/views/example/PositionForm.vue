@@ -78,7 +78,10 @@
               </DataTable>
             </div>
             <div class="input-full flex flex-row-reverse">
-              <Button label="Criar" @click="onFormSubmit" />
+              <Button
+                :label="!position_id ? 'Criar' : 'Atualizar'"
+                @click="onFormSubmit"
+              />
             </div>
           </form>
         </div>
@@ -94,11 +97,14 @@ import { schemaPosition } from '@/utils/validations'
 import { useRoute } from 'vue-router'
 import services from '@/api/index'
 import { useToast } from 'primevue/usetoast'
+import { useAuthStore } from '@/store/auth'
+import router from '@/router'
 
 interface Options {
   [key: string]: [{ [key: string]: string }]
 }
 
+const company_id = useAuthStore().company_id
 const toast = useToast()
 const options = ref<Options>({ companies: [{}], permitions: [{}] } as Options)
 const route = useRoute()
@@ -113,9 +119,18 @@ const permitions = defineComponentBinds('permissoes')
 
 const onFormSubmit = handleSubmit(async (values) => {
   try {
-    if (!position_id) await services.Position.createPosition(values)
-    else await services.Position.updatePosition(values)
+    if (!position_id)
+      await services.Position.createPosition({
+        ...values,
+        permissoes: values.permissoes.map((permission) => permission.value)
+      })
+    else
+      await services.Position.updatePosition({
+        ...values,
+        permissoes: values.permissoes.map((permission) => permission.value)
+      })
 
+    router.push({ name: 'positions' })
     toast.add({
       severity: 'success',
       summary: !values?.id
@@ -157,12 +172,20 @@ const receiveOptions = async () => {
 
 onMounted(async () => {
   await receiveOptions()
+  setFieldValue('empresa_id', company_id!)
+
   if (position_id) {
     const response = await services.Position.getPosition(position_id as string)
 
     setFieldValue('id', response.data.id)
     setFieldValue('nome', response.data.nome)
-    setFieldValue('nome', response.data.nome)
+    setFieldValue(
+      'permissoes',
+      response.data.permissoes.map((permission: any) => ({
+        text: permission.nome,
+        value: permission.id
+      }))
+    )
   }
 })
 </script>

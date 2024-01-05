@@ -13,4 +13,5 @@ export interface MainState {
   token: null | string
   roles: string[] | null
   options_company: [{ text: string; value: string }] | []
+  company_id: string | null
 }

@@ -176,7 +176,10 @@
               }}</small>
             </div>
             <div class="input-full flex flex-row-reverse">
-              <Button label="Criar" @click="onFormSubmit" />
+              <Button
+                :label="company_id ? 'Atualizar' : 'Criar'"
+                @click="onFormSubmit"
+              />
             </div>
           </form>
         </div>
@@ -195,6 +198,7 @@ import { useRoute } from 'vue-router'
 import services from '@/api/index'
 import { useToast } from 'primevue/usetoast'
 import { CompanyProtocol } from '@/@types/company'
+import router from '@/router'
 
 const file = ref<any>(null)
 const toast = useToast()
@@ -215,7 +219,7 @@ const frase = defineComponentBinds('frase')
 
 const onFormSubmit = handleSubmit(async (values) => {
   const formData = new FormData()
-  console.log('caiu')
+
   // Transforme o objeto JSON em FormData
   for (const key of Object.keys(values) as (keyof CompanyProtocol)[]) {
     formData.append(key, values[key] as string | Blob)
@@ -225,6 +229,7 @@ const onFormSubmit = handleSubmit(async (values) => {
     if (!company_id) await services.Company.createCompany(formData)
     else await services.Company.updateCompany(formData, String(company_id))
 
+    router.push({ name: 'company' })
     toast.add({
       severity: 'success',
       summary: !values?.id
@@ -246,10 +251,8 @@ const onFormSubmit = handleSubmit(async (values) => {
 })
 
 const onSelectedFile = (event: any) => {
-  console.log(event.files)
   event.files = [event.files[event.files.length - 1]]
   file.value = event.files[event.files.length - 1]
-  console.log(file.value)
 }
 
 onMounted(async () => {

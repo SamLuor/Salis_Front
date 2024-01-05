@@ -3,11 +3,10 @@
     <div class="w-full pl-2">
       <div class="card bg-transparent">
         <h5 class="header-page">
-          <!-- <div class="flex gap-3" style="align-items: center">
+          <div class="flex gap-3" style="align-items: center">
             <i class="fa-solid fa-briefcase icon-header" />
             Cargos
-          </div> -->
-          <Breadcrumb :home="home" :model="items" />
+          </div>
           <Button
             class="action"
             icon="pi pi-plus"
@@ -134,7 +133,6 @@ async function receivePositions() {
     loading.value = true
     const response = await services.Position.getPositions()
     positions.value = response.data
-    console.log(positions.value)
   } catch (err) {
     toastStore.toast?.add({
       severity: 'error',

@@ -22,6 +22,7 @@
             </span>
           </div>
           <DataTable
+            v-model:filters="filters"
             :value="userStore.users"
             :paginator="true"
             :rows="10"
@@ -31,7 +32,7 @@
             show-gridlines
             responsive-layout="scroll"
             scroll-height="550px"
-            :global-filter-fields="['name', 'email', 'status']"
+            :global-filter-fields="['name', 'email', 'empresas']"
           >
             <template #empty> Nenhum Usuário encontrado. </template>
             <template #loading>
@@ -42,7 +43,7 @@
             <Column field="empresas" header="Empresas" style="min-width: 12rem">
               <template #body="{ data }">
                 {{
-                  data.empresas
+                  data?.empresas
                     .map((item: CompanyProtocol) => {
                       return `${item.razao_social} - ${item.sigla}`
                     })
@@ -120,9 +121,9 @@ const loading = ref<boolean>(true)
 const status = ['Ativo', 'Desativado']
 const filters = ref({
   global: { value: '', matchMode: FilterMatchMode.CONTAINS },
-  name: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  email: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  status: { value: null, matchMode: FilterMatchMode.EQUALS }
+  name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+  email: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+  empresas: { value: null, matchMode: FilterMatchMode.CONTAINS }
 })
 const confirm = useConfirm()
 const visible = ref<boolean>(false)
@@ -133,8 +134,6 @@ const showUser = (data: User) => {
   user.value = data
   visible.value = true
 }
-
-console.log(useAuthStore().user)
 
 const deleteUser = ({ data, message }: { message: string; data: User }) => {
   confirm.require({

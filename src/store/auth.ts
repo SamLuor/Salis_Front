@@ -6,14 +6,20 @@ import router from '@/router'
 import type { UserMe } from '@/@types/auth'
 import { UserFactory } from '@/factories/UserFactory'
 import { MainState } from './@types/Auth'
-import { ConnectedOverlayScrollHandler } from 'primevue/utils'
 
 const initializeState = (): MainState => {
-  const [storedToken, storedUser, storedRoles, storeOptionsCompany] = [
+  const [
+    storedToken,
+    storedUser,
+    storedRoles,
+    storeOptionsCompany,
+    storeCompany
+  ] = [
     localStorage.getItem('@salis:token'),
     localStorage.getItem('@salis:user'),
     localStorage.getItem('@salis:roles'),
-    localStorage.getItem('@salis:options_company')
+    localStorage.getItem('@salis:options_company'),
+    localStorage.getItem('@salis:company')
   ]
 
   return {
@@ -27,6 +33,10 @@ const initializeState = (): MainState => {
     roles:
       storedRoles !== null
         ? JSON.parse(dataProcessor.decrypt(storedRoles))
+        : null,
+    company_id:
+      storeCompany !== null
+        ? JSON.parse(dataProcessor.decrypt(storeCompany))
         : null
   }
 }
@@ -43,7 +53,8 @@ export const useAuthStore = defineStore({
     getUserEmail: (state) => state.user.email,
     getRoles: (state) => state.roles,
     getToken: (state) => state.token,
-    getOptionsCompany: (state) => state.options_company
+    getOptionsCompany: (state) => state.options_company,
+    getCompanyID: (state) => state.company_id
   },
   actions: {
     setUser(user: UserMe) {
@@ -57,6 +68,17 @@ export const useAuthStore = defineStore({
         localStorage.removeItem('@salis:user')
       }
       this.user = userFactored
+    },
+    setCompany_id(company_id: string | null) {
+      if (company_id) {
+        localStorage.setItem(
+          '@salis:company',
+          dataProcessor.encrypt(JSON.stringify(company_id))
+        )
+      } else {
+        localStorage.removeItem('@salis:company_id')
+      }
+      this.company_id = company_id
     },
     setRoles(roles: string[] | null) {
       if (roles) {
@@ -113,6 +135,7 @@ export const useAuthStore = defineStore({
         this.setToken(null)
         this.setUser({} as UserMe)
         this.setOptionsCompany([])
+        this.setCompany_id(null)
 
         router.push({ name: 'login' })
       } catch (err) {
@@ -140,6 +163,7 @@ export const useAuthStore = defineStore({
         const response = await authService.loginWithCompany(id)
         if (response.data.access_token) {
           this.setToken(response.data.access_token)
+          this.setCompany_id(id)
           await this.getMe()
 
           router.push({ name: 'user' })

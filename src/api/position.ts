@@ -63,4 +63,16 @@ export default class PositionService {
         handleError(err, message)
       })
   }
+
+  async vincularPositionInUser(data: { users: string[] }, cargo_id: string) {
+    await this.httpConfig
+      .post('cargo/vincular-usuarios/' + cargo_id, data)
+      .then((response) => {
+        return response.data
+      })
+      .catch((err) => {
+        const { message } = err.response.data
+        handleError(err, message)
+      })
+  }
 }

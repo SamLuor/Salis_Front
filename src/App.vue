@@ -15,10 +15,10 @@
       </div>
       <AppFooter />
     </div>
-    <AppConfig
+    <!-- <AppConfig
       :layout-mode="store.layoutMode"
       @layout-change="onLayoutChange"
-    />
+    /> -->
     <transition name="layout-mask">
       <div
         v-if="store.mobileMenuActive"

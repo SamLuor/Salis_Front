@@ -73,7 +73,7 @@
       <MultiSelect
         v-bind="empresas"
         :placeholder="
-          loading == 'option-empresas'
+          loading == 'option'
             ? 'Carregando empresas...'
             : 'Selecione uma empresa'
         "
@@ -81,12 +81,30 @@
         option-value="value"
         :options="options_company"
         empty-message="Nenhuma opção cadastrada"
-        :loading="loading == 'option-empresas'"
+        :loading="loading == 'option'"
         class="w-full"
         :class="['w-full', { 'p-invalid': errors.empresas }]"
       />
       <small id="text-error" class="p-error">{{
         errors.empresas || '&nbsp;'
+      }}</small>
+    </div>
+    <div class="container-input">
+      <MultiSelect
+        v-bind="positions"
+        :placeholder="
+          loading == 'option' ? 'Carregando Cargos...' : 'Selecione uma Cargos'
+        "
+        option-label="text"
+        option-value="value"
+        :options="options_position"
+        empty-message="Nenhuma opção cadastrada"
+        :loading="loading == 'option'"
+        class="w-full"
+        :class="['w-full', { 'p-invalid': errors.cargos }]"
+      />
+      <small id="text-error" class="p-error">{{
+        errors.cargos || '&nbsp;'
       }}</small>
     </div>
     <Button
@@ -123,12 +141,14 @@ const toast = useToast()
 
 const loading = ref<string | null>(null)
 const options_company = ref<any>(null)
+const options_position = ref<any>(null)
 
 const name = defineComponentBinds('name')
 const email = defineComponentBinds('email')
 const password = defineComponentBinds('password')
 const password_confirmation = defineComponentBinds('password_confirmation')
 const empresas = defineComponentBinds('empresas')
+const positions = defineComponentBinds('cargos')
 
 const onFormSubmit = handleSubmit(async (values) => {
   try {
@@ -138,6 +158,15 @@ const onFormSubmit = handleSubmit(async (values) => {
     } else {
       await services.User.updateUser(values)
     }
+    values.cargos?.forEach(async (cargo_id) => {
+      await services.Position.vincularPositionInUser(
+        {
+          users: [props.user.id]
+        },
+        cargo_id
+      )
+    })
+
     toast.add({
       severity: 'success',
       summary: !props.user.id
@@ -163,10 +192,12 @@ const onFormSubmit = handleSubmit(async (values) => {
 
 const receiveOptions = async () => {
   try {
-    loading.value = 'option-empresas'
+    loading.value = 'option'
     const response = await services.Option.getCompanies()
-
     options_company.value = response.data
+
+    const responsePosition = await services.Option.getPosition()
+    options_position.value = responsePosition.data
   } catch (err) {
     toast.add({
       severity: 'error',
@@ -192,6 +223,10 @@ onMounted(() => {
     setFieldValue(
       'empresas',
       props.user.empresas.map((empresa: CompanyProtocol) => empresa.id)
+    )
+    setFieldValue(
+      'cargos',
+      props.user.cargos.map((cargo: any) => cargo.id)
     )
   }
 })

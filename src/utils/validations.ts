@@ -31,7 +31,14 @@ const schemaCreateUser = z
         })
       )
       .min(1, { message: 'Deve ser vinculado a uma ou mais empresas' })
-      .nonempty({ message: 'Deve ser vinculado a uma ou mais empresas' })
+      .nonempty({ message: 'Deve ser vinculado a uma ou mais empresas' }),
+    cargos: z
+      .array(
+        z.string({
+          required_error: 'Deve ser vinculado a um ou mais cargos'
+        })
+      )
+      .optional()
   })
   .refine((schema) => schema.password_confirmation === schema.password, {
     message: 'Senhas não coincidem!',
@@ -60,6 +67,13 @@ const schemaUpdateUser = z.object({
       z.string({ required_error: 'Deve ser vinculado a uma ou mais empresas' })
     )
     .min(1, { message: 'Deve ser vinculado a uma ou mais empresas' })
+    .optional(),
+  cargos: z
+    .array(
+      z.string({
+        required_error: 'Deve ser vinculado a um ou mais cargos'
+      })
+    )
     .optional()
 })
 
@@ -91,6 +105,7 @@ const schemaUpdateCompany = z.object({
 
 const schemaPosition = z.object({
   id: z.string({ required_error: 'ID é obrigatório' }).optional(),
+  empresa_id: z.string({ required_error: 'ID da empresa é obrigatório' }),
   nome: z.string({ required_error: 'Obrigatório' }),
   permissoes: z
     .array(
