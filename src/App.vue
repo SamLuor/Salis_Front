@@ -92,6 +92,12 @@ const menu = [
         to: '/cargos',
         role: 'gerenciar cargos'
       },
+      {
+        label: 'Clientes',
+        icon: 'fa-solid fa-users',
+        to: '/clientes',
+        role: 'gerenciar clientes'
+      },
       { label: 'List', icon: 'pi pi-fw pi-list', to: '/list' },
       { label: 'Tree', icon: 'pi pi-fw pi-share-alt', to: '/tree' },
       { label: 'Panel', icon: 'pi pi-fw pi-tablet', to: '/panel' },

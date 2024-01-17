@@ -6,9 +6,9 @@ import UserService from './user'
 import OptionService from './options'
 import CompanyService from './company'
 import { useAuthStore } from '@/store/auth'
-import { storeToRefs } from 'pinia'
 import { UserMe } from '@/@types/auth'
 import PositionService from './position'
+import ClientService from './clients'
 
 httpConfig.interceptors.request.use((config) => {
   const dataProcessor = SecureDataProcessor.dataProcessor
@@ -46,5 +46,6 @@ export default {
   User: new UserService(httpConfig),
   Option: new OptionService(httpConfig),
   Company: new CompanyService(httpConfig),
-  Position: new PositionService(httpConfig)
+  Position: new PositionService(httpConfig),
+  Clients: new ClientService(httpConfig)
 }

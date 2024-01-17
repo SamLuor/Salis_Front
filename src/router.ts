@@ -44,6 +44,8 @@ import { storeToRefs } from 'pinia'
 import CompanyFormVue from './views/example/CompanyForm.vue'
 import PositionViewVue from './views/example/PositionView.vue'
 import PositionFormVue from './views/example/PositionForm.vue'
+import ClientsViewVue from './views/example/ClientsView.vue'
+import ClientFormVue from './views/example/ClientForm.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -167,6 +169,22 @@ const router = createRouter({
             role: 'gerenciar cargos'
           },
           component: PositionFormVue
+        },
+        {
+          path: 'clientes',
+          name: 'clients',
+          meta: {
+            role: 'gerenciar clientes'
+          },
+          component: ClientsViewVue
+        },
+        {
+          path: 'cliente-form',
+          name: 'client-form',
+          meta: {
+            role: 'gerenciar clientes'
+          },
+          component: ClientFormVue
         },
         {
           path: '/list',

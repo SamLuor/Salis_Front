@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { isCEP, isCNPJ, isCPF, isPhone } from 'brazilian-values'
+import { isCEP, isCNPJ, isCPF, isPhone, isDDD } from 'brazilian-values'
 
 const schemaLogin = z.object({
   email: z
@@ -122,11 +122,98 @@ const schemaPosition = z.object({
     .nonempty({ message: 'Deve ser vinculado a uma ou mais permissões' })
 })
 
+const schemaCreateClient = z.object({
+  id: z.string().optional(),
+  razao_social: z
+    .string({
+      required_error: 'Campo obrigatório',
+      invalid_type_error: 'Aceita apenas caracteres'
+    })
+    .min(1),
+  nome_fantasia: z
+    .string({
+      required_error: 'Campo obrigatório',
+      invalid_type_error: 'Aceita apenas caracteres'
+    })
+    .min(1),
+  sigla: z
+    .string({
+      required_error: 'Campo obrigatório',
+      invalid_type_error: 'Aceita apenas caracteres'
+    })
+    .min(1),
+  cnpj: z
+    .string({
+      required_error: 'Campo obrigatório',
+      invalid_type_error: 'Aceita apenas caracteres'
+    })
+    .min(1)
+    .refine((value) => isCNPJ(value), { message: 'CNPJ inválido' }),
+  email: z
+    .string({
+      required_error: 'Campo obrigatório',
+      invalid_type_error: 'Digite um Email válido'
+    })
+    .email(),
+  enderecos: z.array(
+    z.object({
+      id: z.string().optional(),
+      cep: z
+        .string()
+        .min(1)
+        .refine((value) => isCEP(value), { message: 'CEP inválido' }),
+      logradouro: z
+        .string({
+          required_error: 'Campo obrigatório',
+          invalid_type_error: 'Aceita apenas caracteres'
+        })
+        .min(1),
+      bairro: z
+        .string({
+          required_error: 'Campo obrigatório',
+          invalid_type_error: 'Aceita apenas caracteres'
+        })
+        .min(1),
+      numero: z
+        .number({
+          required_error: 'Campo obrigatório',
+          invalid_type_error: 'Aceita apenas caracteres'
+        })
+        .min(1),
+      complemento: z
+        .string({
+          required_error: 'Campo obrigatório',
+          invalid_type_error: 'Aceita apenas caracteres'
+        })
+        .optional()
+    })
+  ),
+  telefones: z.array(
+    z.object({
+      id: z.string().optional(),
+      ddd: z
+        .string()
+        .min(1)
+        .refine((value) => isDDD(value), { message: 'DDD inválido' }),
+      numero: z
+        .string()
+        .min(1)
+        .refine((value) => isPhone(value), { message: 'Telefone inválido' }),
+      pessoa: z.string().optional()
+    })
+  ),
+  empresas: z.array(z.string())
+})
+
+const schemaUpdateClient = schemaCreateClient.partial()
+
 export {
   schemaLogin,
   schemaCreateUser,
   schemaUpdateUser,
   schemaCreateCompany,
   schemaUpdateCompany,
-  schemaPosition
+  schemaPosition,
+  schemaCreateClient,
+  schemaUpdateClient
 }
