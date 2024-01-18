@@ -46,6 +46,10 @@ import PositionViewVue from './views/example/PositionView.vue'
 import PositionFormVue from './views/example/PositionForm.vue'
 import ClientsViewVue from './views/example/ClientsView.vue'
 import ClientFormVue from './views/example/ClientForm.vue'
+import MeansPublicationViewVue from './views/example/MeansPublicationView.vue'
+import MeansPublicationFormVue from './views/example/MeansPublicationForm.vue'
+import PublicationFormVue from './views/example/PublicationForm.vue'
+import PublicationViewVue from './views/example/PublicationView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -185,6 +189,54 @@ const router = createRouter({
             role: 'gerenciar clientes'
           },
           component: ClientFormVue
+        },
+        {
+          path: 'meios-publicacao',
+          name: 'means-publication',
+          meta: {
+            role: 'gerenciar meios de publicação'
+          },
+          component: MeansPublicationViewVue
+        },
+        {
+          path: 'meios-publicacao-form',
+          name: 'means-publication-form',
+          meta: {
+            role: 'gerenciar meios de publicação'
+          },
+          component: MeansPublicationFormVue
+        },
+        {
+          path: 'meios-publicacao-show/:id',
+          name: 'means-publication-show',
+          meta: {
+            role: 'gerenciar meios de publicação'
+          },
+          component: MeansPublicationFormVue
+        },
+        {
+          path: 'publicacao',
+          name: 'publications',
+          meta: {
+            role: 'gerenciar meios de publicação'
+          },
+          component: PublicationViewVue
+        },
+        {
+          path: 'publicacao-form',
+          name: 'publication-form',
+          meta: {
+            role: 'gerenciar publicação'
+          },
+          component: PublicationFormVue
+        },
+        {
+          path: 'publicacao-show',
+          name: 'publication-show',
+          meta: {
+            role: 'gerenciar publicação'
+          },
+          component: PublicationFormVue
         },
         {
           path: '/list',

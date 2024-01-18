@@ -24,11 +24,15 @@
                 v-bind="razao_social"
                 aria-describedby="razao_social-help"
               />
-              <small v-if="!errors.razao_social" id="razao_social-help"
+              <small
+                v-if="!errors.razao_social && !errorsPreSave['razao_social']"
+                id="razao_social-help"
                 >Digite a razão social do Cliente.</small
               >
               <small v-else id="text-error" class="p-error">{{
-                errors.razao_social || '&nbsp;'
+                errors.razao_social ||
+                errorsPreSave['razao_social'].message ||
+                '&nbsp;'
               }}</small>
             </div>
             <div class="flex flex-column gap-2 input-full w-full">
@@ -38,11 +42,15 @@
                 v-bind="nome_fantasia"
                 aria-describedby="nome_fantasia-help"
               />
-              <small v-if="!errors.nome_fantasia" id="nome_fantasia-help"
+              <small
+                v-if="!errors.nome_fantasia && !errorsPreSave['nome_fantasia']"
+                id="nome_fantasia-help"
                 >Digite o nome fantasia do cliente.</small
               >
               <small v-else id="text-error" class="p-error">{{
-                errors.nome_fantasia || '&nbsp;'
+                errors.nome_fantasia ||
+                errorsPreSave['nome_fantasia'].message ||
+                '&nbsp;'
               }}</small>
             </div>
             <div class="flex flex-column gap-2 w-full">
@@ -52,11 +60,13 @@
                 v-bind="sigla"
                 aria-describedby="sigla-help"
               />
-              <small v-if="!errors.sigla" id="sigla-help"
+              <small
+                v-if="!errors.sigla && !errorsPreSave['sigla']"
+                id="sigla-help"
                 >Digite a sigla do cliente.</small
               >
               <small v-else id="text-error" class="p-error">{{
-                errors.sigla || '&nbsp;'
+                errors.sigla || errorsPreSave['sigla'].message || '&nbsp;'
               }}</small>
             </div>
             <div class="flex flex-column gap-2 w-full">
@@ -67,11 +77,13 @@
                 mask="99.999.999/9999-99"
                 aria-describedby="CNPJ-help"
               />
-              <small v-if="!errors.cnpj" id="CNPJ-help"
+              <small
+                v-if="!errors.cnpj && !errorsPreSave['cnpj']"
+                id="CNPJ-help"
                 >Digite o CNPJ do cliente.</small
               >
               <small v-else id="text-error" class="p-error">{{
-                errors.cnpj || '&nbsp;'
+                errors.cnpj || errorsPreSave['cnpj'].message || '&nbsp;'
               }}</small>
             </div>
             <div class="flex flex-column gap-2 input-full w-full">
@@ -81,11 +93,38 @@
                 v-bind="email"
                 aria-describedby="Email-help"
               />
-              <small v-if="!errors.email" id="Email-help"
+              <small
+                v-if="!errors.email && !errorsPreSave['email']"
+                id="Email-help"
                 >Digite o email da cliente.</small
               >
               <small v-else id="text-error" class="p-error">{{
-                errors.email || '&nbsp;'
+                errors.email || errorsPreSave['email'].message || '&nbsp;'
+              }}</small>
+            </div>
+            <div class="flex flex-column gap-2 input-full w-full">
+              <label for="username">Empresas</label>
+              <MultiSelect
+                v-bind="empresas"
+                :placeholder="
+                  loading ? 'Carregando empresas...' : 'Selecione uma empresa'
+                "
+                option-label="text"
+                option-value="value"
+                :options="options_company"
+                empty-message="Nenhuma opção cadastrada"
+                :loading="loading"
+                class="w-full"
+                display="chip"
+                :class="['w-full', { 'p-invalid': errors.empresas }]"
+              />
+              <small
+                v-if="!errors.empresas && !errorsPreSave['empresas']"
+                id="Email-help"
+                >Digite o email da cliente.</small
+              >
+              <small v-else id="text-error" class="p-error">{{
+                errors.empresas || errorsPreSave['empresas'].message || '&nbsp;'
               }}</small>
             </div>
             <h5 class="font-semibold input-full">Endereços</h5>
@@ -96,41 +135,53 @@
               <div class="flex flex-column gap-2 w-full">
                 <label for="cep">CEP</label>
                 <InputMask id="cep" mask="99999-999" placeholder="99999-999" />
-                <small v-if="!errors.email" id="cep-help"
+                <small
+                  v-if="!errorsPreSave[`enderecos-${index - 1}-cep`]"
+                  id="cep-help"
                   >Digite o CEP do cliente.</small
                 >
                 <small v-else id="text-error" class="p-error">{{
-                  errors.enderecos || '&nbsp;'
+                  errorsPreSave[`enderecos-${index - 1}-cep`].message ||
+                  '&nbsp;'
                 }}</small>
               </div>
               <div class="flex flex-column gap-2 w-full">
                 <label for="logradouro">Logradouro</label>
                 <InputText id="logradouro" aria-describedby="logradouro-help" />
-                <small v-if="!errors.email" id="logradouro-help"
+                <small
+                  v-if="!errorsPreSave[`enderecos-${index - 1}-logradouro`]"
+                  id="logradouro-help"
                   >Digite o logradouro do cliente.</small
                 >
                 <small v-else id="text-error" class="p-error">{{
-                  errors.email || '&nbsp;'
+                  errorsPreSave[`enderecos-${index - 1}-logradouro`].message ||
+                  '&nbsp;'
                 }}</small>
               </div>
               <div class="flex flex-column gap-2 w-full">
                 <label for="numero">Número</label>
                 <InputText id="numero" aria-describedby="numero-help" />
-                <small v-if="!errors.email" id="numero-help"
+                <small
+                  v-if="!errorsPreSave[`enderecos-${index - 1}-numero`]"
+                  id="numero-help"
                   >Digite o número do endereço do cliente.</small
                 >
                 <small v-else id="text-error" class="p-error">{{
-                  errors.email || '&nbsp;'
+                  errorsPreSave[`enderecos-${index - 1}-logradouro`].message ||
+                  '&nbsp;'
                 }}</small>
               </div>
               <div class="flex flex-column gap-2 w-full">
                 <label for="bairro">Bairro</label>
                 <InputText id="bairro" aria-describedby="bairro-help" />
-                <small v-if="!errors.email" id="bairro-help"
+                <small
+                  v-if="!errorsPreSave[`enderecos-${index - 1}-bairro`]"
+                  id="bairro-help"
                   >Digite o Bairro do cliente.</small
                 >
                 <small v-else id="text-error" class="p-error">{{
-                  errors.email || '&nbsp;'
+                  errorsPreSave[`enderecos-${index - 1}-bairro`].message ||
+                  '&nbsp;'
                 }}</small>
               </div>
               <div class="flex flex-column gap-2 input-full w-full">
@@ -139,11 +190,14 @@
                   id="complemento"
                   aria-describedby="complemento-help"
                 />
-                <small v-if="!errors.email" id="complemento-help"
+                <small
+                  v-if="!errorsPreSave[`enderecos-${index - 1}-complemento`]"
+                  id="complemento-help"
                   >Digite o Complemento do cliente.</small
                 >
                 <small v-else id="text-error" class="p-error">{{
-                  errors.enderecos || '&nbsp;'
+                  errorsPreSave[`enderecos-${index - 1}-complemento`].message ||
+                  '&nbsp;'
                 }}</small>
               </div>
               <span
@@ -152,8 +206,7 @@
                 style="border: 1px solid #e2e2e2"
               >
                 <Badge
-                  value="x"
-                  size=""
+                  value="X"
                   class="absolute bg-red-400"
                   style="top: -0.7rem; right: -5px"
                 />
@@ -172,6 +225,83 @@
                     numero: null,
                     complemento: ''
                   })
+              "
+            />
+            <h5 class="font-semibold input-full">Telefones</h5>
+            <template
+              v-for="index in telefones?.length"
+              :key="'telefone-'.concat(String(index))"
+            >
+              <div class="flex flex-column gap-2 w-full">
+                <label for="ddd">DDD</label>
+                <InputNumber
+                  v-model="telefones[index - 1].ddd"
+                  input-id="ddd"
+                  :use-grouping="false"
+                />
+                <small
+                  v-if="!errorsPreSave[`telefones-${index - 1}-ddd`]"
+                  id="ddd-help"
+                  >Digite o DDD do Telefone.</small
+                >
+                <small v-else id="text-error" class="p-error">{{
+                  errorsPreSave[`telefones-${index - 1}-ddd`].message ||
+                  '&nbsp;'
+                }}</small>
+              </div>
+              <div class="flex flex-column gap-2 w-full">
+                <label for="numero">Número de telefone</label>
+                <InputMask
+                  id="numero"
+                  v-model="telefones[index - 1].numero"
+                  mask="99999-9999"
+                  placeholder="99999-9999"
+                />
+                <small
+                  v-if="!errorsPreSave[`telefones-${index - 1}-numero`]"
+                  id="numero-help"
+                  >Digite o número de telefone.</small
+                >
+                <small v-else id="text-error" class="p-error">{{
+                  errorsPreSave[`telefones-${index - 1}-numero`].message ||
+                  '&nbsp;'
+                }}</small>
+              </div>
+              <div class="flex flex-column gap-2 input-full w-full">
+                <label for="pessoa">Pessoa</label>
+                <InputText
+                  id="pessoa"
+                  v-model="telefones[index - 1].pessoa"
+                  aria-describedby="pessoa-help"
+                />
+                <small
+                  v-if="!errorsPreSave[`telefones-${index - 1}-pessoa`]"
+                  id="pessoa-help"
+                  >Digite o pessoa do telefone.</small
+                >
+                <small v-else id="text-error" class="p-error">{{
+                  errorsPreSave[`telefones-${index - 1}-pessoa`].message ||
+                  '&nbsp;'
+                }}</small>
+              </div>
+              <span
+                v-if="telefones.length > index"
+                class="input-full relative flex items-center"
+                style="border: 1px solid #e2e2e2"
+              >
+                <Badge
+                  value="X"
+                  class="absolute bg-red-400"
+                  style="top: -0.7rem; right: -5px"
+                />
+              </span>
+            </template>
+            <Button
+              class="input-full py-4"
+              icon="pi pi-plus"
+              label="Adicionar Endereço"
+              @click="
+                () => telefones.push({ ddd: null, numero: null, pessoa: '' })
               "
             />
             <div class="input-full flex flex-row-reverse">
@@ -196,36 +326,69 @@ import { useRoute } from 'vue-router'
 import services from '@/api/index'
 import { useToast } from 'primevue/usetoast'
 import router from '@/router'
-import { ClientProtocol, Endereco } from '@/@types/client'
+import { ClientProtocol, Endereco, Telefone } from '@/@types/client'
+import InputNumber from 'primevue/inputnumber'
+import * as zod from 'zod'
 
-const file = ref<any>(null)
+const loading = ref(false)
 const toast = useToast()
+const options_company = ref([])
 const route = useRoute()
 const client_id = route.params?.id
 const schema = client_id ? schemaUpdateClient : schemaCreateClient
-const { defineComponentBinds, handleSubmit, errors, setFieldValue } = useForm({
+const {
+  defineComponentBinds,
+  handleSubmit,
+  errors,
+  setFieldValue,
+  values,
+  validate
+} = useForm({
   validationSchema: toTypedSchema(schema)
 })
+
+const errorsPreSave = ref<{ [key: string]: any }>({})
 
 const razao_social = defineComponentBinds('razao_social')
 const nome_fantasia = defineComponentBinds('nome_fantasia')
 const sigla = defineComponentBinds('sigla')
 const cnpj = defineComponentBinds('cnpj')
 const email = defineComponentBinds('email')
+const empresas = defineComponentBinds('empresas')
 
 const enderecos = ref<Endereco[]>([
   { cep: '', logradouro: '', bairro: '', numero: null, complemento: '' }
 ])
 
-const onFormSubmit = handleSubmit(async (values) => {
-  const formData = new FormData()
+const telefones = ref<Telefone[]>([{ ddd: null, numero: '', pessoa: '' }])
 
-  // Transforme o objeto JSON em FormData
-  for (const key of Object.keys(values) as (keyof ClientProtocol)[]) {
-    formData.append(key, values[key] as string | Blob)
-  }
+const onFormSubmit = async () => {
+  errorsPreSave.value = {}
 
   try {
+    schemaCreateClient.parse({
+      ...values,
+      enderecos: enderecos.value,
+      telefones: telefones.value
+    })
+  } catch (err) {
+    if (err instanceof zod.ZodError) {
+      errorsPreSave.value = err.issues.reduce((acc: any, current) => {
+        const key = current.path.join('-')
+        acc[key] = current
+        return acc
+      }, {})
+    }
+    return
+  }
+  //const formData = new FormData()
+
+  // Transforme o objeto JSON em FormData
+  /* for (const key of Object.keys(values) as (keyof ClientProtocol)[]) {
+    formData.append(key, values[key] as string | Blob)
+  } 
+
+  /* try {
     if (!client_id) await services.Company.createCompany(formData)
     else await services.Company.updateCompany(formData, String(client_id))
 
@@ -247,15 +410,28 @@ const onFormSubmit = handleSubmit(async (values) => {
       detail: (err as Error).message,
       life: 3000
     })
-  }
-})
+  } */
+}
 
-const onSelectedFile = (event: any) => {
-  event.files = [event.files[event.files.length - 1]]
-  file.value = event.files[event.files.length - 1]
+const receiveOptions = async () => {
+  try {
+    loading.value = true
+    const response = await services.Option.getCompanies()
+    options_company.value = response.data
+  } catch (err) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error carregar opções de empresas',
+      detail: (err as Error).message,
+      life: 3000
+    })
+  } finally {
+    loading.value = false
+  }
 }
 
 onMounted(async () => {
+  await receiveOptions()
   if (client_id) {
     const response = await services.Clients.getClient(client_id as string)
 

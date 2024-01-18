@@ -98,19 +98,27 @@ const menu = [
         to: '/clientes',
         role: 'gerenciar clientes'
       },
-      { label: 'List', icon: 'pi pi-fw pi-list', to: '/list' },
-      { label: 'Tree', icon: 'pi pi-fw pi-share-alt', to: '/tree' },
-      { label: 'Panel', icon: 'pi pi-fw pi-tablet', to: '/panel' },
-      { label: 'Overlay', icon: 'pi pi-fw pi-clone', to: '/overlay' },
-      { label: 'Media', icon: 'pi pi-fw pi-image', to: '/media' },
-      { label: 'Menu', icon: 'pi pi-fw pi-bars', to: '/menu' },
-      { label: 'Message', icon: 'pi pi-fw pi-comment', to: '/messages' },
-      { label: 'File', icon: 'pi pi-fw pi-file', to: '/file' },
-      { label: 'Chart', icon: 'pi pi-fw pi-chart-bar', to: '/chart' },
-      { label: 'Misc', icon: 'pi pi-fw pi-circle-off', to: '/misc' }
+      {
+        label: 'Meio de Publicação',
+        icon: 'fa-solid fa-users',
+        to: '/meios-publicacao',
+        role: 'gerenciar meios de publicação'
+      }
     ].filter((route) => {
       return authStore.user.permissions.some((role) => role.nome === route.role)
     })
+  },
+  {
+    label: 'Ações',
+    icon: 'pi pi-fw pi-sitemap',
+    items: [
+      {
+        label: 'Publicação',
+        icon: 'fa-solid fa-users',
+        to: '/publicacao',
+        role: 'gerenciar publicação'
+      }
+    ]
   }
 ]
 const containerClass = computed(() => {

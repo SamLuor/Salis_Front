@@ -195,9 +195,6 @@ const receiveOptions = async () => {
     loading.value = 'option'
     const response = await services.Option.getCompanies()
     options_company.value = response.data
-
-    const responsePosition = await services.Option.getPosition()
-    options_position.value = responsePosition.data
   } catch (err) {
     toast.add({
       severity: 'error',

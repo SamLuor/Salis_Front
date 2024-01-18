@@ -9,6 +9,8 @@ import { useAuthStore } from '@/store/auth'
 import { UserMe } from '@/@types/auth'
 import PositionService from './position'
 import ClientService from './clients'
+import MeansPublicationService from './means_publication'
+import PublicationService from './publication'
 
 httpConfig.interceptors.request.use((config) => {
   const dataProcessor = SecureDataProcessor.dataProcessor
@@ -47,5 +49,7 @@ export default {
   Option: new OptionService(httpConfig),
   Company: new CompanyService(httpConfig),
   Position: new PositionService(httpConfig),
-  Clients: new ClientService(httpConfig)
+  Clients: new ClientService(httpConfig),
+  MeansPublication: new MeansPublicationService(httpConfig),
+  Publication: new PublicationService(httpConfig)
 }

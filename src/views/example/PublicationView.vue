@@ -3,12 +3,12 @@
     <div class="w-full pl-2">
       <div class="card bg-transparent">
         <h5 class="header-page">
-          Clientes
+          Publicações
           <Button
             class="action"
             icon="pi pi-plus"
-            label="Criar Cliente"
-            @click="createClient"
+            label="Criar Publicação"
+            @click="createPublication"
           />
         </h5>
         <div class="px-4">
@@ -79,18 +79,19 @@ import { useToastRef } from '@/store/features'
 import router from '@/router'
 import useClientStore from '@/store/clients'
 import { ClientProtocol } from '@/@types/client'
+import { PublicationProtocol } from '@/@types/publication'
 
 const clientStore = useClientStore()
 const loading = ref<boolean>(true)
 const confirm = useConfirm()
 const toastStore = useToastRef()
 
-const showClient = (data: ClientProtocol) => {
-  router.push({ name: 'client-show', params: { id: data.id } })
+const showClient = (data: PublicationProtocol) => {
+  router.push({ name: 'publication-show', params: { id: data.id } })
 }
 
-const createClient = () => {
-  router.push({ name: 'client-form' })
+const createPublication = () => {
+  router.push({ name: 'publication-form' })
 }
 
 const deleteClient = ({
@@ -102,7 +103,7 @@ const deleteClient = ({
 }) => {
   confirm.require({
     group: 'delete',
-    header: 'Deseja apagar esse cliente?',
+    header: 'Deseja apagar essa Publicação?',
     message: message,
     accept: async () => {
       try {
@@ -110,13 +111,13 @@ const deleteClient = ({
         toastStore.toast?.add({
           severity: 'success',
           summary: 'Apagada com sucesso',
-          detail: 'O Cliente foi apagado!',
+          detail: 'A Publicação foi apagada!',
           life: 3000
         })
       } catch (err) {
         toastStore.toast?.add({
           severity: 'error',
-          summary: 'Houve um erro, cliente não apagado',
+          summary: 'Houve um erro, Publicação não apagada',
           detail: (err as Error).message,
           life: 3000
         })
@@ -131,7 +132,7 @@ const deleteClient = ({
 onMounted(async () => {
   try {
     loading.value = true
-    await services.Clients.getClients()
+    await services.Publication.getPublications()
   } finally {
     loading.value = false
   }

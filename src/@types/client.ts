@@ -12,8 +12,8 @@ export interface ClientProtocol {
 }
 
 export interface Telefone {
-  ddd: string
-  numero: string
+  ddd: string | null
+  numero: string | null
   pessoa: string
 }
 

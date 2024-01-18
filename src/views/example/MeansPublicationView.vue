@@ -3,17 +3,17 @@
     <div class="w-full pl-2">
       <div class="card bg-transparent">
         <h5 class="header-page">
-          Clientes
+          Meios de Publicação
           <Button
             class="action"
             icon="pi pi-plus"
-            label="Criar Cliente"
-            @click="createClient"
+            label="Criar Meio de Publicação"
+            @click="createMeanPublication"
           />
         </h5>
         <div class="px-4">
           <DataTable
-            :value="clientStore.clients"
+            :value="meansStore.means"
             :paginator="true"
             :rows="10"
             data-key="id"
@@ -25,33 +25,32 @@
             scroll-height="550px"
             :global-filter-fields="['name', 'email', 'status']"
           >
-            <template #empty> Nenhum Usuário encontrado. </template>
+            <template #empty> Nenhum Meio de publicação encontrado. </template>
             <template #loading>
-              Carregando dados dos usuários. Por favor aguarde...
+              Carregando dados dos meios de publicação. Por favor aguarde...
             </template>
-            <Column
-              field="nome_fantasia"
-              header="Empresa"
-              style="min-width: 12rem"
-            >
-              <template #body="{ data }: { data: ClientProtocol }">
-                <div>{{ data.nome_fantasia }} - {{ data.sigla }}</div>
-              </template></Column
-            >
-            <Column field="email" header="Email" style="min-width: 12rem" />
-            <Column field="cnpj" header="CNPJ" style="min-width: 12rem" />
+            <Column field="nome" header="Nome" style="min-width: 12rem" />
+            <Column field="empresas" header="Empresas" style="min-width: 12rem">
+              <template #body="{ data }: { data: MeansPublicationData }">
+                {{
+                  data?.empresas
+                    ?.map((company) => company.razao_social)
+                    ?.join('-')
+                }}
+              </template>
+            </Column>
             <Column header="Ações" style="min-width: 70px; max-width: 70px">
-              <template #body="{ data }: { data: ClientProtocol }">
+              <template #body="{ data }: { data: MeansPublicationProtocol }">
                 <div class="flex items-center" style="justify-content: center">
                   <Button
                     class="action-table"
                     icon="pi pi-pencil"
-                    @click="showClient(data)"
+                    @click="showMeanPublication(data)"
                   />
                   <Button
                     class="action-table"
                     icon="pi pi-trash text-red-500"
-                    @click="deleteClient({ message: data.nome_fantasia, data })"
+                    @click="deleteClient({ message: data.nome, data })"
                   />
                 </div>
               </template>
@@ -77,20 +76,23 @@ import { useConfirm } from 'primevue/useconfirm'
 import ConfirmDialogBase from '@/components/ConfirmDialogBase.vue'
 import { useToastRef } from '@/store/features'
 import router from '@/router'
-import useClientStore from '@/store/clients'
-import { ClientProtocol } from '@/@types/client'
+import useMeansPublicationStore from '@/store/means_publication'
+import type {
+  MeansPublicationProtocol,
+  MeansPublicationData
+} from '@/@types/means_publication'
 
-const clientStore = useClientStore()
+const meansStore = useMeansPublicationStore()
 const loading = ref<boolean>(true)
 const confirm = useConfirm()
 const toastStore = useToastRef()
 
-const showClient = (data: ClientProtocol) => {
-  router.push({ name: 'client-show', params: { id: data.id } })
+const showMeanPublication = (data: MeansPublicationProtocol) => {
+  router.push({ name: 'means-publication-show', params: { id: data.id } })
 }
 
-const createClient = () => {
-  router.push({ name: 'client-form' })
+const createMeanPublication = () => {
+  router.push({ name: 'means-publication-form' })
 }
 
 const deleteClient = ({
@@ -98,25 +100,25 @@ const deleteClient = ({
   message
 }: {
   message: string
-  data: ClientProtocol
+  data: MeansPublicationProtocol
 }) => {
   confirm.require({
     group: 'delete',
-    header: 'Deseja apagar esse cliente?',
+    header: 'Deseja apagar esse meio de publicação?',
     message: message,
     accept: async () => {
       try {
-        await services.Clients.deleteClient(data)
+        await services.MeansPublication.deleteMeansPublication(data)
         toastStore.toast?.add({
           severity: 'success',
           summary: 'Apagada com sucesso',
-          detail: 'O Cliente foi apagado!',
+          detail: 'O Meio de publicação foi apagado!',
           life: 3000
         })
       } catch (err) {
         toastStore.toast?.add({
           severity: 'error',
-          summary: 'Houve um erro, cliente não apagado',
+          summary: 'Houve um erro, meio de publicação não apagado',
           detail: (err as Error).message,
           life: 3000
         })
@@ -131,7 +133,7 @@ const deleteClient = ({
 onMounted(async () => {
   try {
     loading.value = true
-    await services.Clients.getClients()
+    await services.MeansPublication.getMeansPublications()
   } finally {
     loading.value = false
   }
