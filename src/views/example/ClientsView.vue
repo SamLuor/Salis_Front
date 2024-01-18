@@ -39,7 +39,11 @@
               </template></Column
             >
             <Column field="email" header="Email" style="min-width: 12rem" />
-            <Column field="cnpj" header="CNPJ" style="min-width: 12rem" />
+            <Column field="cnpj" header="CNPJ" style="min-width: 12rem">
+              <template #body="{ data }: { data: ClientProtocol }">
+                <div>{{ formatToCNPJ(data.cnpj) }}</div>
+              </template></Column
+            >
             <Column header="Ações" style="min-width: 70px; max-width: 70px">
               <template #body="{ data }: { data: ClientProtocol }">
                 <div class="flex items-center" style="justify-content: center">
@@ -79,6 +83,7 @@ import { useToastRef } from '@/store/features'
 import router from '@/router'
 import useClientStore from '@/store/clients'
 import { ClientProtocol } from '@/@types/client'
+import { formatToCNPJ } from 'brazilian-values'
 
 const clientStore = useClientStore()
 const loading = ref<boolean>(true)

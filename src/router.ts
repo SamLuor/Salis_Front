@@ -183,8 +183,16 @@ const router = createRouter({
           component: ClientsViewVue
         },
         {
-          path: 'cliente-form',
+          path: 'clientes-form',
           name: 'client-form',
+          meta: {
+            role: 'gerenciar clientes'
+          },
+          component: ClientFormVue
+        },
+        {
+          path: 'clientes-show/:id',
+          name: 'client-show',
           meta: {
             role: 'gerenciar clientes'
           },

@@ -121,20 +121,27 @@
               <small
                 v-if="!errors.empresas && !errorsPreSave['empresas']"
                 id="Email-help"
-                >Digite o email da cliente.</small
+                >Selecione uma ou mais empresas.</small
               >
               <small v-else id="text-error" class="p-error">{{
                 errors.empresas || errorsPreSave['empresas'].message || '&nbsp;'
               }}</small>
             </div>
-            <h5 class="font-semibold input-full">Endereços</h5>
+            <h5 class="font-semibold input-full title-section-form">
+              Endereços
+            </h5>
             <template
               v-for="index in enderecos?.length"
               :key="'endereco-'.concat(String(index))"
             >
               <div class="flex flex-column gap-2 w-full">
                 <label for="cep">CEP</label>
-                <InputMask id="cep" mask="99999-999" placeholder="99999-999" />
+                <InputMask
+                  id="cep"
+                  v-model="enderecos[index - 1].cep"
+                  mask="99999-999"
+                  placeholder="99999-999"
+                />
                 <small
                   v-if="!errorsPreSave[`enderecos-${index - 1}-cep`]"
                   id="cep-help"
@@ -147,7 +154,11 @@
               </div>
               <div class="flex flex-column gap-2 w-full">
                 <label for="logradouro">Logradouro</label>
-                <InputText id="logradouro" aria-describedby="logradouro-help" />
+                <InputText
+                  id="logradouro"
+                  v-model="enderecos[index - 1].logradouro"
+                  aria-describedby="logradouro-help"
+                />
                 <small
                   v-if="!errorsPreSave[`enderecos-${index - 1}-logradouro`]"
                   id="logradouro-help"
@@ -160,20 +171,29 @@
               </div>
               <div class="flex flex-column gap-2 w-full">
                 <label for="numero">Número</label>
-                <InputText id="numero" aria-describedby="numero-help" />
+                <InputNumber
+                  id="numero"
+                  v-model="enderecos[index - 1].numero"
+                  aria-describedby="numero-help"
+                  :use-grouping="false"
+                />
                 <small
                   v-if="!errorsPreSave[`enderecos-${index - 1}-numero`]"
                   id="numero-help"
                   >Digite o número do endereço do cliente.</small
                 >
                 <small v-else id="text-error" class="p-error">{{
-                  errorsPreSave[`enderecos-${index - 1}-logradouro`].message ||
+                  errorsPreSave[`enderecos-${index - 1}-numero`].message ||
                   '&nbsp;'
                 }}</small>
               </div>
               <div class="flex flex-column gap-2 w-full">
                 <label for="bairro">Bairro</label>
-                <InputText id="bairro" aria-describedby="bairro-help" />
+                <InputText
+                  id="bairro"
+                  v-model="enderecos[index - 1].bairro"
+                  aria-describedby="bairro-help"
+                />
                 <small
                   v-if="!errorsPreSave[`enderecos-${index - 1}-bairro`]"
                   id="bairro-help"
@@ -208,7 +228,8 @@
                 <Badge
                   value="X"
                   class="absolute bg-red-400"
-                  style="top: -0.7rem; right: -5px"
+                  style="top: -0.7rem; right: -5px; cursor: pointer"
+                  @click="enderecos.splice(index, 1)"
                 />
               </span>
             </template>
@@ -227,7 +248,9 @@
                   })
               "
             />
-            <h5 class="font-semibold input-full">Telefones</h5>
+            <h5 class="font-semibold input-full title-section-form">
+              Telefones
+            </h5>
             <template
               v-for="index in telefones?.length"
               :key="'telefone-'.concat(String(index))"
@@ -277,7 +300,7 @@
                 <small
                   v-if="!errorsPreSave[`telefones-${index - 1}-pessoa`]"
                   id="pessoa-help"
-                  >Digite o pessoa do telefone.</small
+                  >Digite a pessoa do telefone.</small
                 >
                 <small v-else id="text-error" class="p-error">{{
                   errorsPreSave[`telefones-${index - 1}-pessoa`].message ||
@@ -292,7 +315,8 @@
                 <Badge
                   value="X"
                   class="absolute bg-red-400"
-                  style="top: -0.7rem; right: -5px"
+                  style="top: -0.7rem; right: -5px; cursor: pointer"
+                  @click="telefones.splice(index, 1)"
                 />
               </span>
             </template>
@@ -325,10 +349,11 @@ import { schemaCreateClient, schemaUpdateClient } from '@/utils/validations'
 import { useRoute } from 'vue-router'
 import services from '@/api/index'
 import { useToast } from 'primevue/usetoast'
-import router from '@/router'
-import { ClientProtocol, Endereco, Telefone } from '@/@types/client'
+import { Endereco, Telefone } from '@/@types/client'
 import InputNumber from 'primevue/inputnumber'
 import * as zod from 'zod'
+import router from '@/router'
+import { CompanyProtocol } from '@/@types/company'
 
 const loading = ref(false)
 const toast = useToast()
@@ -336,14 +361,7 @@ const options_company = ref([])
 const route = useRoute()
 const client_id = route.params?.id
 const schema = client_id ? schemaUpdateClient : schemaCreateClient
-const {
-  defineComponentBinds,
-  handleSubmit,
-  errors,
-  setFieldValue,
-  values,
-  validate
-} = useForm({
+const { defineComponentBinds, errors, setFieldValue, values } = useForm({
   validationSchema: toTypedSchema(schema)
 })
 
@@ -355,11 +373,9 @@ const sigla = defineComponentBinds('sigla')
 const cnpj = defineComponentBinds('cnpj')
 const email = defineComponentBinds('email')
 const empresas = defineComponentBinds('empresas')
-
 const enderecos = ref<Endereco[]>([
   { cep: '', logradouro: '', bairro: '', numero: null, complemento: '' }
 ])
-
 const telefones = ref<Telefone[]>([{ ddd: null, numero: '', pessoa: '' }])
 
 const onFormSubmit = async () => {
@@ -381,16 +397,23 @@ const onFormSubmit = async () => {
     }
     return
   }
-  //const formData = new FormData()
 
-  // Transforme o objeto JSON em FormData
-  /* for (const key of Object.keys(values) as (keyof ClientProtocol)[]) {
-    formData.append(key, values[key] as string | Blob)
-  } 
-
-  /* try {
-    if (!client_id) await services.Company.createCompany(formData)
-    else await services.Company.updateCompany(formData, String(client_id))
+  try {
+    if (!client_id)
+      await services.Clients.createClient({
+        ...values,
+        enderecos: enderecos.value,
+        telefones: telefones.value
+      })
+    else
+      await services.Clients.updateClient(
+        {
+          ...values,
+          enderecos: enderecos.value,
+          telefones: telefones.value
+        },
+        String(client_id)
+      )
 
     router.push({ name: 'company' })
     toast.add({
@@ -410,7 +433,7 @@ const onFormSubmit = async () => {
       detail: (err as Error).message,
       life: 3000
     })
-  } */
+  }
 }
 
 const receiveOptions = async () => {
@@ -441,6 +464,22 @@ onMounted(async () => {
     setFieldValue('sigla', response.data.sigla)
     setFieldValue('cnpj', response.data.cnpj)
     setFieldValue('email', response.data.email)
+    setFieldValue(
+      'empresas',
+      response.data.empresas.map((empresa: CompanyProtocol) => empresa.id)
+    )
+
+    if (response.data.enderecos.length > 0) {
+      enderecos.value = response.data.enderecos.map(
+        (endereco: Endereco) => endereco
+      )
+    }
+
+    if (response.data.telefones.length > 0) {
+      telefones.value = response.data.telefones.map(
+        (telefone: Telefone) => telefone
+      )
+    }
   }
 })
 </script>
@@ -503,5 +542,9 @@ onMounted(async () => {
   .header-page {
     @apply flex justify-between items-center dark:text-dark-white70;
   }
+}
+
+.title-section-form {
+  @apply dark:text-dark-white70;
 }
 </style>

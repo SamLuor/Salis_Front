@@ -6,7 +6,7 @@ import { ClientProtocol } from '@/@types/client'
 export default class ClientService {
   constructor(private readonly httpConfig: AxiosInstance) {}
 
-  async createClient(data: FormData) {
+  async createClient(data: any) {
     const store = useClientStore()
 
     return await this.httpConfig
@@ -63,7 +63,7 @@ export default class ClientService {
       })
   }
 
-  async updateClient(data: FormData, id: string) {
+  async updateClient(data: Partial<ClientProtocol>, id: string) {
     const store = useClientStore()
     await this.httpConfig
       .put('/cliente/' + id, data)

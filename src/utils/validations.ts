@@ -125,40 +125,41 @@ const schemaPosition = z.object({
 const schemaTelefone = z.object({
   id: z.string().optional(),
   ddd: z
-    .number()
-    .min(1)
+    .number({
+      required_error: 'Campo obrigatório',
+      invalid_type_error: 'Aceita apenas números'
+    })
     .refine((value) => isDDD(String(value)), { message: 'DDD inválido' }),
   numero: z
     .string()
-    .min(1)
     .refine((value) => isPhone(value), { message: 'Telefone inválido' }),
-  pessoa: z.string().min(1)
+  pessoa: z
+    .string({
+      required_error: 'Campo obrigatório',
+      invalid_type_error: 'Aceita apenas caracteres'
+    })
+    .min(1, { message: 'Campo obrigatório' })
 })
 
 const schemaEndereco = z.object({
   id: z.string().optional(),
-  cep: z
-    .string()
-    .min(1)
-    .refine((value) => isCEP(value), { message: 'CEP inválido' }),
+  cep: z.string().refine((value) => isCEP(value), { message: 'CEP inválido' }),
   logradouro: z
     .string({
       required_error: 'Campo obrigatório',
       invalid_type_error: 'Aceita apenas caracteres'
     })
-    .min(1),
+    .min(1, { message: 'Campo obrigatório' }),
   bairro: z
     .string({
       required_error: 'Campo obrigatório',
       invalid_type_error: 'Aceita apenas caracteres'
     })
-    .min(1),
-  numero: z
-    .number({
-      required_error: 'Campo obrigatório',
-      invalid_type_error: 'Aceita apenas caracteres'
-    })
-    .min(1),
+    .min(1, { message: 'Campo obrigatório' }),
+  numero: z.number({
+    required_error: 'Campo obrigatório',
+    invalid_type_error: 'Aceita apenas números'
+  }),
   complemento: z
     .string({
       required_error: 'Campo obrigatório',
@@ -169,30 +170,23 @@ const schemaEndereco = z.object({
 
 const schemaCreateClient = z.object({
   id: z.string().optional(),
-  razao_social: z
-    .string({
-      required_error: 'Campo obrigatório',
-      invalid_type_error: 'Aceita apenas caracteres'
-    })
-    .min(1),
-  nome_fantasia: z
-    .string({
-      required_error: 'Campo obrigatório',
-      invalid_type_error: 'Aceita apenas caracteres'
-    })
-    .min(1),
-  sigla: z
-    .string({
-      required_error: 'Campo obrigatório',
-      invalid_type_error: 'Aceita apenas caracteres'
-    })
-    .min(1),
+  razao_social: z.string({
+    required_error: 'Campo obrigatório',
+    invalid_type_error: 'Aceita apenas caracteres'
+  }),
+  nome_fantasia: z.string({
+    required_error: 'Campo obrigatório',
+    invalid_type_error: 'Aceita apenas caracteres'
+  }),
+  sigla: z.string({
+    required_error: 'Campo obrigatório',
+    invalid_type_error: 'Aceita apenas caracteres'
+  }),
   cnpj: z
     .string({
       required_error: 'Campo obrigatório',
       invalid_type_error: 'Aceita apenas caracteres'
     })
-    .min(1)
     .refine((value) => isCNPJ(value), { message: 'CNPJ inválido' }),
   email: z
     .string({
@@ -202,7 +196,11 @@ const schemaCreateClient = z.object({
     .email(),
   enderecos: schemaEndereco.array().min(1),
   telefones: schemaTelefone.array().min(1),
-  empresas: z.array(z.string()).min(1)
+  empresas: z
+    .array(z.string({ required_error: 'Campo obrigatório' }), {
+      required_error: 'Campo obrigatório'
+    })
+    .min(1, { message: 'Campo obrigatório' })
 })
 
 const schemaUpdateClient = schemaCreateClient.partial()
