@@ -31,7 +31,7 @@
             </template>
             <Column
               field="nome_fantasia"
-              header="Empresa"
+              header="Cliente"
               style="min-width: 12rem"
             >
               <template #body="{ data }: { data: ClientProtocol }">

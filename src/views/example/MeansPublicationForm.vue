@@ -60,6 +60,7 @@
             <div class="input-full flex flex-row-reverse">
               <Button
                 :label="means_id ? 'Atualizar' : 'Criar'"
+                :loading="loading"
                 @click="onFormSubmit"
               />
             </div>
@@ -114,19 +115,21 @@ const onFormSubmit = handleSubmit(async (values) => {
         String(means_id)
       )
 
-    router.push({ name: 'company' })
+    router.push({ name: 'means-publication' })
     toast.add({
       severity: 'success',
       summary: means_id
-        ? 'Cliente criado com sucesso!'
-        : 'Cliente atualizado com sucesso!',
+        ? 'Meio de Publicação criado com sucesso!'
+        : 'Meio de Publicação atualizado com sucesso!',
       detail: 'Dados salvos com sucesso.',
       life: 3000
     })
   } catch (err) {
     toast.add({
       severity: 'error',
-      summary: means_id ? 'Erro ao criar Cliente' : 'Erro ao atualizar Cliente',
+      summary: means_id
+        ? 'Erro ao criar Meio de Publicação'
+        : 'Erro ao atualizar Meio de Publicação',
       detail: (err as Error).message,
       life: 3000
     })

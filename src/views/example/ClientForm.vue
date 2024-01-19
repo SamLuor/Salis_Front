@@ -331,6 +331,7 @@
             <div class="input-full flex flex-row-reverse">
               <Button
                 :label="client_id ? 'Atualizar' : 'Criar'"
+                :loading="loading"
                 @click="onFormSubmit"
               />
             </div>
@@ -399,6 +400,7 @@ const onFormSubmit = async () => {
   }
 
   try {
+    loading.value = true
     if (!client_id)
       await services.Clients.createClient({
         ...values,
@@ -415,7 +417,7 @@ const onFormSubmit = async () => {
         String(client_id)
       )
 
-    router.push({ name: 'company' })
+    router.push({ name: 'client' })
     toast.add({
       severity: 'success',
       summary: !values?.id
@@ -433,6 +435,8 @@ const onFormSubmit = async () => {
       detail: (err as Error).message,
       life: 3000
     })
+  } finally {
+    loading.value = false
   }
 }
 
@@ -470,15 +474,15 @@ onMounted(async () => {
     )
 
     if (response.data.enderecos.length > 0) {
-      enderecos.value = response.data.enderecos.map(
-        (endereco: Endereco) => endereco
-      )
+      enderecos.value = response.data.enderecos.map((endereco: Endereco) => {
+        return { ...endereco, numero: +endereco.numero!, complemento: '' }
+      })
     }
 
     if (response.data.telefones.length > 0) {
-      telefones.value = response.data.telefones.map(
-        (telefone: Telefone) => telefone
-      )
+      telefones.value = response.data.telefones.map((telefone: Telefone) => {
+        return { ...telefone, ddd: +telefone.ddd! }
+      })
     }
   }
 })

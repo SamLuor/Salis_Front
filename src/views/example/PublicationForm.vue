@@ -24,16 +24,19 @@
               <div class="flex flex-column gap-2 w-full">
                 <label for="ddd">Data</label>
                 <Calendar v-model="publicacoes[index - 1].date" show-icon />
-                <small v-if="!errors" id="ddd-help"
-                  >Digite o DDD do Telefone.</small
+                <small
+                  v-if="!errors[`publicacoes-${index - 1}-date`]"
+                  id="ddd-help"
+                  >Selecione a data da publicação.</small
                 >
                 <small v-else id="text-error" class="p-error">{{
-                  errors || '&nbsp;'
+                  errors[`publicacoes-${index - 1}-date`].message || '&nbsp;'
                 }}</small>
               </div>
               <div class="flex flex-column gap-2 w-full">
                 <label for="numero">Arquivo</label>
                 <FileUpload
+                  v-model="publicacoes[index - 1].file"
                   mode="basic"
                   name="demo[]"
                   class="w-full"
@@ -41,11 +44,13 @@
                   :max-file-size="1000000"
                   @select="(event) => selectFile(event, index - 1)"
                 />
-                <small v-if="!errors.publicacoes" id="numero-help"
-                  >Digite o número de telefone.</small
+                <small
+                  v-if="!errors[`publicacoes-${index - 1}-file`]"
+                  id="numero-help"
+                  >Escolha um arquivo.</small
                 >
                 <small v-else id="text-error" class="p-error">{{
-                  errors || '&nbsp;'
+                  errors[`publicacoes-${index - 1}-file`].message || '&nbsp;'
                 }}</small>
               </div>
               <div class="flex flex-column gap-2 input-full w-full">
@@ -58,11 +63,14 @@
                   placeholder="Selecione um cliente"
                   class="w-full"
                 />
-                <small v-if="!errors" id="pessoa-help"
+                <small
+                  v-if="!errors[`publicacoes-${index - 1}-cliente_id`]"
+                  id="pessoa-help"
                   >Selecione um cliente.</small
                 >
                 <small v-else id="text-error" class="p-error">{{
-                  errors || '&nbsp;'
+                  errors[`publicacoes-${index - 1}-cliente_id`].message ||
+                  '&nbsp;'
                 }}</small>
               </div>
               <div class="flex flex-column gap-2 input-full w-full">
@@ -75,11 +83,14 @@
                   placeholder="Selecione um meio de publicação"
                   class="w-full"
                 />
-                <small v-if="!errors" id="pessoa-help"
-                  >Digite o pessoa do telefone.</small
+                <small
+                  v-if="!errors[`publicacoes-${index - 1}-meio_publicacao_id`]"
+                  id="pessoa-help"
+                  >Selecione um meio de publicação.</small
                 >
                 <small v-else id="text-error" class="p-error">{{
-                  errors || '&nbsp;'
+                  errors[`publicacoes-${index - 1}-meio_publicacao_id`]
+                    .message || '&nbsp;'
                 }}</small>
               </div>
               <span
@@ -137,7 +148,7 @@ import InputNumber from 'primevue/inputnumber'
 import { PublicationProtocol } from '@/@types/publication'
 import Calendar from 'primevue/calendar'
 import { FileUploadSelectEvent } from 'primevue/fileupload'
-import * as z from 'zod'
+import * as zod from 'zod'
 
 const toast = useToast()
 const route = useRoute()
@@ -145,9 +156,11 @@ const publication_id = route.params?.id
 const schema = publication_id
   ? schemaUpdatePublication
   : schemaCreatePublication
-const { defineComponentBinds, handleSubmit, errors, setFieldValue } = useForm({
+const { setFieldValue } = useForm({
   validationSchema: toTypedSchema(schema)
 })
+
+const errors = ref<{ [key: string]: any }>({})
 
 const clients_options = ref([])
 const means_options = ref([])
@@ -157,13 +170,24 @@ const publicacoes = ref<PublicationProtocol[]>([
 ])
 
 const selectFile = (event: FileUploadSelectEvent, index: number) =>
-  (publicacoes.value[index].file = event.files)
+  (publicacoes.value[index].file = event.files[0])
 
 const onFormSubmit = async () => {
-  const valid = schemaCreatePublication.parse({
-    publicacoes: publicacoes.value
-  })
-  console.log(valid)
+  try {
+    schema.parse({
+      publicacoes: publicacoes.value
+    })
+  } catch (err) {
+    if (err instanceof zod.ZodError) {
+      errors.value = err.issues.reduce((acc: any, current) => {
+        const key = current.path.join('-')
+        acc[key] = current
+        return acc
+      }, {})
+    }
+    return
+  }
+
   const formData = new FormData()
 
   publicacoes.value.forEach((item: any, index: number) => {
@@ -206,7 +230,7 @@ const receiveOptions = async () => {
       if (option.status == 'fulfilled') {
         if (index == 0) {
           clients_options.value = option.value.data.map((client: any) => ({
-            name: client.nome,
+            name: client.razao_social,
             value: client.id
           }))
         } else if (index == 1) {

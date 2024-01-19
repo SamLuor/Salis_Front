@@ -225,10 +225,17 @@ const schemaUpdateMeansPublication = schemaCreateMeansPublication.partial()
 const schemaCreatePublication = z.object({
   publicacoes: z.array(
     z.object({
-      date: z.string().min(1),
-      file: z.any(),
-      cliente_id: z.string().min(1),
-      meio_publicacao_id: z.string().min(1)
+      date: z.date({
+        required_error: 'Campo obrigatório',
+        invalid_type_error: 'Data invalida'
+      }),
+      file: z.any().refine((file) => file?.size === 0, 'Campo obrigatório'),
+      cliente_id: z
+        .string({ required_error: 'Campo obrigatório' })
+        .min(1, { message: 'Campo obrigatório' }),
+      meio_publicacao_id: z
+        .string({ required_error: 'Campo obrigatorio' })
+        .min(1, { message: 'Campo obrigatório' })
     })
   )
 })

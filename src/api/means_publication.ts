@@ -52,7 +52,7 @@ export default class MeansPublicationService {
     const store = useMeansPublicationStore()
 
     await this.httpConfig
-      .delete('/meio-publicacao/' + data.id)
+      .post('/meio-publicacao/delete', { meio_publicacoes: [data.id] })
       .then((response) => {
         store.deleteMean(data.id ?? '')
         return response.data
