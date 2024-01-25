@@ -50,6 +50,8 @@ import MeansPublicationViewVue from './views/example/MeansPublicationView.vue'
 import MeansPublicationFormVue from './views/example/MeansPublicationForm.vue'
 import PublicationFormVue from './views/example/PublicationForm.vue'
 import PublicationViewVue from './views/example/PublicationView.vue'
+import ProcessViewVue from './views/example/ProcessView.vue'
+import ProcessStepsVue from './views/example/ProcessSteps.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -223,28 +225,28 @@ const router = createRouter({
           component: MeansPublicationFormVue
         },
         {
-          path: 'publicacao',
+          path: 'publicações',
           name: 'publications',
           meta: {
             role: 'gerenciar meios de publicação'
           },
-          component: PublicationViewVue
+          component: ProcessViewVue
         },
         {
-          path: 'publicacao-form',
-          name: 'publication-form',
+          path: 'publicações-form',
+          name: 'publications-form',
           meta: {
             role: 'gerenciar publicação'
           },
-          component: PublicationFormVue
+          component: ProcessStepsVue
         },
         {
-          path: 'publicacao-show',
-          name: 'publication-show',
+          path: 'publicações-show/:id',
+          name: 'publications-show',
           meta: {
             role: 'gerenciar publicação'
           },
-          component: PublicationFormVue
+          component: ProcessStepsVue
         },
         {
           path: '/list',

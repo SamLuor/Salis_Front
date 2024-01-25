@@ -41,7 +41,7 @@ export default class PublicationService {
 
   async getPublication(id: string) {
     return await this.httpConfig
-      .get('/processo/publicacao/' + id)
+      .get('/processo/' + id)
       .then((response) => {
         return response.data
       })
@@ -55,7 +55,7 @@ export default class PublicationService {
     const store = usePublicationStore()
 
     await this.httpConfig
-      .delete('/processo/publicacao/' + data.id)
+      .post('/processo/publicacao/destroy' + data.id)
       .then((response) => {
         store.deletePublication(data?.id ?? '')
         return response.data
@@ -66,10 +66,10 @@ export default class PublicationService {
       })
   }
 
-  async updatePublication(data: UpdatePublications, id: string) {
+  async updatePublication(data: FormData, id: string) {
     const store = usePublicationStore()
     await this.httpConfig
-      .put('/processo/publicacao/' + id, data)
+      .post('processo/publicacao/' + id, data)
       .then((response) => {
         store.updatePublication(response.data.data)
         return response.data

@@ -51,5 +51,6 @@ export default {
   Position: new PositionService(httpConfig),
   Clients: new ClientService(httpConfig),
   MeansPublication: new MeansPublicationService(httpConfig),
-  Publication: new PublicationService(httpConfig)
+  Publication: new PublicationService(httpConfig),
+  httpConfig
 }

@@ -62,7 +62,7 @@ const menu = [
     ]
   }, */
   {
-    label: 'Configurações de Acessos',
+    label: 'Configurações',
     icon: 'pi pi-fw pi-sitemap',
     items: [
       { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', to: '/formlayout' },
@@ -99,7 +99,7 @@ const menu = [
         role: 'gerenciar clientes'
       },
       {
-        label: 'Meio de Publicação',
+        label: 'Meios de Publicação',
         icon: 'fa-solid fa-users',
         to: '/meios-publicacao',
         role: 'gerenciar meios de publicação'
@@ -109,16 +109,18 @@ const menu = [
     })
   },
   {
-    label: 'Ações',
+    label: 'Processo',
     icon: 'pi pi-fw pi-sitemap',
     items: [
       {
-        label: 'Publicação',
+        label: 'Publicações',
         icon: 'fa-solid fa-users',
-        to: '/publicacao',
+        to: '/publicações',
         role: 'gerenciar publicação'
       }
-    ]
+    ].filter((route) => {
+      return authStore.user.permissions.some((role) => role.nome === route.role)
+    })
   }
 ]
 const containerClass = computed(() => {

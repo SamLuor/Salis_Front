@@ -229,7 +229,7 @@ const schemaCreatePublication = z.object({
         required_error: 'Campo obrigatório',
         invalid_type_error: 'Data invalida'
       }),
-      file: z.any().refine((file) => file?.size === 0, 'Campo obrigatório'),
+      file: z.any().refine((file) => file?.size > 0, 'Campo obrigatório'),
       cliente_id: z
         .string({ required_error: 'Campo obrigatório' })
         .min(1, { message: 'Campo obrigatório' }),

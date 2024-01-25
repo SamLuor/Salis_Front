@@ -2,9 +2,6 @@
   <div class="grid overflow-hidden">
     <div class="w-full pl-2">
       <div class="card mb-0 bg-transparent">
-        <h5 class="header-page">
-          {{ publication_id ? 'Atualizar Publicação' : 'Cadastrar Publicação' }}
-        </h5>
         <div class="px-4 container-area-form">
           <div class="section-form">
             <div class="content">
@@ -23,7 +20,11 @@
             >
               <div class="flex flex-column gap-2 w-full">
                 <label for="ddd">Data</label>
-                <Calendar v-model="publicacoes[index - 1].date" show-icon />
+                <Calendar
+                  v-model="publicacoes[index - 1].date"
+                  show-icon
+                  date-format="dd/mm/yy"
+                />
                 <small
                   v-if="!errors[`publicacoes-${index - 1}-date`]"
                   id="ddd-help"
@@ -36,6 +37,7 @@
               <div class="flex flex-column gap-2 w-full">
                 <label for="numero">Arquivo</label>
                 <FileUpload
+                  v-if="!publication_id || !publicacoes[index - 1].file_path"
                   v-model="publicacoes[index - 1].file"
                   mode="basic"
                   name="demo[]"
@@ -44,6 +46,27 @@
                   :max-file-size="1000000"
                   @select="(event) => selectFile(event, index - 1)"
                 />
+                <span v-else class="flex gap-2">
+                  <Button
+                    icon="pi pi-eye"
+                    class="w-full"
+                    :label="
+                      publicacoes[index - 1].file_path
+                        ?.split('arquivos/')
+                        .join('')
+                    "
+                    @click="
+                      () =>
+                        openDocument(String(publicacoes[index - 1].file_path))
+                    "
+                  />
+                  <Button
+                    v-tooltip.top="'Retirar arquivo'"
+                    icon="fa-solid fa-trash"
+                    class="bg-red-300"
+                    @click="() => removeFile(index - 1)"
+                  />
+                </span>
                 <small
                   v-if="!errors[`publicacoes-${index - 1}-file`]"
                   id="numero-help"
@@ -59,6 +82,7 @@
                   v-model="publicacoes[index - 1].cliente_id"
                   :options="clients_options"
                   option-label="name"
+                  option-value="value"
                   empty-message="Sem clientes cadastrados"
                   placeholder="Selecione um cliente"
                   class="w-full"
@@ -76,9 +100,10 @@
               <div class="flex flex-column gap-2 input-full w-full">
                 <label for="pessoa">Meio de Publicação</label>
                 <Dropdown
-                  v-model="publicacoes[index - 1].cliente_id"
+                  v-model="publicacoes[index - 1].meio_publicacao_id"
                   :options="means_options"
                   option-label="name"
+                  option-value="value"
                   empty-message="Sem meios de publicação cadastrados"
                   placeholder="Selecione um meio de publicação"
                   class="w-full"
@@ -102,6 +127,7 @@
                   value="X"
                   class="absolute bg-red-400"
                   style="top: -0.7rem; right: -5px"
+                  @click="removePublication(index - 1)"
                 />
               </span>
             </template>
@@ -143,8 +169,6 @@ import { useRoute } from 'vue-router'
 import services from '@/api/index'
 import { useToast } from 'primevue/usetoast'
 import router from '@/router'
-import { ClientProtocol, Endereco, Telefone } from '@/@types/client'
-import InputNumber from 'primevue/inputnumber'
 import { PublicationProtocol } from '@/@types/publication'
 import Calendar from 'primevue/calendar'
 import { FileUploadSelectEvent } from 'primevue/fileupload'
@@ -172,13 +196,36 @@ const publicacoes = ref<PublicationProtocol[]>([
 const selectFile = (event: FileUploadSelectEvent, index: number) =>
   (publicacoes.value[index].file = event.files[0])
 
+const removeFile = (index: number) => {
+  publicacoes.value[index].file_path = ''
+}
+
+const removePublication = (index: number) => {
+  publicacoes.value.splice(index, 1)
+}
+
+const openDocument = (path: string) => {
+  const api = services.httpConfig
+    .getUri()
+    .split('/api')
+    .join('/' + path)
+
+  const link = document.createElement('a')
+  link.href = api
+  link.download = path.split('arquivos/').join('')
+  link.target = '_blank'
+  link.click()
+}
+
 const onFormSubmit = async () => {
+  errors.value = {}
   try {
     schema.parse({
       publicacoes: publicacoes.value
     })
   } catch (err) {
     if (err instanceof zod.ZodError) {
+      console.log(err.issues)
       errors.value = err.issues.reduce((acc: any, current) => {
         const key = current.path.join('-')
         acc[key] = current
@@ -190,35 +237,47 @@ const onFormSubmit = async () => {
 
   const formData = new FormData()
 
-  publicacoes.value.forEach((item: any, index: number) => {
-    formData.append(`publicacoes[${index}]`, item)
+  publicacoes.value.forEach((item: PublicationProtocol, index: number) => {
+    if (item.id) formData.append(`publicacoes[${index}][id]`, item.id)
+    formData.append(
+      `publicacoes[${index}][date]`,
+      new Date(item.date).toDateString()
+    )
+    formData.append(`publicacoes[${index}][file]`, item.file)
+    formData.append(`publicacoes[${index}][cliente_id]`, item.cliente_id)
+    formData.append(
+      `publicacoes[${index}][meio_publicacao_id]`,
+      item.meio_publicacao_id
+    )
   })
 
-  console.log(formData.get('publicacoes'))
-
-  /*  try {
+  try {
     if (!publication_id) await services.Publication.createPublication(formData)
-    else await services.Company.updateCompany(formData, String(publication_id))
+    else
+      await services.Publication.updatePublication(
+        formData,
+        String(publication_id)
+      )
 
-    router.push({ name: 'company' })
+    router.push({ name: 'publications' })
     toast.add({
       severity: 'success',
-      summary: !values?.id
-        ? 'Cliente criado com sucesso!'
-        : 'Cliente atualizado com sucesso!',
+      summary: !publication_id
+        ? 'Publicação criado com sucesso!'
+        : 'Publicação atualizado com sucesso!',
       detail: 'Dados salvos com sucesso.',
       life: 3000
     })
   } catch (err) {
     toast.add({
       severity: 'error',
-      summary: !values?.id
-        ? 'Erro ao criar Cliente'
-        : 'Erro ao atualizar Cliente',
+      summary: !publication_id
+        ? 'Erro ao criar Publicação'
+        : 'Erro ao atualizar Publicação',
       detail: (err as Error).message,
       life: 3000
     })
-  } */
+  }
 }
 
 const receiveOptions = async () => {
@@ -259,7 +318,12 @@ onMounted(async () => {
       publication_id as string
     )
 
-    publicacoes.value = response.data.publicacoes
+    publicacoes.value = response.data.publicacoes.map(
+      (publication: PublicationProtocol) => ({
+        ...publication,
+        date: new Date(publication.date)
+      })
+    )
   }
 })
 </script>

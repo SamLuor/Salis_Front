@@ -3,17 +3,17 @@
     <div class="w-full pl-2">
       <div class="card bg-transparent">
         <h5 class="header-page">
-          Publicações
+          Processos
           <Button
             class="action"
             icon="pi pi-plus"
-            label="Criar Publicação"
+            label="Criar novo processo"
             @click="createPublication"
           />
         </h5>
         <div class="px-4">
           <DataTable
-            :value="clientStore.clients"
+            :value="publicationStore.publications"
             :paginator="true"
             :rows="10"
             data-key="id"
@@ -25,33 +25,24 @@
             scroll-height="550px"
             :global-filter-fields="['name', 'email', 'status']"
           >
-            <template #empty> Nenhum Usuário encontrado. </template>
+            <template #empty> Nenhuma publicação encontrada. </template>
             <template #loading>
-              Carregando dados dos usuários. Por favor aguarde...
+              Carregando publicações. Por favor aguarde...
             </template>
-            <Column
-              field="nome_fantasia"
-              header="Empresa"
-              style="min-width: 12rem"
-            >
-              <template #body="{ data }: { data: ClientProtocol }">
-                <div>{{ data.nome_fantasia }} - {{ data.sigla }}</div>
-              </template></Column
-            >
-            <Column field="email" header="Email" style="min-width: 12rem" />
-            <Column field="cnpj" header="CNPJ" style="min-width: 12rem" />
+            <Column field="codigo" header="Código" style="min-width: 12rem" />
+            <!-- <Column field="cnpj" header="CNPJ" style="min-width: 12rem" /> -->
             <Column header="Ações" style="min-width: 70px; max-width: 70px">
-              <template #body="{ data }: { data: ClientProtocol }">
+              <template #body="{ data }: { data: any }">
                 <div class="flex items-center" style="justify-content: center">
                   <Button
                     class="action-table"
                     icon="pi pi-pencil"
-                    @click="showClient(data)"
+                    @click="showPublication(data)"
                   />
                   <Button
                     class="action-table"
                     icon="pi pi-trash text-red-500"
-                    @click="deleteClient({ message: data.nome_fantasia, data })"
+                    @click="deletePublication({ message: data.codigo, data })"
                   />
                 </div>
               </template>
@@ -77,29 +68,28 @@ import { useConfirm } from 'primevue/useconfirm'
 import ConfirmDialogBase from '@/components/ConfirmDialogBase.vue'
 import { useToastRef } from '@/store/features'
 import router from '@/router'
-import useClientStore from '@/store/clients'
-import { ClientProtocol } from '@/@types/client'
 import { PublicationProtocol } from '@/@types/publication'
+import usePublicationStore from '@/store/publication'
 
-const clientStore = useClientStore()
+const publicationStore = usePublicationStore()
 const loading = ref<boolean>(true)
 const confirm = useConfirm()
 const toastStore = useToastRef()
 
-const showClient = (data: PublicationProtocol) => {
-  router.push({ name: 'publication-show', params: { id: data.id } })
+const showPublication = (data: PublicationProtocol) => {
+  router.push({ name: 'publications-show', params: { id: data.id } })
 }
 
 const createPublication = () => {
-  router.push({ name: 'publication-form' })
+  router.push({ name: 'publications-form' })
 }
 
-const deleteClient = ({
+const deletePublication = ({
   data,
   message
 }: {
   message: string
-  data: ClientProtocol
+  data: PublicationProtocol
 }) => {
   confirm.require({
     group: 'delete',
@@ -107,7 +97,7 @@ const deleteClient = ({
     message: message,
     accept: async () => {
       try {
-        await services.Clients.deleteClient(data)
+        await services.Publication.deletePublication(data)
         toastStore.toast?.add({
           severity: 'success',
           summary: 'Apagada com sucesso',

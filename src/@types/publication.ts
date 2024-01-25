@@ -7,6 +7,7 @@ export interface PublicationProtocol {
   id?: string
   date: string
   file: string
+  file_path?: string
   cliente_id: string
   meio_publicacao_id: string
 }

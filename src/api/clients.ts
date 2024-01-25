@@ -52,7 +52,7 @@ export default class ClientService {
     const store = useClientStore()
 
     await this.httpConfig
-      .post('/cliente/delete', { clientes: [data.id] })
+      .post('/cliente/destroy', { clientes: [data.id] })
       .then((response) => {
         store.deleteClient(data.id ?? '')
         return response.data

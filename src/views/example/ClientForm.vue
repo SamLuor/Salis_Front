@@ -417,7 +417,7 @@ const onFormSubmit = async () => {
         String(client_id)
       )
 
-    router.push({ name: 'client' })
+    router.push({ name: 'clients' })
     toast.add({
       severity: 'success',
       summary: !values?.id
