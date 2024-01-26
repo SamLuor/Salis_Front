@@ -11,12 +11,16 @@
   },
   "dependencies": {
     "@vee-validate/zod": "^4.12.2",
+    "@vueuse/core": "^10.7.0",
+    "axios": "^1.6.2",
+    "brazilian-values": "^0.13.0",
     "chart.js": "^3.8.0",
     "core-js": "^3.23.3",
+    "crypto-js": "^4.2.0",
     "pinia": "^2.0.14",
     "primeflex": "^3.2.1",
     "primeicons": "^5.0.0",
-    "primevue": "^3",
+    "primevue": "3.46.0",
     "prismjs": "^1.28.0",
     "vee-validate": "^4.12.2",
     "vue": "^3.2.25",
@@ -25,6 +29,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.2.1",
     "@types/node": "^18.0.0",
     "@types/prismjs": "^1.26.0",
     "@typescript-eslint/eslint-plugin": "^5.62.0",

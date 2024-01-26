@@ -1,7 +1,11 @@
 <template>
-  <div class="layout-wrapper" :class="containerClass" @click="onWrapperClick">
+  <div
+    class="layout-wrapper container"
+    :class="containerClass"
+    @click="onWrapperClick"
+  >
     <AppTopbar @menu-toggle="onMenuToggle" />
-    <div class="layout-sidebar" @click="onSidebarClick">
+    <div class="layout-sidebar sub-container" @click="onSidebarClick">
       <AppMenu :model="menu" @menuitem-click="onMenuItemClick" />
     </div>
 
@@ -11,10 +15,10 @@
       </div>
       <AppFooter />
     </div>
-    <AppConfig
+    <!-- <AppConfig
       :layout-mode="store.layoutMode"
       @layout-change="onLayoutChange"
-    />
+    /> -->
     <transition name="layout-mask">
       <div
         v-if="store.mobileMenuActive"
@@ -22,6 +26,7 @@
       ></div>
     </transition>
   </div>
+  <Toast position="bottom-right" />
 </template>
 <script lang="ts" setup>
 import whiteLogo from '@/assets/img/logo-white.svg'
@@ -31,25 +36,33 @@ import { computed, getCurrentInstance } from 'vue'
 import AppMenu from '@/layout/AppMenu.vue'
 import AppConfig from '@/layout/AppConfig.vue'
 import AppFooter from '@/layout/AppFooter.vue'
+import Toast from 'primevue/toast'
 import { useThemeStore } from '@/store/theme'
-const app = getCurrentInstance()
+import { useToastRef } from './store/features'
+import { useToast } from 'primevue/usetoast'
+import { useAuthStore } from './store/auth'
 
+const app = getCurrentInstance()
 const store = useThemeStore()
+const toast = useToast()
+
 store.menuClick = true
 
+const authStore = useAuthStore()
+
 const menu = [
-  {
+  /* {
     label: 'Home',
     items: [
       {
         label: 'Dashboard',
         icon: 'pi pi-fw pi-home',
-        to: '/'
+        to: '/dashboard'
       }
     ]
-  },
+  }, */
   {
-    label: 'UI Components',
+    label: 'Configurações',
     icon: 'pi pi-fw pi-sitemap',
     items: [
       { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', to: '/formlayout' },
@@ -61,132 +74,53 @@ const menu = [
         to: '/invalidstate'
       },
       { label: 'Button', icon: 'pi pi-fw pi-mobile', to: '/button' },
-      { label: 'Table', icon: 'pi pi-fw pi-table', to: '/table' },
-      { label: 'List', icon: 'pi pi-fw pi-list', to: '/list' },
-      { label: 'Tree', icon: 'pi pi-fw pi-share-alt', to: '/tree' },
-      { label: 'Panel', icon: 'pi pi-fw pi-tablet', to: '/panel' },
-      { label: 'Overlay', icon: 'pi pi-fw pi-clone', to: '/overlay' },
-      { label: 'Media', icon: 'pi pi-fw pi-image', to: '/media' },
-      { label: 'Menu', icon: 'pi pi-fw pi-bars', to: '/menu' },
-      { label: 'Message', icon: 'pi pi-fw pi-comment', to: '/messages' },
-      { label: 'File', icon: 'pi pi-fw pi-file', to: '/file' },
-      { label: 'Chart', icon: 'pi pi-fw pi-chart-bar', to: '/chart' },
-      { label: 'Misc', icon: 'pi pi-fw pi-circle-off', to: '/misc' }
-    ]
-  },
-  {
-    label: 'PrimeBlocks',
-    items: [
       {
-        label: 'Free Blocks',
-        icon: 'pi pi-fw pi-eye',
-        to: '/blocks',
-        badge: 'NEW'
+        label: 'Usuários',
+        icon: 'pi pi-fw pi-users',
+        to: '/',
+        role: 'gerenciar usuários'
       },
       {
-        label: 'All Blocks',
-        icon: 'pi pi-fw pi-globe',
-        url: 'https://www.primefaces.org/primeblocks-vue',
-        target: '_blank'
-      }
-    ]
-  },
-  {
-    label: 'Utilities',
-    items: [
-      { label: 'PrimeIcons', icon: 'pi pi-fw pi-prime', to: '/icons' },
-      {
-        label: 'PrimeFlex',
-        icon: 'pi pi-fw pi-desktop',
-        url: 'https://www.primefaces.org/primeflex/',
-        target: '_blank'
-      }
-    ]
-  },
-  {
-    label: 'Pages',
-    icon: 'pi pi-fw pi-clone',
-    items: [
-      { label: 'Crud', icon: 'pi pi-fw pi-user-edit', to: '/crud' },
-      { label: 'Timeline', icon: 'pi pi-fw pi-calendar', to: '/timeline' },
-      { label: 'Landing', icon: 'pi pi-fw pi-globe', to: '/landing' },
-      { label: 'Login', icon: 'pi pi-fw pi-sign-in', to: '/login' },
-      { label: 'Error', icon: 'pi pi-fw pi-times-circle', to: '/error' },
-      {
-        label: 'Not Found',
-        icon: 'pi pi-fw pi-exclamation-circle',
-        to: '/notfound'
-      },
-      { label: 'Access Denied', icon: 'pi pi-fw pi-lock', to: '/access' },
-      { label: 'Empty', icon: 'pi pi-fw pi-circle-off', to: '/empty' }
-    ]
-  },
-  {
-    label: 'Menu Hierarchy',
-    icon: 'pi pi-fw pi-search',
-    items: [
-      {
-        label: 'Submenu 1',
-        icon: 'pi pi-fw pi-bookmark',
-        items: [
-          {
-            label: 'Submenu 1.1',
-            icon: 'pi pi-fw pi-bookmark',
-            items: [
-              { label: 'Submenu 1.1.1', icon: 'pi pi-fw pi-bookmark' },
-              { label: 'Submenu 1.1.2', icon: 'pi pi-fw pi-bookmark' },
-              { label: 'Submenu 1.1.3', icon: 'pi pi-fw pi-bookmark' }
-            ]
-          },
-          {
-            label: 'Submenu 1.2',
-            icon: 'pi pi-fw pi-bookmark',
-            items: [
-              { label: 'Submenu 1.2.1', icon: 'pi pi-fw pi-bookmark' },
-              { label: 'Submenu 1.2.2', icon: 'pi pi-fw pi-bookmark' }
-            ]
-          }
-        ]
+        label: 'Empresas',
+        icon: 'pi pi-fw pi-building',
+        to: '/empresas',
+        role: 'gerenciar empresas'
       },
       {
-        label: 'Submenu 2',
-        icon: 'pi pi-fw pi-bookmark',
-        items: [
-          {
-            label: 'Submenu 2.1',
-            icon: 'pi pi-fw pi-bookmark',
-            items: [
-              { label: 'Submenu 2.1.1', icon: 'pi pi-fw pi-bookmark' },
-              { label: 'Submenu 2.1.2', icon: 'pi pi-fw pi-bookmark' },
-              { label: 'Submenu 2.1.3', icon: 'pi pi-fw pi-bookmark' }
-            ]
-          },
-          {
-            label: 'Submenu 2.2',
-            icon: 'pi pi-fw pi-bookmark',
-            items: [
-              { label: 'Submenu 2.2.1', icon: 'pi pi-fw pi-bookmark' },
-              { label: 'Submenu 2.2.2', icon: 'pi pi-fw pi-bookmark' }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  {
-    label: 'Get Started',
-    items: [
-      {
-        label: 'Documentation',
-        icon: 'pi pi-fw pi-question',
-        command: () => {}
+        label: 'Cargos',
+        icon: 'fa-solid fa-briefcase',
+        to: '/cargos',
+        role: 'gerenciar cargos'
       },
       {
-        label: 'View Source',
-        icon: 'pi pi-fw pi-search',
-        command: () => {}
+        label: 'Clientes',
+        icon: 'fa-solid fa-users',
+        to: '/clientes',
+        role: 'gerenciar clientes'
+      },
+      {
+        label: 'Meios de Publicação',
+        icon: 'fa-solid fa-users',
+        to: '/meios-publicacao',
+        role: 'gerenciar meios de publicação'
       }
-    ]
+    ].filter((route) => {
+      return authStore.user.permissions.some((role) => role.nome === route.role)
+    })
+  },
+  {
+    label: 'Processo',
+    icon: 'pi pi-fw pi-sitemap',
+    items: [
+      {
+        label: 'Publicações',
+        icon: 'fa-solid fa-users',
+        to: '/publicações',
+        role: 'gerenciar publicação'
+      }
+    ].filter((route) => {
+      return authStore.user.permissions.some((role) => role.nome === route.role)
+    })
   }
 ]
 const containerClass = computed(() => {
@@ -205,10 +139,9 @@ const containerClass = computed(() => {
       app?.appContext.config.globalProperties.$primevue.config.ripple === false
   }
 })
+
 defineEmits(['change-theme'])
 const onMenuToggle = () => {
-  console.log('toggle', store.menuClick)
-
   store.menuClick = true
 
   if (isDesktop()) {

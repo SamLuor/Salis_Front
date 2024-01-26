@@ -1,4 +1,7 @@
 //import type { Config } from 'tailwindcss'
+//Palete Primary - https://coolors.co/palette/012a4a-013b63-01487c-024f87-2a6f98-2d7da0-468faf-62a5c2-8ac2d9-a8d6e5
+//Palete Secondary - https://coolors.co/palette/0466c8-0353a4-023e7d-002855-001845-001233-33415c-5c677d-7d8597-979dac
+//Palete Contrast - https://coolors.co/p  alette/ed9625-e58d1b-e28000-e88b12-b56a09
 
 module.exports = {
   darkMode: 'class',
@@ -15,6 +18,43 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        'primary-options': {
+          background: {
+            container: 'rgb(243, 246, 251)',
+            'container-header': 'rgb(214, 220, 229)',
+            'container-header-dark': 'rgb(46, 72, 94)',
+            'sub-container': 'rgb(11, 45, 72)',
+            card: 'rgb(243, 246, 251)',
+            stroke: 'rgb(225, 230, 235)',
+            'nav-header': '#E4EAEE'
+          },
+          text: {
+            color: 'rgb(228, 241, 255)',
+            'sub-text': 'rgb(162, 163, 165)'
+          },
+          900: '#012A4A',
+          800: '#013B63',
+          700: '#01487C',
+          600: '#024F87',
+          500: '#2A6F98',
+          400: '#2D7DA0',
+          300: '#468FAF',
+          200: '#62A5C2',
+          100: '#8AC2D9',
+          50: '#A8D6E5'
+        },
+        'secondary-options': {
+          900: '#0466C8',
+          800: '#0353A4',
+          700: '#023E7D',
+          600: '#002855',
+          500: '#001845',
+          400: '#001233',
+          300: '#33415C',
+          200: '#5C677D',
+          100: '#7D8597',
+          50: '#979DAC'
+        },
         primary: {
           principal: 'rgb(0, 78, 204)',
           100: 'rgb(202, 240, 248)',
@@ -44,12 +84,10 @@ module.exports = {
           'dark-blue': 'var(--background-dark-blue)',
           'dark-blue70': 'var(--background-dark-blue70)'
         },
-        text: {
-          'light-black70': 'var(--text-light-black70)',
-          'light-gray': 'var(--text-light-gray)',
-          'dark-gray': 'var(--text-dark-gray)',
-          'dark-white70': 'var(--text-dark-white70)'
-        },
+        'light-black70': 'var(--text-light-black70)',
+        'light-gray': 'var(--text-light-gray)',
+        'dark-gray': 'var(--text-dark-gray)',
+        'dark-white70': 'var(--text-dark-white70)',
         warning: {
           light: 'var(--warning-light)',
           dark: 'var(--warning-dark)'

@@ -1,5 +1,5 @@
 .p-inputtext:enabled {
-  @apply bg-transparent dark:text-white dark:border-gray-400 focus:border-primary-principal focus:shadow-primary-700;
+  @apply bg-transparent dark:text-white dark:border-gray-600 focus:border-primary-principal focus:shadow-primary-700;
 }
 
 .p-inputtext:enabled:hover {
@@ -16,6 +16,10 @@ input.p-input::placeholder {
   .p-icon {
     @apply right-4 w-5 h-5 dark:stroke-[var(--text-dark-white70)] dark:fill-[var(--text-dark-white70)];
   }
+}
+
+.p-input-icon-left > i:first-of-type {
+  @apply text-gray-500 dark:text-gray-300;
 }
 
 .p-checkbox:not(.p-checkbox-disabled) {

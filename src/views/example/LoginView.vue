@@ -1,4 +1,51 @@
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { useThemeStore } from '@/store/theme'
+import { toTypedSchema } from '@vee-validate/zod'
+import { useForm } from 'vee-validate'
+import Button from 'primevue/button'
+import Banner from '@/assets/img/background-form.png'
+import { schemaLogin } from '@/utils/validations'
+import { useAuthStore } from '@/store/auth'
+import { useToast } from 'primevue/usetoast'
+
+const themeStore = useThemeStore()
+const authStore = useAuthStore()
+const toast = useToast()
+
+const { handleSubmit, errors, defineComponentBinds, setFieldError } = useForm({
+  validationSchema: toTypedSchema(schemaLogin)
+})
+
+//const isLoading = ref<boolean>(false)
+
+const email = defineComponentBinds('email')
+const password = defineComponentBinds('password')
+const checked = ref<boolean>(false)
+
+const onFormSubmit = handleSubmit(async (values) => {
+  try {
+    await authStore.login(values)
+  } catch (err) {
+    toast?.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: (err as Error).message,
+      life: 3150
+    })
+  }
+})
+
+const tooltipConfig = computed(() => ({
+  value: themeStore.isDarkTheme ? 'Dark Mode' : 'Light Mode',
+  pt: {
+    text: 'font-medium bg-primary'
+  }
+}))
+</script>
+
 <template>
+  <Toast position="bottom-right" />
   <div
     class="bg-no-repeat bg-cover container-background"
     :style="{
@@ -44,38 +91,46 @@
           </div>
 
           <form class="w-full md:w-10 mx-auto" @submit.prevent>
-            <label
-              for="email"
-              class="block text-md font-semibold mb-2 text-color-setted"
-              >Email</label
-            >
-            <InputText
-              id="email"
-              v-bind="email"
-              type="text"
-              class="w-full mb-3"
-              placeholder="Email"
-              style="padding: 0.7rem"
-            />
+            <div class="mb-3">
+              <label
+                for="email"
+                class="block text-md font-semibold mb-2 text-color-setted"
+                >Email</label
+              >
+              <InputText
+                id="email"
+                v-bind="email"
+                type="text"
+                :class="['w-full', { 'p-invalid': errors.password }]"
+                placeholder="Email"
+                style="padding: 0.7rem"
+              />
+              <small id="text-error" class="p-error">{{
+                errors.email || '&nbsp;'
+              }}</small>
+            </div>
 
-            <label
-              for="password"
-              class="block font-semibold text-md mb-2 text-color-setted"
-              >Password</label
-            >
-            <Password
-              id="password"
-              v-bind="password"
-              placeholder="Password"
-              :toggle-mask="true"
-              class="w-full mb-3"
-              input-class="w-full"
-              :input-style="{ padding: '.7rem' }"
-              prompt-label="Digite sua senha"
-              weak-label="Fraca"
-              medium-label="Médio"
-              strong-label="Forte"
-            ></Password>
+            <div class="mb-3">
+              <label
+                for="password"
+                class="block font-semibold text-md mb-2 text-color-setted"
+                >Password</label
+              >
+              <Password
+                id="password"
+                v-bind="password"
+                placeholder="Password"
+                :class="[{ 'p-invalid': errors.password }]"
+                :toggle-mask="true"
+                class="w-full"
+                input-class="w-full"
+                :input-style="{ padding: '.7rem' }"
+                :feedback="false"
+              />
+              <small id="text-error" class="p-error">{{
+                errors.password || '&nbsp;'
+              }}</small>
+            </div>
 
             <div class="flex align-items-center justify-content-between mb-5">
               <div class="flex align-items-center">
@@ -105,59 +160,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useThemeStore } from '@/store/theme'
-import { toTypedSchema } from '@vee-validate/zod'
-import { useForm } from 'vee-validate'
-import Button from 'primevue/button'
-import Banner from '@/assets/img/background-form.png'
-import { schemaLogin } from '@/utils/validations'
-
-const { handleSubmit, errors, validateField, setFieldError } = useForm({
-  validationSchema: toTypedSchema(schemaLogin)
-})
-
-const isLoading = ref<boolean>(false)
-
-const email = validateField('email')
-const password = validateField('password')
-const checked = ref<boolean>(false)
-
-const themeStore = useThemeStore()
-
-const onFormSubmit = handleSubmit(async (values) => {
-  console.log(values)
-  isLoading.value = true
-  try {
-    //await services.budgets.createProject(values)
-    //toast.success('Projeto cadastrado com sucesso!')
-  } catch (error) {
-    //toast.error((error as Error).message)
-  } finally {
-    isLoading.value = false
-  }
-})
-
-const tooltipConfig = computed(() => ({
-  value: themeStore.isDarkTheme ? 'Dark Mode' : 'Light Mode',
-  pt: {
-    arrow: {
-      style: {
-        borderBottomColor: 'var(--primary-color)'
-      }
-    },
-    text: {
-      style: {
-        backgroundColor: themeStore.isDarkTheme
-          ? 'var(--secondary-color-500)'
-          : 'var(--primary-color)'
-      }
-    }
-  }
-}))
-</script>
 
 <style lang="scss" scoped>
 .container-background {

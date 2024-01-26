@@ -4,8 +4,8 @@
       <div class="card p-fluid">
         <h5>Dialog</h5>
         <Dialog
-          header="Dialog"
           v-model:visible="display"
+          header="Dialog"
           :breakpoints="{ '960px': '75vw' }"
           :style="{ width: '30vw' }"
           :modal="true"
@@ -22,9 +22,9 @@
           <template #footer>
             <Button
               label="Ok"
-              @click="close"
               icon="pi pi-check"
               class="p-button-outlined"
+              @click="close"
             />
           </template>
         </Dialog>
@@ -42,43 +42,42 @@
             <Button
               type="button"
               label="Image"
-              @click="toggle"
               class="p-button-success"
+              @click="toggle"
             />
-            <OverlayPanel ref="op" appendTo="body" :showCloseIcon="true">
-              <img src="images/nature/nature9.jpg" alt="Nature 9" />
+            <OverlayPanel ref="op" append-to="body" :show-close-icon="true">
             </OverlayPanel>
           </div>
           <div class="col-6">
             <Button
               type="button"
               label="DataTable"
-              @click="toggleDataTable"
               class="p-button-success"
+              @click="toggleDataTable"
             />
             <OverlayPanel
-              ref="op2"
-              appendTo="body"
-              :showCloseIcon="true"
               id="overlay_panel"
+              ref="op2"
+              append-to="body"
+              :show-close-icon="true"
               style="width: 450px"
             >
               <DataTable
-                :value="products"
                 v-model:selection="selectedProduct"
-                selectionMode="single"
+                :value="products"
+                selection-mode="single"
                 :paginator="true"
                 :rows="5"
+                responsive-layout="scroll"
                 @row-select="onProductSelect"
-                responsiveLayout="scroll"
               >
                 <Column
                   field="name"
                   header="Name"
                   :sortable="true"
-                  headerStyle="min-width:10rem;"
+                  header-style="min-width:10rem;"
                 ></Column>
-                <Column header="Image" headerStyle="min-width:10rem;">
+                <Column header="Image" header-style="min-width:10rem;">
                   <template #body="slotProps">
                     <img
                       :src="'images/product/' + slotProps.data.image"
@@ -92,7 +91,7 @@
                   field="price"
                   header="Price"
                   :sortable="true"
-                  headerStyle="min-width:8rem;"
+                  header-style="min-width:8rem;"
                 >
                   <template #body="slotProps">
                     {{ formatCurrency(slotProps.data.price) }}
@@ -115,8 +114,8 @@
           @click="openConfirmation"
         />
         <Dialog
-          header="Confirmation"
           v-model:visible="displayConfirmation"
+          header="Confirmation"
           :style="{ width: '350px' }"
           :modal="true"
         >
@@ -131,40 +130,44 @@
             <Button
               label="No"
               icon="pi pi-times"
-              @click="closeConfirmation"
               class="p-button-text"
+              @click="closeConfirmation"
             />
             <Button
               label="Yes"
               icon="pi pi-check"
-              @click="closeConfirmation"
               class="p-button-text"
               autofocus
+              @click="closeConfirmation"
             />
           </template>
         </Dialog>
       </div>
       <div class="card">
         <h5>Sidebar</h5>
-        <Sidebar v-model:visible="visibleLeft" :baseZIndex="1000">
+        <Sidebar v-model:visible="visibleLeft" :base-z-index="1000">
           <h1 style="font-weight: normal">Left Sidebar</h1>
         </Sidebar>
 
         <Sidebar
           v-model:visible="visibleRight"
-          :baseZIndex="1000"
+          :base-z-index="1000"
           position="right"
         >
           <h1 style="font-weight: normal">Right Sidebar</h1>
         </Sidebar>
 
-        <Sidebar v-model:visible="visibleTop" :baseZIndex="1000" position="top">
+        <Sidebar
+          v-model:visible="visibleTop"
+          :base-z-index="1000"
+          position="top"
+        >
           <h1 style="font-weight: normal">Top Sidebar</h1>
         </Sidebar>
 
         <Sidebar
           v-model:visible="visibleBottom"
-          :baseZIndex="1000"
+          :base-z-index="1000"
           position="bottom"
         >
           <h1 style="font-weight: normal">Bottom Sidebar</h1>
@@ -172,7 +175,7 @@
 
         <Sidebar
           v-model:visible="visibleFull"
-          :baseZIndex="1000"
+          :base-z-index="1000"
           position="full"
         >
           <h1 style="font-weight: normal">Full Screen</h1>
@@ -181,26 +184,26 @@
         <Button
           icon="pi pi-arrow-right"
           class="p-button-warning"
-          @click="visibleLeft = true"
           style="margin-right: 0.25em"
+          @click="visibleLeft = true"
         />
         <Button
           icon="pi pi-arrow-left"
           class="p-button-warning"
-          @click="visibleRight = true"
           style="margin-right: 0.25em"
+          @click="visibleRight = true"
         />
         <Button
           icon="pi pi-arrow-down"
           class="p-button-warning"
-          @click="visibleTop = true"
           style="margin-right: 0.25em"
+          @click="visibleTop = true"
         />
         <Button
           icon="pi pi-arrow-up"
           class="p-button-warning"
-          @click="visibleBottom = true"
           style="margin-right: 0.25em"
+          @click="visibleBottom = true"
         />
         <Button
           icon="pi pi-external-link"
@@ -215,17 +218,17 @@
         <div class="formgroup-inline">
           <div class="field">
             <InputText
+              v-tooltip="'Your username'"
               type="text"
               placeholder="Username"
-              v-tooltip="'Your username'"
             />
           </div>
 
           <Button
+            v-tooltip="'Click to proceed'"
             type="button"
             label="Save"
             icon="pi pi-check"
-            v-tooltip="'Click to proceed'"
           />
         </div>
       </div>
@@ -236,10 +239,10 @@
         <ConfirmPopup></ConfirmPopup>
         <Button
           ref="popup"
-          @click="confirm($event)"
           icon="pi pi-check"
           label="Confirm"
           class="mr-2"
+          @click="confirm($event)"
         ></Button>
       </div>
     </div>

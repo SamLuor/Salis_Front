@@ -1,146 +1,160 @@
 .layout-topbar {
-    position: fixed;
-    height: 5rem;
-    z-index: 997;
+  position: fixed;
+  height: 5rem;
+  z-index: 997;
+  left: 300px;
+  top: 0;
+  width: calc(100% - 300px);
+  padding: 0.5rem 2rem;
+  background-color: var(--surface-card);
+  transition: all $transitionDuration;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  @apply shadow-sm shadow-slate-400/60;
+
+  &.active {
     left: 0;
-    top: 0;
     width: 100%;
-    padding: 0 2rem;
-    background-color: var(--surface-card);
-    transition: left $transitionDuration;
+  }
+
+  .layout-topbar-logo {
     display: flex;
     align-items: center;
-    box-shadow: 0px 3px 5px rgba(0,0,0,.02), 0px 0px 2px rgba(0,0,0,.05), 0px 1px 4px rgba(0,0,0,.08);
+    color: var(--surface-900);
+    font-size: 1.5rem;
+    font-weight: 500;
+    width: 300px;
+    border-radius: 12px;
 
-    .layout-topbar-logo {
-        display: flex;
-        align-items: center;
-        color: var(--surface-900);
-        font-size: 1.5rem;
-        font-weight: 500;
-        width: 300px;
-        border-radius: 12px;
-
-        img {
-            @apply w-20;
-            margin-right: .5rem;
-        }
-
-        p.text-logo {
-            @apply font-semibold text-[#10324F];
-        }
-
-        &:focus {
-            @include focused();
-        }
+    img {
+      @apply w-20;
+      margin-right: 0.5rem;
     }
+
+    p.text-logo {
+      @apply font-semibold text-[#10324F];
+    }
+
+    &:focus {
+      @include focused();
+    }
+  }
+
+  .layout-topbar-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    color: var(--text-color-secondary);
+    width: 56px;
+    height: 100%;
+    cursor: pointer;
+    transition: background-color $transitionDuration;
+    @apply bg-primary-options-background-sub-container text-primary-options-text-color hover:text-primary-options-text-color dark:bg-secondary-600 rounded-md;
+
+    &:hover {
+      @apply bg-primary-options-background-sub-container;
+    }
+
+    &:focus {
+      @include focused();
+    }
+
+    i {
+      font-size: 1.5rem;
+    }
+
+    span {
+      font-size: 1rem;
+      display: none;
+    }
+  }
+
+  .layout-menu-button {
+    margin-left: 2rem;
+  }
+
+  .layout-topbar-menu-button {
+    display: none;
+
+    i {
+      font-size: 1.25rem;
+    }
+  }
+
+  .toggle-side {
+    @apply text-primary-options-background-sub-container dark:text-primary-options-text-color rounded-full;
+  }
+
+  .layout-topbar-menu {
+    padding: 0;
+    list-style: none;
+    display: flex;
+    @apply h-full;
 
     .layout-topbar-button {
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-        color: var(--text-color-secondary);
-        border-radius: 50%;
-        width: 3rem;
-        height: 3rem;
-        cursor: pointer;
-        transition: background-color $transitionDuration;
-        
-        &:hover {
-            color: var(--text-color);
-            background-color: var(--surface-hover);
-        }
-
-        &:focus {
-            @include focused();
-        }
-
-        i {
-            font-size: 1.5rem;
-        }
-
-        span {
-            font-size: 1rem;
-            display: none;
-        }
+      margin-left: 0.2rem;
     }
-
-    .layout-menu-button {
-        margin-left: 2rem;
-    }
-
-    .layout-topbar-menu-button {
-        display: none;
-
-        i {
-            font-size: 1.25rem;
-        }
-    }
-
-    .layout-topbar-menu {
-        margin: 0 0 0 auto;
-        padding: 0;
-        list-style: none;
-        display: flex;
-        
-        .layout-topbar-button {
-            margin-left: 1rem;
-        }
-    }
+  }
 }
 
 @media (max-width: 991px) {
-    .layout-topbar {
-        justify-content: space-between;
+  .layout-topbar {
+    justify-content: space-between;
+    width: 100%;
+    left: 0;
 
-        .layout-topbar-logo {
-            width: auto;
-            order: 2;
-        }
-    
-        .layout-menu-button {
-            margin-left: 0;
-            order: 1;
-        }
-
-        .layout-topbar-menu-button {
-            display: inline-flex;
-            margin-left: 0;
-            order: 3;
-        }
-
-        .layout-topbar-menu {
-            margin-left: 0;
-            position: absolute;
-            flex-direction: column;
-            background-color: var(--surface-overlay);
-            box-shadow: 0px 3px 5px rgba(0,0,0,.02), 0px 0px 2px rgba(0,0,0,.05), 0px 1px 4px rgba(0,0,0,.08);
-            border-radius: 12px;
-            padding: 1rem;
-            right: 2rem;
-            top: 5rem;
-            min-width: 15rem;
-
-            .layout-topbar-button {
-                margin-left: 0;
-                display: flex;
-                width: 100%;
-                height: auto;
-                justify-content: flex-start;
-                border-radius: 12px;
-                padding: 1rem;
-
-                i {
-                    font-size: 1rem;
-                    margin-right: .5rem;
-                }
-
-                span {
-                    font-weight: medium;
-                    display: block;
-                }
-            }
-        }
+    .layout-topbar-logo {
+      width: auto;
+      order: 2;
     }
+
+    .layout-menu-button {
+      margin-left: 0;
+      order: 1;
+    }
+
+    .layout-topbar-menu-button {
+      display: inline-flex;
+      margin-left: 0;
+      order: 3;
+    }
+
+    .layout-topbar-menu {
+      margin-left: 0;
+      position: absolute;
+      flex-direction: column;
+      background-color: var(--surface-overlay);
+      box-shadow:
+        0px 3px 5px rgba(0, 0, 0, 0.02),
+        0px 0px 2px rgba(0, 0, 0, 0.05),
+        0px 1px 4px rgba(0, 0, 0, 0.08);
+      border-radius: 12px;
+      padding: 1rem;
+      right: 2rem;
+      top: 5rem;
+      min-width: 15rem;
+
+      .layout-topbar-button {
+        margin-left: 0;
+        display: flex;
+        width: 100%;
+        height: auto;
+        justify-content: flex-start;
+        border-radius: 12px;
+        padding: 1rem;
+
+        i {
+          font-size: 1rem;
+          margin-right: 0.5rem;
+        }
+
+        span {
+          font-weight: medium;
+          display: block;
+        }
+      }
+    }
+  }
 }

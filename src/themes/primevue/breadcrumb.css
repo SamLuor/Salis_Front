@@ -1,0 +1,3 @@
+.p-breadcrumb {
+  @apply bg-transparent border-none !important;
+}

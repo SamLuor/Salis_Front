@@ -1,0 +1,69 @@
+.container-filter {
+  @apply flex justify-between px-4 py-4 bg-white;
+}
+
+.p-datatable {
+  @apply bg-transparent border border-[#CBD4E1] overflow-hidden;
+  .p-datatable-header {
+    @apply bg-transparent;
+  }
+
+  &.no-filter {
+    @apply rounded-t-lg;
+  }
+
+  .p-datatable-thead > tr > th {
+    @apply border-gray-200 dark:border-gray-600;
+  }
+
+  .p-datatable-tbody > tr > td + td {
+    @apply border-gray-200 dark:border-gray-600;
+  }
+  .p-datatable-tbody > tr:first-child > td {
+    @apply border-gray-200 dark:border-gray-600;
+  }
+
+  .p-datatable-tbody > tr > td {
+    @apply border-gray-200 dark:border-gray-600;
+  }
+
+  .p-column-header-content {
+    @apply justify-center;
+  }
+
+  .p-datatable-table {
+    .p-datatable-thead {
+      @apply bg-primary-options-background-container-header dark:bg-background-dark-blue;
+
+      tr > th {
+        @apply bg-primary-options-background-container dark:bg-background-dark-blue text-light-black70 dark:text-dark-white70 p-2;
+      }
+    }
+  }
+
+  .p-datatable-tbody > tr {
+    @apply bg-background-light-white dark:bg-background-dark-blue70 text-light-black70 dark:text-dark-gray;
+  }
+
+  &.table-options {
+    @apply rounded-lg;
+    .p-datatable-thead > tr > th {
+      @apply bg-primary-options-background-container-header text-light-black70 dark:text-dark-gray p-2;
+    }
+
+    .p-datatable-tbody td {
+      @apply border-x;
+    }
+    .p-datatable-tbody tr:last-child td {
+      @apply rounded-b-lg border-x;
+    }
+  }
+
+  .p-paginator {
+    @apply border-b border-x rounded-none rounded-b-lg dark:border-gray-600 bg-background-light-white dark:bg-background-dark-blue70;
+
+    .p-paginator-pages .p-paginator-page.p-highlight {
+      @apply bg-background-light-white dark:bg-background-dark-blue;
+    }
+  }
+}

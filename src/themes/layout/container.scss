@@ -3,9 +3,17 @@
 }
 
 .sub-container {
-  @apply bg-[var(--background-light-white)] dark:bg-[var(--background-dark-blue70)];
+  @apply bg-primary-options-background-sub-container dark:bg-[var(--background-dark-blue70)];
+}
+
+.container-header {
+  @apply bg-primary-options-background-container-header dark:bg-primary-options-background-container-header-dark;
 }
 
 .border-setted {
   @apply border-gray-300 dark:border-gray-700;
+}
+
+.container-filter {
+  @apply bg-background-light-white dark:bg-background-dark-blue70 border-b-0 border-t border-x border-solid  border-gray-200 dark:border-gray-600 rounded-t-lg;
 }

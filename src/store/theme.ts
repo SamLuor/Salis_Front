@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { updateHtmlClass } from '@/utils/helpers'
 
 interface ThemeState {
   darkTheme: boolean
@@ -12,7 +13,7 @@ export const useThemeStore = defineStore({
   id: 'theme',
   state: (): ThemeState => {
     return {
-      darkTheme: false,
+      darkTheme: localStorage.getItem('@salis:theme') == 'dark' ? true : false,
       menuClick: false,
       layoutMode: 'static',
       staticMenuInactive: false,
@@ -22,22 +23,15 @@ export const useThemeStore = defineStore({
   },
   getters: {
     isDarkTheme: (state) => {
+      updateHtmlClass(state.darkTheme)
       return state.darkTheme
     }
   },
   actions: {
     toggleThemeColor() {
       this.darkTheme = !this.darkTheme
-      this.updateHtmlClass()
-    },
-    updateHtmlClass() {
-      const htmlElement = document.documentElement
-
-      if (this.darkTheme) {
-        htmlElement.classList.add('dark')
-      } else {
-        htmlElement.classList.remove('dark')
-      }
+      localStorage.setItem('@salis:theme', this.darkTheme ? 'dark' : 'light')
+      updateHtmlClass(this.darkTheme)
     }
   }
 })

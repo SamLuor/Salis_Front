@@ -87,7 +87,7 @@ import TieredMenu from 'primevue/tieredmenu'
 import Textarea from 'primevue/textarea'
 import Timeline from 'primevue/timeline'
 import Toast from 'primevue/toast'
-import ToastService from 'primevue/toastservice'
+import ToastService, { ToastServiceMethods } from 'primevue/toastservice'
 import Toolbar from 'primevue/toolbar'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
@@ -104,12 +104,15 @@ import CodeHighlight from '@/directive/AppCodeHighlight'
 import StyleClass from 'primevue/styleclass'
 import BadgeDirective from 'primevue/badgedirective'
 import AppWrapperVue from './layout/AppWrapper.vue'
+import { useToast } from 'primevue/usetoast'
+import { useToastRef } from './store/features'
 
 const app = createApp(AppWrapperVue)
 app.config.globalProperties.$appState = reactive({
   theme: 'lara-light-indigo',
   darkTheme: false
 })
+
 app
   .directive('tooltip', Tooltip)
   .directive('ripple', Ripple)
@@ -203,5 +206,4 @@ app
   .use(createPinia())
   .use(ConfirmationService)
   .use(ToastService)
-
   .mount('#app')

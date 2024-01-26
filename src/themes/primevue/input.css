@@ -1,0 +1,6 @@
+.p-invalid {
+  @apply border-red-400 !important;
+}
+input::placeholder {
+  @apply text-light-black70 dark:text-dark-white70;
+}

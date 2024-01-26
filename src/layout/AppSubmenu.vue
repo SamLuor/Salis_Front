@@ -13,7 +13,10 @@
         role="none"
       >
         <template v-if="root">
-          <div class="layout-menuitem-root-text" :aria-label="item.label">
+          <div
+            class="layout-menuitem-root-text text-color-defined"
+            :aria-label="item.label"
+          >
             {{ item.label }}
           </div>
           <appsubmenu
@@ -24,15 +27,19 @@
         <template v-else>
           <router-link
             v-if="item.to"
+            v-ripple
             :to="item.to"
-            :class="[item.class, 'p-ripple', { 'p-disabled': item.disabled }]"
+            :class="[
+              'p-ripple',
+              { 'p-disabled': item.disabled },
+              'menu-item-tailwind',
+              { 'router-link-exact-active': isActive(item) }
+            ]"
             :style="item.style"
-            @click="onMenuItemClick($event, item, i)"
             :target="item.target"
             :aria-label="item.label"
-            exact
             role="menuitem"
-            v-ripple
+            @click="onMenuItemClick($event, item, i)"
           >
             <i :class="item.icon"></i>
             <span>{{ item.label }}</span>
@@ -44,14 +51,14 @@
           </router-link>
           <a
             v-if="!item.to"
+            v-ripple
             :href="item.url || '#'"
             :style="item.style"
             :class="[item.class, 'p-ripple', { 'p-disabled': item.disabled }]"
-            @click="onMenuItemClick($event, item, i)"
             :target="item.target"
             :aria-label="item.label"
             role="menuitem"
-            v-ripple
+            @click="onMenuItemClick($event, item, i)"
           >
             <i :class="item.icon"></i>
             <span>{{ item.label }}</span>
@@ -71,18 +78,20 @@
         </template>
       </li>
       <li
-        class="p-menu-separator"
-        :style="item.style"
         v-if="visible(item) && item.separator"
         :key="'separator' + i"
+        class="p-menu-separator"
+        :style="item.style"
         role="separator"
       ></li>
     </template>
   </ul>
 </template>
 <script>
+import { useRoute } from 'vue-router'
+
 export default {
-  name: 'appsubmenu',
+  name: 'Appsubmenu',
   props: {
     items: Array,
     root: {
@@ -96,6 +105,11 @@ export default {
     }
   },
   methods: {
+    isActive: (to) => {
+      if (useRoute().path.includes(to.label.toLowerCase())) {
+        return true
+      }
+    },
     onMenuItemClick(event, item, index) {
       if (item.disabled) {
         event.preventDefault()
@@ -126,3 +140,20 @@ export default {
   }
 }
 </script>
+<style scoped>
+.text-section {
+  @apply dark:text-dark-white70;
+}
+.menu-item-tailwind {
+  @apply text-dark-gray dark:text-dark-white70;
+}
+.menu-item-tailwind:hover {
+  @apply text-dark-white70 bg-primary-principal dark:text-dark-white70 dark:bg-secondary-500;
+}
+.layout-menu li a.router-link-exact-active {
+  @apply text-primary-600 dark:text-secondary-500 hover:text-primary-options-text-color;
+}
+.layout-menu li a.router-link-exact-active:hover {
+  @apply dark:text-dark-white70;
+}
+</style>

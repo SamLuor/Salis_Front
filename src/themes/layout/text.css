@@ -1,3 +1,7 @@
+.text-color-defined {
+  @apply text-primary-options-text-color !important;
+}
+
 .text-color-setted {
   @apply dark:text-[var(--text-dark-white70)];
 }
