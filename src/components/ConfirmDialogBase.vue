@@ -34,5 +34,7 @@
 </template>
 
 <script setup lang="ts">
+import type { ConfirmDialogSlots } from 'primevue/confirmdialog'
+
 const props = defineProps(['class', 'group', 'icon', 'colorClasses'])
 </script>

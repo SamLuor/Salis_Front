@@ -325,7 +325,7 @@
               icon="pi pi-plus"
               label="Adicionar Endereço"
               @click="
-                () => telefones.push({ ddd: null, numero: null, pessoa: '' })
+                () => telefones.push({ ddd: null, numero: '', pessoa: '' })
               "
             />
             <div class="input-full flex flex-row-reverse">

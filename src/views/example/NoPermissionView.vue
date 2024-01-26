@@ -14,3 +14,5 @@
   @apply flex flex-col dark:bg-background-dark-blue70 !important;
 }
 </style>
+
+<script setup lang="ts"></script>

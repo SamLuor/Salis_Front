@@ -193,8 +193,10 @@ const publicacoes = ref<PublicationProtocol[]>([
   { cliente_id: '', date: '', file: '', meio_publicacao_id: '' }
 ])
 
-const selectFile = (event: FileUploadSelectEvent, index: number) =>
-  (publicacoes.value[index].file = event.files[0])
+const selectFile = (event: any, index: number) => {
+  const eventFileSelected = event as FileUploadSelectEvent
+  publicacoes.value[index].file = eventFileSelected.files[0]
+}
 
 const removeFile = (index: number) => {
   publicacoes.value[index].file_path = ''

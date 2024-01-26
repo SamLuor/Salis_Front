@@ -79,7 +79,7 @@ const loading = ref<boolean>(true)
 const confirm = useConfirm()
 const toastStore = useToastRef()
 
-const showPosition = (data) => {
+const showPosition = (data: any) => {
   router.push({ name: 'position-show', params: { id: data.id } })
 }
 

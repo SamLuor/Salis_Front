@@ -154,18 +154,21 @@ const onFormSubmit = handleSubmit(async (values) => {
   try {
     if (!props.user.id) {
       loading.value = 'user'
-      await services.User.createUser(values as User)
+      await services.User.createUser(values as unknown as User)
     } else {
-      await services.User.updateUser(values)
+      await services.User.updateUser(values as Partial<User>)
     }
-    values.cargos?.forEach(async (cargo_id) => {
-      await services.Position.vincularPositionInUser(
-        {
-          users: [props.user.id]
-        },
-        cargo_id
-      )
-    })
+
+    await Promise.all(
+      values.cargos?.map(async (cargo_id) => {
+        await services.Position.vincularPositionInUser(
+          {
+            users: [props.user.id]
+          },
+          cargo_id
+        )
+      }) ?? []
+    )
 
     toast.add({
       severity: 'success',

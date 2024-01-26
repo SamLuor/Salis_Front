@@ -219,10 +219,11 @@ const frase = defineComponentBinds('frase')
 
 const onFormSubmit = handleSubmit(async (values) => {
   const formData = new FormData()
+  const isCreate = 'id' in values
 
   // Transforme o objeto JSON em FormData
-  for (const key of Object.keys(values) as (keyof CompanyProtocol)[]) {
-    formData.append(key, values[key] as string | Blob)
+  for (const key of Object.keys(values)) {
+    formData.append(key, values[key as keyof typeof values] as string | Blob)
   }
 
   try {
@@ -232,7 +233,7 @@ const onFormSubmit = handleSubmit(async (values) => {
     router.push({ name: 'company' })
     toast.add({
       severity: 'success',
-      summary: !values?.id
+      summary: isCreate
         ? 'Empresa criada com sucesso!'
         : 'Empresa atualizado com sucesso!',
       detail: 'Dados salvos com sucesso.',
@@ -241,9 +242,7 @@ const onFormSubmit = handleSubmit(async (values) => {
   } catch (err) {
     toast.add({
       severity: 'error',
-      summary: !values?.id
-        ? 'Erro ao criar Empresa'
-        : 'Erro ao atualizar Empresa',
+      summary: isCreate ? 'Erro ao criar Empresa' : 'Erro ao atualizar Empresa',
       detail: (err as Error).message,
       life: 3000
     })
