@@ -4,7 +4,7 @@ import PublicationForm from './PublicationForm.vue'
 import TabsSteps from '@/components/TabsSteps/TabsSteps.vue'
 
 const active = shallowRef(PublicationForm)
-const step = ref(2)
+const step = ref(1)
 const currentProcess = ref(0)
 
 const selectStatus = (status: number) => {

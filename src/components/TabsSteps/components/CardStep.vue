@@ -49,7 +49,7 @@ const emit = defineEmits(['changeStatus'])
         { 'bg-gray-500': !isCurrent && !isCompleted }
       ]"
     >
-      <div class="block-active"></div>
+      <!-- <div class="block-active"></div> -->
       <i :class="['icon-step', props.icon]"
     /></span>
     <div class="container-text-step">
