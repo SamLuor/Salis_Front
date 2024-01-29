@@ -6,25 +6,25 @@ const statuses = [
   {
     status: 0,
     header: 'Publicação',
-    description: 'Publicações e tatatatatatat',
+    description: 'Fase Publicação',
     icon: 'fa-solid fa-file-import'
   },
   {
     status: 1,
     header: 'Edital',
-    description: 'Edital e tatatatatatat',
+    description: 'Fase Edital',
     icon: 'fa-solid fa-eye'
   },
   {
     status: 2,
     header: 'Termo de Referência',
-    description: 'Termo de Referência e tatatatatatat',
+    description: 'Fase Termo de Referência',
     icon: 'fa-solid fa-trash'
   },
   {
     status: 3,
     header: 'Lista de Produtos',
-    description: 'Lista de Produtos e tatatatatatat',
+    description: 'Fase Lista de Produtos',
     icon: 'fa-solid fa-square'
   }
 ]
