@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CardStep from './components/CardStep.vue'
-const props = defineProps<{ statusProcess: number }>()
+const props = defineProps(['statusProcess', 'current'])
 const emit = defineEmits(['changeStatus'])
 const statuses = [
   {
@@ -39,7 +39,8 @@ const changeStatus = (status: number) => {
     <CardStep
       v-for="status in statuses"
       :key="'status'.concat(String(status))"
-      :status-process="props.statusProcess"
+      :is-completed="statusProcess >= status.status"
+      :is-current="status.status === props.current"
       :status="status.status"
       :description="status.description"
       :header="status.header"
