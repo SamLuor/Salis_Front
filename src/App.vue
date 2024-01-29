@@ -113,7 +113,7 @@ const menu = [
     icon: 'pi pi-fw pi-sitemap',
     items: [
       {
-        label: 'Publicações',
+        label: 'Processos',
         icon: 'fa-solid fa-users',
         to: '/publicações',
         role: 'gerenciar publicação'
