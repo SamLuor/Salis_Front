@@ -2,6 +2,7 @@
 import { shallowRef, ref, onMounted } from 'vue'
 import PublicationForm from './PublicationForm.vue'
 import InDevelopment from './InDevelopment.vue'
+import EditalForm from './EditalForm.vue'
 import TabsSteps from '@/components/TabsSteps/TabsSteps.vue'
 import { useRoute } from 'vue-router'
 import services from '@/api/index'
@@ -24,7 +25,7 @@ const keysData = ['publicacoes', 'desenvolvimento']
 
 const componentsOptions: ComponentsMap = {
   '0': PublicationForm,
-  '1': InDevelopment,
+  '1': EditalForm,
   '2': InDevelopment,
   '3': InDevelopment
 }
