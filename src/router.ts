@@ -168,7 +168,7 @@ const router = createRouter({
           component: MeansPublicationFormVue
         },
         {
-          path: 'publicações',
+          path: 'publicacoes',
           name: 'publications',
           meta: {
             role: 'gerenciar meios de publicação'
@@ -176,7 +176,7 @@ const router = createRouter({
           component: ProcessViewVue
         },
         {
-          path: 'publicações-form',
+          path: 'publicacoes-form',
           name: 'publications-form',
           meta: {
             role: 'gerenciar publicação'
@@ -184,7 +184,7 @@ const router = createRouter({
           component: ProcessStepsVue
         },
         {
-          path: 'publicações-show/:id',
+          path: 'publicacoes-show/:id',
           name: 'publications-show',
           meta: {
             role: 'gerenciar publicação'

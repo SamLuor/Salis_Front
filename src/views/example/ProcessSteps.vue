@@ -1,15 +1,58 @@
 <script setup lang="ts">
-import { shallowRef, ref } from 'vue'
+import { shallowRef, ref, onMounted } from 'vue'
 import PublicationForm from './PublicationForm.vue'
+import InDevelopment from './InDevelopment.vue'
 import TabsSteps from '@/components/TabsSteps/TabsSteps.vue'
+import { useRoute } from 'vue-router'
+import services from '@/api/index'
+import { PublicationProtocol } from '@/@types/publication'
 
+const route = useRoute()
+
+const publication_id = route.params?.id
 const active = shallowRef(PublicationForm)
+const processData = ref<{ [key: string]: any }>({})
+const keyCurrent = ref<string>('publicacoes')
 const step = ref(1)
 const currentProcess = ref(0)
 
+interface ComponentsMap {
+  [key: string]: any
+}
+
+const keysData = ['publicacoes', 'desenvolvimento']
+
+const componentsOptions: ComponentsMap = {
+  '0': PublicationForm,
+  '1': InDevelopment,
+  '2': InDevelopment,
+  '3': InDevelopment
+}
+
 const selectStatus = (status: number) => {
   currentProcess.value = status
+  active.value = componentsOptions[status]
+  keyCurrent.value = keysData[status]
 }
+
+onMounted(async () => {
+  if (publication_id) {
+    const response = await services.Publication.getPublication(
+      publication_id as string
+    )
+
+    processData.value = {
+      ...response.data,
+      desenvolvimento: 'hello',
+      publicacoes: response.data.publicacoes.map(
+        (publication: PublicationProtocol) => ({
+          ...publication,
+          date: new Date(publication.date)
+        })
+      )
+    }
+  }
+})
 </script>
 
 <template>
@@ -18,11 +61,12 @@ const selectStatus = (status: number) => {
       <div class="card mb-0 bg-transparent">
         <h5 class="header-page">Processos</h5>
         <TabsSteps
+          v-if="publication_id"
           :status-process="step"
           :current="currentProcess"
           @change-status="selectStatus"
         />
-        <component :is="active" />
+        <component :is="active" :data="processData[keyCurrent]" />
       </div>
     </div>
   </div>
