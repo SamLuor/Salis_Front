@@ -335,7 +335,7 @@
             <div class="input-full flex flex-row-reverse">
               <Button
                 :label="
-                  publication_id ? 'Avançar para Análise Preliminar' : 'Criar'
+                  publication_id ? 'Avançar para Próxima Tarefa' : 'Criar'
                 "
               />
             </div>

@@ -7,6 +7,7 @@ import TabsSteps from '@/components/TabsSteps/TabsSteps.vue'
 import { useRoute } from 'vue-router'
 import services from '@/api/index'
 import { PublicationProtocol } from '@/@types/publication'
+import TermReferenceForm from './TermReferenceForm.vue'
 
 const route = useRoute()
 
@@ -14,7 +15,7 @@ const publication_id = route.params?.id
 const active = shallowRef(PublicationForm)
 const processData = ref<{ [key: string]: any }>({})
 const keyCurrent = ref<string>('publicacoes')
-const step = ref(1)
+const step = ref(2)
 const currentProcess = ref(0)
 
 interface ComponentsMap {
@@ -26,7 +27,7 @@ const keysData = ['publicacoes', 'desenvolvimento']
 const componentsOptions: ComponentsMap = {
   '0': PublicationForm,
   '1': EditalForm,
-  '2': InDevelopment,
+  '2': TermReferenceForm,
   '3': InDevelopment
 }
 
