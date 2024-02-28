@@ -15,8 +15,7 @@ export default class PublicationService {
     return await this.httpConfig
       .post('/processo/publicacao', data)
       .then((response) => {
-        store.setPublication([...store.publications, response.data.data])
-        return response.data
+        return response
       })
       .catch((err) => {
         const { message } = err.response.data

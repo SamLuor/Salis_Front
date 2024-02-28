@@ -158,9 +158,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { useForm } from 'vee-validate'
-import { toTypedSchema } from '@vee-validate/zod'
+import { onMounted, ref, watch } from 'vue'
 import {
   schemaCreatePublication,
   schemaUpdatePublication
@@ -174,24 +172,25 @@ import Calendar from 'primevue/calendar'
 import { FileUploadSelectEvent } from 'primevue/fileupload'
 import * as zod from 'zod'
 
+const props = defineProps<{ data: PublicationProtocol[] }>()
+
 const toast = useToast()
 const route = useRoute()
 const publication_id = route.params?.id
 const schema = publication_id
   ? schemaUpdatePublication
   : schemaCreatePublication
-const { setFieldValue } = useForm({
-  validationSchema: toTypedSchema(schema)
-})
 
 const errors = ref<{ [key: string]: any }>({})
 
 const clients_options = ref([])
 const means_options = ref([])
 
-const publicacoes = ref<PublicationProtocol[]>([
-  { cliente_id: '', date: '', file: '', meio_publicacao_id: '' }
-])
+const publicacoes = ref<PublicationProtocol[]>(
+  Array.isArray(props.data)
+    ? props.data
+    : [{ cliente_id: '', date: '', file: '', meio_publicacao_id: '' }]
+)
 
 const selectFile = (event: any, index: number) => {
   const eventFileSelected = event as FileUploadSelectEvent
@@ -314,19 +313,6 @@ const receiveOptions = async () => {
 
 onMounted(async () => {
   receiveOptions()
-
-  if (publication_id) {
-    const response = await services.Publication.getPublication(
-      publication_id as string
-    )
-
-    publicacoes.value = response.data.publicacoes.map(
-      (publication: PublicationProtocol) => ({
-        ...publication,
-        date: new Date(publication.date)
-      })
-    )
-  }
 })
 </script>
 

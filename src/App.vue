@@ -115,7 +115,7 @@ const menu = [
       {
         label: 'Processos',
         icon: 'fa-solid fa-users',
-        to: '/publicações',
+        to: '/publicacoes',
         role: 'gerenciar publicação'
       }
     ].filter((route) => {
