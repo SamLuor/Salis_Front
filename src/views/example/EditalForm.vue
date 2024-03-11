@@ -560,6 +560,17 @@ form {
 }
 .container-inputs-form {
   @apply grid grid-cols-2 gap-4 pb-4;
+
+  h5 {
+    @apply text-light-black70 dark:text-dark-white70 text-lg mb-1 font-semibold;
+  }
+
+  label {
+    @apply text-light-black70 dark:text-dark-white70;
+  }
+  small {
+    @apply text-light-gray dark:text-dark-gray;
+  }
 }
 
 .card {

@@ -242,6 +242,62 @@ const schemaCreatePublication = z.object({
 
 const schemaUpdatePublication = schemaCreatePublication.partial()
 
+const schemaCreateEdital = z.object({
+  modalidade_id: z
+    .string({ required_error: '' })
+    .nonempty('Modalidade ID é obrigatório'),
+  regime_id: z
+    .string({ required_error: '' })
+    .nonempty('Regime ID é obrigatório'),
+  tipo_execucao_id: z
+    .string({ required_error: '' })
+    .nonempty('Tipo de Execução ID é obrigatório'),
+  modo_disputa_id: z
+    .string({ required_error: '' })
+    .nonempty('Modo de Disputa ID é obrigatório'),
+  julgamento_id: z
+    .string({ required_error: '' })
+    .nonempty('Julgamento ID é obrigatório'),
+  numero: z.string({ required_error: '' }).nonempty('Número é obrigatório'),
+  periodico: z
+    .string({ required_error: '' })
+    .nonempty('Periodicidade é obrigatória'),
+  portal_compra_id: z
+    .string({ required_error: '' })
+    .nonempty('Portal de Compra ID é obrigatório'),
+  numero_portal_compra: z.string({
+    required_error: 'Número do Portal de Compra é obrigatório'
+  }),
+  numero_p_a: z.string({
+    required_error: 'Número do Processo Administrativo é obrigatório'
+  }),
+  pregoeiro: z.string({ required_error: 'Pregoeiro é obrigatório' }),
+  descricao_completa_objeto: z
+    .string({ required_error: '' })
+    .nonempty('Descrição Completa do Objeto é obrigatória'),
+  descricao_simplificada_objeto: z
+    .string({ required_error: '' })
+    .nonempty('Descrição Simplificada do Objeto é obrigatória'),
+  inicio_acolhimento_proposta: z
+    .string({ required_error: '' })
+    .nonempty('Início do Acolhimento da Proposta é obrigatório'),
+  limite_acolhimento_proposta: z
+    .string({ required_error: '' })
+    .nonempty('Limite do Acolhimento da Proposta é obrigatório'),
+  abertura_proposta: z.string({
+    required_error: 'Abertura da Proposta é obrigatória'
+  }),
+  data_disputa: z.string({ required_error: 'Data da Disputa é obrigatória' }),
+  clientes: z
+    .array(z.string({ required_error: 'Clientes é obrigatório' }))
+    .nonempty(),
+  arquivo: z.string({ required_error: 'Arquivo é obrigatório' }),
+  anexos: z.object({
+    add: z.array(z.string()),
+    remove: z.array(z.string())
+  })
+})
+
 export {
   schemaLogin,
   schemaCreateUser,
