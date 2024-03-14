@@ -57,7 +57,7 @@ export default class OptionService {
     return await this.httpConfig
       .get('/option/clientes')
       .then((response) => {
-        return { ...response.data, option: 'users' }
+        return { ...response.data, option: 'clients' }
       })
       .catch((err) => {
         const { message } = err.response.data
@@ -69,7 +69,7 @@ export default class OptionService {
     return await this.httpConfig
       .get('/option/meio-publicacoes')
       .then((response) => {
-        return { ...response.data, option: 'users' }
+        return { ...response.data, option: 'publicationMeans' }
       })
       .catch((err) => {
         const { message } = err.response.data
@@ -81,7 +81,7 @@ export default class OptionService {
     return await this.httpConfig
       .get('/option/tipo-processos')
       .then((response) => {
-        return { ...response.data, option: 'users' }
+        return { ...response.data, option: 'processTypes' }
       })
       .catch((err) => {
         const { message } = err.response.data
@@ -93,7 +93,7 @@ export default class OptionService {
     return await this.httpConfig
       .get('/option/modalidade-processos')
       .then((response) => {
-        return { ...response.data, option: 'users' }
+        return { ...response.data, option: 'processModality' }
       })
       .catch((err) => {
         const { message } = err.response.data
@@ -105,7 +105,7 @@ export default class OptionService {
     return await this.httpConfig
       .get('/option/regime-contratacoes')
       .then((response) => {
-        return { ...response.data, option: 'users' }
+        return { ...response.data, option: 'hiringRegime' }
       })
       .catch((err) => {
         const { message } = err.response.data
@@ -117,7 +117,7 @@ export default class OptionService {
     return await this.httpConfig
       .get('/option/portal-compras')
       .then((response) => {
-        return { ...response.data, option: 'users' }
+        return { ...response.data, option: 'purchasingPortal' }
       })
       .catch((err) => {
         const { message } = err.response.data
@@ -129,7 +129,7 @@ export default class OptionService {
     return await this.httpConfig
       .get('/option/tipo-execucoes')
       .then((response) => {
-        return { ...response.data, option: 'users' }
+        return { ...response.data, option: 'executionTypes' }
       })
       .catch((err) => {
         const { message } = err.response.data
@@ -137,11 +137,11 @@ export default class OptionService {
       })
   }
 
-  async getModalityProcess() {
+  async getContestModes() {
     return await this.httpConfig
       .get('/option/modo-disputas')
       .then((response) => {
-        return { ...response.data, option: 'users' }
+        return { ...response.data, option: 'contestModes' }
       })
       .catch((err) => {
         const { message } = err.response.data
@@ -149,11 +149,11 @@ export default class OptionService {
       })
   }
 
-  async getModalityProcess() {
+  async getJudgingCriteria() {
     return await this.httpConfig
       .get('/option/criterio-julgamentos')
       .then((response) => {
-        return { ...response.data, option: 'users' }
+        return { ...response.data, option: 'judgingCriteria' }
       })
       .catch((err) => {
         const { message } = err.response.data
