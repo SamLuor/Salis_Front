@@ -52,4 +52,112 @@ export default class OptionService {
         handleError(err, message)
       })
   }
+
+  async getClients() {
+    return await this.httpConfig
+      .get('/option/clientes')
+      .then((response) => {
+        return { ...response.data, option: 'users' }
+      })
+      .catch((err) => {
+        const { message } = err.response.data
+        handleError(err, message)
+      })
+  }
+
+  async getPublicationMeans() {
+    return await this.httpConfig
+      .get('/option/meio-publicacoes')
+      .then((response) => {
+        return { ...response.data, option: 'users' }
+      })
+      .catch((err) => {
+        const { message } = err.response.data
+        handleError(err, message)
+      })
+  }
+
+  async getProcessTypes() {
+    return await this.httpConfig
+      .get('/option/tipo-processos')
+      .then((response) => {
+        return { ...response.data, option: 'users' }
+      })
+      .catch((err) => {
+        const { message } = err.response.data
+        handleError(err, message)
+      })
+  }
+
+  async getProcessModality() {
+    return await this.httpConfig
+      .get('/option/modalidade-processos')
+      .then((response) => {
+        return { ...response.data, option: 'users' }
+      })
+      .catch((err) => {
+        const { message } = err.response.data
+        handleError(err, message)
+      })
+  }
+
+  async getHiringRegime() {
+    return await this.httpConfig
+      .get('/option/regime-contratacoes')
+      .then((response) => {
+        return { ...response.data, option: 'users' }
+      })
+      .catch((err) => {
+        const { message } = err.response.data
+        handleError(err, message)
+      })
+  }
+
+  async getPurchasingPortal() {
+    return await this.httpConfig
+      .get('/option/portal-compras')
+      .then((response) => {
+        return { ...response.data, option: 'users' }
+      })
+      .catch((err) => {
+        const { message } = err.response.data
+        handleError(err, message)
+      })
+  }
+
+  async getExecutionTypes() {
+    return await this.httpConfig
+      .get('/option/tipo-execucoes')
+      .then((response) => {
+        return { ...response.data, option: 'users' }
+      })
+      .catch((err) => {
+        const { message } = err.response.data
+        handleError(err, message)
+      })
+  }
+
+  async getModalityProcess() {
+    return await this.httpConfig
+      .get('/option/modo-disputas')
+      .then((response) => {
+        return { ...response.data, option: 'users' }
+      })
+      .catch((err) => {
+        const { message } = err.response.data
+        handleError(err, message)
+      })
+  }
+
+  async getModalityProcess() {
+    return await this.httpConfig
+      .get('/option/criterio-julgamentos')
+      .then((response) => {
+        return { ...response.data, option: 'users' }
+      })
+      .catch((err) => {
+        const { message } = err.response.data
+        handleError(err, message)
+      })
+  }
 }

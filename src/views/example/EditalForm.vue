@@ -337,6 +337,7 @@
                 :label="
                   publication_id ? 'Avançar para Próxima Tarefa' : 'Criar'
                 "
+                @click="onFormSubmit"
               />
             </div>
           </form>
@@ -346,8 +347,10 @@
   </div>
 </template>
 <script setup lang="ts">
+import { schemaCreateEdital } from '@/utils/validations'
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import * as zod from 'zod'
 
 const route = useRoute()
 const publication_id = route.params?.id
@@ -382,6 +385,96 @@ const form = ref({
   fullEdition: null,
   otherAttachments: null
 })
+
+const formState = ref({
+  modalidade_id: '',
+  regime_id: '',
+  tipo_execucao_id: '',
+  modo_disputa_id: '',
+  julgamento_id: '',
+  numero: '',
+  periodico: '',
+  portal_compra_id: '',
+  numero_portal_compra: '',
+  numero_p_a: '',
+  pregoeiro: '',
+  descricao_completa_objeto: '',
+  descricao_simplificada_objeto: '',
+  inicio_acolhimento_proposta: '',
+  limite_acolhimento_proposta: '',
+  abertura_proposta: '',
+  data_disputa: '',
+  clientes: [],
+  arquivo: '',
+  anexos: {
+    add: [],
+    remove: []
+  }
+})
+
+// Handler
+const onFormSubmit = async () => {
+  errors.value = {}
+  try {
+    schemaCreateEdital.parse(form.value)
+  } catch (err) {
+    if (err instanceof zod.ZodError) {
+      console.log(err.issues)
+      errors.value = err.issues.reduce((acc: any, current) => {
+        console.log(current.path)
+        const key = current.path
+        acc[key] = current
+        return acc
+      }, {})
+    }
+    return
+  }
+  console.log(errors.value)
+
+  /* const formData = new FormData()
+
+  publicacoes.value.forEach((item: PublicationProtocol, index: number) => {
+    if (item.id) formData.append(`publicacoes[${index}][id]`, item.id)
+    formData.append(
+      `publicacoes[${index}][date]`,
+      new Date(item.date).toDateString()
+    )
+    formData.append(`publicacoes[${index}][file]`, item.file)
+    formData.append(`publicacoes[${index}][cliente_id]`, item.cliente_id)
+    formData.append(
+      `publicacoes[${index}][meio_publicacao_id]`,
+      item.meio_publicacao_id
+    )
+  })
+
+  try {
+    if (!publication_id) await services.Publication.createPublication(formData)
+    else
+      await services.Publication.updatePublication(
+        formData,
+        String(publication_id)
+      )
+
+    router.push({ name: 'publications' })
+    toast.add({
+      severity: 'success',
+      summary: !publication_id
+        ? 'Publicação criado com sucesso!'
+        : 'Publicação atualizado com sucesso!',
+      detail: 'Dados salvos com sucesso.',
+      life: 3000
+    })
+  } catch (err) {
+    toast.add({
+      severity: 'error',
+      summary: !publication_id
+        ? 'Erro ao criar Publicação'
+        : 'Erro ao atualizar Publicação',
+      detail: (err as Error).message,
+      life: 3000
+    })
+  } */
+}
 
 // Filters Process Options
 const showContractRegime = computed(
