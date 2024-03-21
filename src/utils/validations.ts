@@ -223,6 +223,11 @@ const schemaCreateMeansPublication = z.object({
 const schemaUpdateMeansPublication = schemaCreateMeansPublication.partial()
 
 const schemaCreatePublication = z.object({
+  processo: z.object({
+    tipo_processo_id: z
+      .string({ required_error: 'Campo obrigatorio' })
+      .min(1, { message: 'Campo obrigatório' })
+  }),
   publicacoes: z.array(
     z.object({
       date: z.date({
@@ -245,56 +250,62 @@ const schemaUpdatePublication = schemaCreatePublication.partial()
 const schemaCreateEdital = z.object({
   modalidade_id: z
     .string({ required_error: '' })
-    .nonempty('Modalidade ID é obrigatório'),
-  regime_id: z
-    .string({ required_error: '' })
-    .nonempty('Regime ID é obrigatório'),
-  tipo_execucao_id: z
-    .string({ required_error: '' })
-    .nonempty('Tipo de Execução ID é obrigatório'),
-  modo_disputa_id: z
-    .string({ required_error: '' })
-    .nonempty('Modo de Disputa ID é obrigatório'),
-  julgamento_id: z
-    .string({ required_error: '' })
-    .nonempty('Julgamento ID é obrigatório'),
-  numero: z.string({ required_error: '' }).nonempty('Número é obrigatório'),
-  periodico: z
-    .string({ required_error: '' })
-    .nonempty('Periodicidade é obrigatória'),
+    .min(1, 'Modalidade ID é obrigatório'),
+  numero: z.string({ required_error: '' }).min(1, 'Número é obrigatório'),
+  periodico: z.boolean({ required_error: '' }),
   portal_compra_id: z
     .string({ required_error: '' })
-    .nonempty('Portal de Compra ID é obrigatório'),
-  numero_portal_compra: z.string({
-    required_error: 'Número do Portal de Compra é obrigatório'
+    .min(1, 'Portal de Compra ID é obrigatório'),
+  numero_portal_compra: z
+    .string({
+      required_error: 'Número do Portal de Compra é obrigatório',
+      invalid_type_error: 'Número do Portal de Compra é obrigatório'
+    })
+    .min(1, 'Número do Portal de Compra é obrigatório'),
+  numero_p_a: z.number({
+    required_error: 'Número do Processo Administrativo é obrigatório',
+    invalid_type_error: 'Apenas números são válidos'
   }),
-  numero_p_a: z.string({
-    required_error: 'Número do Processo Administrativo é obrigatório'
-  }),
-  pregoeiro: z.string({ required_error: 'Pregoeiro é obrigatório' }),
+  pregoeiro: z
+    .string({ required_error: 'Pregoeiro é obrigatório' })
+    .min(1, 'Campo obrigatório'),
   descricao_completa_objeto: z
     .string({ required_error: '' })
-    .nonempty('Descrição Completa do Objeto é obrigatória'),
+    .min(1, 'Descrição Completa do Objeto é obrigatória'),
   descricao_simplificada_objeto: z
     .string({ required_error: '' })
-    .nonempty('Descrição Simplificada do Objeto é obrigatória'),
-  inicio_acolhimento_proposta: z
-    .string({ required_error: '' })
-    .nonempty('Início do Acolhimento da Proposta é obrigatório'),
-  limite_acolhimento_proposta: z
-    .string({ required_error: '' })
-    .nonempty('Limite do Acolhimento da Proposta é obrigatório'),
-  abertura_proposta: z.string({
-    required_error: 'Abertura da Proposta é obrigatória'
+    .min(1, 'Descrição Simplificada do Objeto é obrigatória'),
+  inicio_acolhimento_proposta: z.date({
+    required_error: 'Campo Obrigatório',
+    invalid_type_error: 'Data Invalida'
   }),
-  data_disputa: z.string({ required_error: 'Data da Disputa é obrigatória' }),
+  limite_acolhimento_proposta: z.date({
+    required_error: 'Campo Obrigatório',
+    invalid_type_error: 'Data Invalida'
+  }),
+  abertura_proposta: z.date({
+    required_error: 'Abertura da Proposta é obrigatória',
+    invalid_type_error: 'Data Invalida'
+  }),
+  data_disputa: z.date({
+    required_error: 'Data da Disputa é obrigatória',
+    invalid_type_error: 'Data Invalida'
+  }),
   clientes: z
-    .array(z.string({ required_error: 'Clientes é obrigatório' }))
-    .nonempty(),
-  arquivo: z.string({ required_error: 'Arquivo é obrigatório' }),
+    .array(
+      z
+        .string({ required_error: 'Clientes é obrigatório' })
+        .min(1, 'Campo obrigatório')
+    )
+    .min(1, 'Campo obrigatório'),
+  arquivo: z
+    .array(z.any({ required_error: 'Arquivo é obrigatório' }), {
+      invalid_type_error: 'Campo obrigatório'
+    })
+    .min(1, 'Campo obrigatório'),
   anexos: z.object({
-    add: z.array(z.string()),
-    remove: z.array(z.string())
+    add: z.array(z.any()),
+    remove: z.array(z.any())
   })
 })
 

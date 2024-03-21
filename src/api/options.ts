@@ -1,4 +1,3 @@
-import { AuthProtocol } from '@/@types/auth'
 import type { AxiosInstance } from 'axios'
 import { handleError } from '@/utils/handleErrors'
 
@@ -105,7 +104,7 @@ export default class OptionService {
     return await this.httpConfig
       .get('/option/regime-contratacoes')
       .then((response) => {
-        return { ...response.data, option: 'hiringRegime' }
+        return { ...response.data, option: 'contractRegimes' }
       })
       .catch((err) => {
         const { message } = err.response.data
@@ -117,7 +116,7 @@ export default class OptionService {
     return await this.httpConfig
       .get('/option/portal-compras')
       .then((response) => {
-        return { ...response.data, option: 'purchasingPortal' }
+        return { ...response.data, option: 'purchasingPortals' }
       })
       .catch((err) => {
         const { message } = err.response.data
@@ -141,7 +140,7 @@ export default class OptionService {
     return await this.httpConfig
       .get('/option/modo-disputas')
       .then((response) => {
-        return { ...response.data, option: 'contestModes' }
+        return { ...response.data, option: 'disputeModes' }
       })
       .catch((err) => {
         const { message } = err.response.data
@@ -153,7 +152,7 @@ export default class OptionService {
     return await this.httpConfig
       .get('/option/criterio-julgamentos')
       .then((response) => {
-        return { ...response.data, option: 'judgingCriteria' }
+        return { ...response.data, option: 'judgmentCriteria' }
       })
       .catch((err) => {
         const { message } = err.response.data

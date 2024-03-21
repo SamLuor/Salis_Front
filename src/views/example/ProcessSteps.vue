@@ -68,7 +68,11 @@ onMounted(async () => {
           :current="currentProcess"
           @change-status="selectStatus"
         />
-        <component :is="active" :data="processData[keyCurrent]" />
+        <component
+          :is="active"
+          v-if="processData[keyCurrent]"
+          :data="processData[keyCurrent]"
+        />
       </div>
     </div>
   </div>

@@ -11,6 +11,7 @@ import PositionService from './position'
 import ClientService from './clients'
 import MeansPublicationService from './means_publication'
 import PublicationService from './publication'
+import EditalService from './edital'
 
 httpConfig.interceptors.request.use((config) => {
   const dataProcessor = SecureDataProcessor.dataProcessor
@@ -52,5 +53,6 @@ export default {
   Clients: new ClientService(httpConfig),
   MeansPublication: new MeansPublicationService(httpConfig),
   Publication: new PublicationService(httpConfig),
+  Edital: new EditalService(httpConfig),
   httpConfig
 }

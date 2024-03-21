@@ -22,66 +22,74 @@
                 <Dropdown
                   id="licitationType"
                   v-model="form.licitationType"
-                  :options="licitationTypes"
-                  option-label="name"
+                  :options="options.processModality"
+                  option-label="text"
                   option-value="value"
                   placeholder="Selecione uma modalidade"
                   class="w-full"
                   @change="onLicitationTypeChange"
                 />
-                <small class="p-error">{{ errors.licitationType }}</small>
+                <small class="p-error">{{
+                  errors.modalidade_id?.message
+                }}</small>
               </div>
               <div v-if="showContractRegime" class="p-field">
                 <label for="contractRegime">Regime da Contratação</label>
                 <Dropdown
                   id="contractRegime"
                   v-model="form.contractRegime"
-                  :options="contractRegimes"
-                  option-label="name"
+                  :options="options.contractRegimes"
+                  option-label="text"
                   option-value="value"
                   placeholder="Selecione um regime"
                   class="w-full"
                 />
-                <small class="p-error">{{ errors.contractRegime }}</small>
+                <small class="p-error">{{ errors.regime_id?.message }}</small>
               </div>
               <div v-if="showExecutionType" class="p-field">
                 <label for="executionType">Tipo de Execução</label>
                 <Dropdown
                   id="executionType"
                   v-model="form.executionType"
-                  :options="executionTypes"
-                  option-label="name"
+                  :options="options.executionTypes"
+                  option-label="text"
                   option-value="value"
                   placeholder="Selecione um tipo de execução"
                   class="w-full"
                 />
-                <small class="p-error">{{ errors.executionType }}</small>
+                <small class="p-error">{{
+                  errors.tipo_execucao_id?.message
+                }}</small>
               </div>
               <div v-if="showDisputeMode" class="p-field">
                 <label for="disputeMode">Modo de Disputa</label>
                 <Dropdown
                   id="disputeMode"
                   v-model="form.disputeMode"
-                  :options="disputeModes"
-                  option-label="name"
+                  :options="options.disputeModes"
+                  option-label="text"
                   option-value="value"
                   placeholder="Selecione um modo de disputa"
                   class="w-full"
                 />
-                <small class="p-error">{{ errors.disputeMode }}</small>
+                <small class="p-error">{{
+                  errors.modo_disputa_id?.message
+                }}</small>
               </div>
               <div v-if="showJudgmentCriteria" class="p-field">
                 <label for="judgmentCriteria">Critério de Julgamento</label>
                 <Dropdown
                   id="judgmentCriteria"
                   v-model="form.judgmentCriteria"
-                  :options="judgmentCriteria"
-                  option-label="name"
+                  :options="options.judgmentCriteria"
+                  option-label="text"
                   option-value="value"
                   placeholder="Selecione um critério de julgamento"
                   class="w-full"
                 />
-                <small class="p-error">{{ errors.judgmentCriteria }}</small>
+                <small class="p-error">{{
+                  errors.julgamento_id?.message
+                }}</small>
               </div>
             </div>
             <!-- Dados Edital -->
@@ -95,45 +103,49 @@
                   placeholder="Insira o número do edital"
                   class="w-full"
                 />
-                <small class="p-error">{{ errors.editalNumber }}</small>
+                <small class="p-error">{{ errors.numero?.message }}</small>
               </div>
               <div class="p-field">
                 <label for="isPeriodic">Edital é periódico? (anualmente)</label>
                 <Dropdown
                   id="isPeriodic"
                   v-model="form.isPeriodic"
-                  :options="periodicOptions"
-                  option-label="name"
+                  :options="options.periodicOptions"
+                  option-label="text"
                   option-value="value"
                   placeholder="Selecione"
                   class="w-full"
                 />
-                <small class="p-error">{{ errors.isPeriodic }}</small>
+                <small class="p-error">{{ errors.periodico?.message }}</small>
               </div>
               <div class="p-field">
                 <label for="purchasingPortal">Portal de Compras</label>
                 <Dropdown
                   id="purchasingPortal"
                   v-model="form.purchasingPortal"
-                  :options="purchasingPortals"
-                  option-label="name"
+                  :options="options.purchasingPortals"
+                  option-label="text"
                   option-value="value"
                   placeholder="Selecione um portal de compras"
                   class="w-full"
                 />
-                <small class="p-error">{{ errors.purchasingPortal }}</small>
+                <small class="p-error">{{
+                  errors.portal_compra_id?.message
+                }}</small>
               </div>
               <div class="p-field input-full">
                 <label for="licitationNumber"
-                  >Nº da Licicação no Portal de Compras</label
+                  >Nº da Licitação no Portal de Compras</label
                 >
-                <InputText
+                <InputNumber
                   id="licitationNumber"
                   v-model="form.licitationNumber"
                   placeholder="Insira o número da licitação"
                   class="w-full"
                 />
-                <small class="p-error">{{ errors.licitationNumber }}</small>
+                <small class="p-error">{{
+                  errors.numero_portal_compra?.message
+                }}</small>
               </div>
               <template
                 v-for="(authority, index) in form.contractingAuthorities"
@@ -150,13 +162,16 @@
                   <Dropdown
                     :id="`contractingAuthority-${index}`"
                     v-model="authority.value"
-                    :options="contractingAuthorities"
-                    option-label="name"
+                    :options="options.clients"
+                    option-label="text"
                     option-value="value"
                     placeholder="Selecione um órgão"
                     class="w-full"
                     @change="onContractingAuthorityChange(index)"
                   />
+                  <small v-if="errors.clientes[index]" class="p-error">{{
+                    errors.clientes[index]?.message
+                  }}</small>
                 </div>
                 <div class="p-field">
                   <label :for="`contractingAuthoritySigla-${index}`"
@@ -201,9 +216,7 @@
                   placeholder="Insira o número do processo administrativo"
                   class="w-full"
                 />
-                <small class="p-error">{{
-                  errors.administrativeProcessNumber
-                }}</small>
+                <small class="p-error">{{ errors.numero_p_a?.message }}</small>
               </div>
               <div class="p-field">
                 <label for="pregoeiro">Pregoeiro (A)</label>
@@ -213,7 +226,7 @@
                   placeholder="Insira o pregoeiro"
                   class="w-full"
                 />
-                <small class="p-error">{{ errors.pregoeiro }}</small>
+                <small class="p-error">{{ errors.pregoeiro?.message }}</small>
               </div>
               <div class="p-field input-full">
                 <label for="completeObjectDescription">
@@ -226,7 +239,7 @@
                   class="w-full"
                 />
                 <small class="p-error">{{
-                  errors.completeObjectDescription
+                  errors.descricao_completa_objeto?.message
                 }}</small>
               </div>
               <div class="p-field input-full">
@@ -240,39 +253,77 @@
                   class="w-full"
                 />
                 <small class="p-error">{{
-                  errors.simplifiedObjectDescription
+                  errors.descricao_simplificada_objeto?.message
                 }}</small>
               </div>
             </div>
             <div class="container-inputs-form">
               <h5 class="input-full">DESCRIÇÃO SIMPLIFICADA DO OBJETO</h5>
-              <div class="p-field">
+              <div class="p-field input-full">
                 <label for="fullEdition">Edital Completo (Edital)</label>
                 <FileUpload
-                  id="fullEdition"
-                  v-model="form.fullEdition"
+                  id="archive"
                   mode="basic"
-                  name="fullEdition"
-                  :auto="true"
+                  name="archive"
+                  class="w-full"
+                  custom-upload
+                  :multiple="false"
                   :choose-label="'Buscar anexo'"
                   :upload-label="'Upload'"
                   :cancel-label="'Cancelar'"
+                  @select="selectArchive"
+                  @clear="removeArchive"
                 />
-                <small class="p-error">{{ errors.fullEdition }}</small>
+                <small v-if="Array.isArray(errors.arquivo)" class="p-error">{{
+                  errors.arquivo?.map((error) => error.message)
+                }}</small>
               </div>
-              <div class="p-field">
+              <div class="p-field input-full">
                 <label for="otherAttachments">Outros Anexos</label>
                 <FileUpload
-                  id="otherAttachments"
-                  v-model="form.otherAttachments"
-                  mode="basic"
-                  name="otherAttachments"
-                  :auto="true"
+                  name="demo[]"
+                  :multiple="true"
+                  :max-file-size="1000000"
+                  class="w-full"
+                  custom-upload
                   :choose-label="'Buscar anexo'"
                   :upload-label="'Upload'"
                   :cancel-label="'Cancelar'"
-                />
-                <small class="p-error">{{ errors.otherAttachments }}</small>
+                  @select="selectFile"
+                  @remove="removeFile"
+                  @clear="clearFiles"
+                >
+                  <template #header="{ chooseCallback, clearCallback, files }">
+                    <div
+                      class="flex flex-wrap justify-content-between align-items-center flex-1 gap-2"
+                    >
+                      <div class="flex gap-2">
+                        <Button
+                          class="btn-select-files"
+                          icon="pi pi-file"
+                          rounded
+                          outlined
+                          @click="chooseCallback()"
+                        ></Button>
+                        <Button
+                          class="btn-clear-files"
+                          icon="pi pi-times"
+                          rounded
+                          outlined
+                          severity="danger"
+                          :disabled="!files || files.length === 0"
+                          @click="clearCallback()"
+                        ></Button>
+                      </div>
+                    </div>
+                  </template>
+                  <template #empty>
+                    <p>Arraste e solte arquivos aqui.</p>
+                  </template>
+                </FileUpload>
+                <small class="p-error">{{
+                  errors.anexos?.add?.map((error) => error.message + ' ')
+                }}</small>
               </div>
             </div>
             <!-- Datas -->
@@ -290,7 +341,7 @@
                   :show-time="true"
                 />
                 <small class="p-error">{{
-                  errors.startProposalReception
+                  errors.inicio_acolhimento_proposta?.message
                 }}</small>
               </div>
               <div class="p-field">
@@ -305,7 +356,7 @@
                   :show-time="true"
                 />
                 <small class="p-error">{{
-                  errors.limitProposalReception
+                  errors.limite_acolhimento_proposta?.message
                 }}</small>
               </div>
               <div class="p-field">
@@ -317,7 +368,9 @@
                   class="w-full"
                   :show-time="true"
                 />
-                <small class="p-error">{{ errors.openingProposal }}</small>
+                <small class="p-error">{{
+                  errors.abertura_proposta?.message
+                }}</small>
               </div>
               <div class="p-field">
                 <label for="disputeDateTime">Data e Hora da Disputa</label>
@@ -328,15 +381,15 @@
                   class="w-full"
                   :show-time="true"
                 />
-                <small class="p-error">{{ errors.disputeDateTime }}</small>
+                <small class="p-error">{{
+                  errors.data_disputa?.message
+                }}</small>
               </div>
             </div>
 
             <div class="input-full flex flex-row-reverse">
               <Button
-                :label="
-                  publication_id ? 'Avançar para Próxima Tarefa' : 'Criar'
-                "
+                :label="edital_id ? 'Avançar para Próxima Tarefa' : 'Criar'"
                 @click="onFormSubmit"
               />
             </div>
@@ -348,42 +401,56 @@
 </template>
 <script setup lang="ts">
 import { schemaCreateEdital } from '@/utils/validations'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import * as zod from 'zod'
+import services from '@/api/index'
+import { useToast } from 'primevue/usetoast'
+import { EditalProtocol, ErrorsEditalInterface } from '@/@types/edital'
+import {
+  FileUploadRemoveEvent,
+  FileUploadSelectEvent
+} from 'primevue/fileupload'
+import z from 'zod'
+import InputNumber from 'primevue/inputnumber'
 
 const route = useRoute()
-const publication_id = route.params?.id
+const toast = useToast()
+const edital_id = ''
 
-const errors = ref<{ [key: string]: any }>({})
+const errors = ref<ErrorsEditalInterface>({} as ErrorsEditalInterface)
 
-const form = ref({
-  licitationType: null,
-  contractRegime: null,
-  executionType: null,
-  disputeMode: null,
-  judgmentCriteria: null,
-  editalNumber: null,
-  isPeriodic: null,
-  purchasingPortal: null,
+const form = ref<EditalProtocol>({
+  licitationType: '',
+  contractRegime: '',
+  executionType: '',
+  disputeMode: '',
+  judgmentCriteria: '',
+  editalNumber: '',
+  isPeriodic: false,
+  purchasingPortal: '',
   licitationNumber: null,
   contractingAuthorities: [
     {
-      value: null,
-      sigla: null,
-      uasg: null
+      value: '',
+      sigla: '',
+      uasg: ''
     }
   ],
   administrativeProcessNumber: null,
-  pregoeiro: null,
+  pregoeiro: '',
   completeObjectDescription: '',
-  simplifiedObjectDescription: null,
+  simplifiedObjectDescription: '',
   startProposalReception: null,
   limitProposalReception: null,
   openingProposal: null,
   disputeDateTime: null,
   fullEdition: null,
-  otherAttachments: null
+  archive: null,
+  otherAttachments: {
+    add: [],
+    remove: []
+  }
 })
 
 const formState = ref({
@@ -412,166 +479,253 @@ const formState = ref({
   }
 })
 
-// Handler
+// Handlers
 const onFormSubmit = async () => {
-  errors.value = {}
+  const dataFormatted = copyFormDataToFormState(form.value)
+
+  const schema = schemaCreateEdital.extend({
+    ...(showContractRegime.value && {
+      regime_id: z
+        .string({ required_error: '' })
+        .min(1, 'Regime ID é obrigatório')
+    }),
+    ...(showDisputeMode.value && {
+      tipo_execucao_id: z
+        .string({ required_error: '' })
+        .min(1, 'Tipo de Execução ID é obrigatório')
+    }),
+    ...(showDisputeMode.value && {
+      modo_disputa_id: z
+        .string({ required_error: '' })
+        .min(1, 'Modo de Disputa ID é obrigatório'),
+      julgamento_id: z
+        .string({ required_error: '' })
+        .min(1, 'Julgamento ID é obrigatório')
+    })
+  })
+
+  errors.value = {} as ErrorsEditalInterface
   try {
-    schemaCreateEdital.parse(form.value)
+    schema.parse(dataFormatted)
   } catch (err) {
     if (err instanceof zod.ZodError) {
-      console.log(err.issues)
       errors.value = err.issues.reduce((acc: any, current) => {
-        console.log(current.path)
-        const key = current.path
-        acc[key] = current
+        const [path, index] = current.path
+        if (!isNaN(+index)) {
+          acc[String(path)] = acc[String(path)] ?? []
+          acc[String(path)].push(current)
+        } else acc[String(path)] = current
         return acc
       }, {})
     }
     return
   }
-  console.log(errors.value)
-
-  /* const formData = new FormData()
-
-  publicacoes.value.forEach((item: PublicationProtocol, index: number) => {
-    if (item.id) formData.append(`publicacoes[${index}][id]`, item.id)
-    formData.append(
-      `publicacoes[${index}][date]`,
-      new Date(item.date).toDateString()
-    )
-    formData.append(`publicacoes[${index}][file]`, item.file)
-    formData.append(`publicacoes[${index}][cliente_id]`, item.cliente_id)
-    formData.append(
-      `publicacoes[${index}][meio_publicacao_id]`,
-      item.meio_publicacao_id
-    )
-  })
+  const formData = onFormData(form.value)
 
   try {
-    if (!publication_id) await services.Publication.createPublication(formData)
-    else
-      await services.Publication.updatePublication(
-        formData,
-        String(publication_id)
-      )
+    if (!edital_id) await services.Edital.create(formData)
+    else await services.Edital.update(formData, String(edital_id))
 
-    router.push({ name: 'publications' })
+    //router.push({ name: 'publications' })
     toast.add({
       severity: 'success',
-      summary: !publication_id
-        ? 'Publicação criado com sucesso!'
-        : 'Publicação atualizado com sucesso!',
+      summary: !edital_id
+        ? 'Edital criado com sucesso!'
+        : 'Edital atualizado com sucesso!',
       detail: 'Dados salvos com sucesso.',
       life: 3000
     })
   } catch (err) {
     toast.add({
       severity: 'error',
-      summary: !publication_id
-        ? 'Erro ao criar Publicação'
-        : 'Erro ao atualizar Publicação',
+      summary: !edital_id ? 'Erro ao criar Edital' : 'Erro ao atualizar Edital',
       detail: (err as Error).message,
       life: 3000
     })
-  } */
+  }
+}
+
+const onFormData = (form: EditalProtocol) => {
+  const formData = new FormData()
+  formData.append('modalidade_id', form.licitationType)
+  if (showContractRegime.value) {
+    formData.append('regime_id', form.contractRegime)
+  }
+  if (showExecutionType.value) {
+    formData.append('tipo_execucao_id', form.executionType)
+  }
+  if (showDisputeMode.value) {
+    formData.append('modo_disputa_id', form.disputeMode)
+  }
+  if (showJudgmentCriteria.value) {
+    formData.append('julgamento_id', form.judgmentCriteria)
+  }
+  formData.append('numero', form.editalNumber)
+  formData.append('periodico', form.isPeriodic ? 'true' : 'false')
+  formData.append('portal_compra_id', form.purchasingPortal)
+  formData.append('numero_portal_compra', String(form.licitationNumber))
+  formData.append('numero_p_a', String(form.administrativeProcessNumber))
+  formData.append('pregoeiro', form.pregoeiro)
+  formData.append('descricao_completa_objeto', form.completeObjectDescription)
+  formData.append(
+    'descricao_simplificada_objeto',
+    form.simplifiedObjectDescription
+  )
+  formData.append(
+    'inicio_acolhimento_proposta',
+    form.startProposalReception ? form.startProposalReception.toISOString() : ''
+  )
+  formData.append(
+    'limite_acolhimento_proposta',
+    form.limitProposalReception ? form.limitProposalReception.toISOString() : ''
+  )
+  formData.append(
+    'abertura_proposta',
+    form.openingProposal ? form.openingProposal.toISOString() : ''
+  )
+  formData.append(
+    'data_disputa',
+    form.disputeDateTime ? form.disputeDateTime.toISOString() : ''
+  )
+  if (!form.archive?.path && Array.isArray(form.archive)) {
+    formData.append('arquivo', form.archive[0])
+  }
+  for (let index = 0; index < form.contractingAuthorities.length; index++) {
+    const client = form.contractingAuthorities[index]
+    if (multipleContractings.value) {
+      formData.append(`clientes[${index}]`, client.value)
+    } else {
+      formData.append(`clientes[${index}]`, client.value)
+      break
+    }
+  }
+  form.otherAttachments.add.forEach((attachment, index) => {
+    formData.append(`anexos[add][${index}]`, attachment)
+  })
+  form.otherAttachments.remove.forEach((attachment, index) => {
+    formData.append(`anexos[remove][${index}]`, attachment)
+  })
+  return formData
+}
+
+function copyFormDataToFormState(form: EditalProtocol) {
+  const data: any = {
+    anexos: {}
+  }
+  data.modalidade_id = form.licitationType
+  data.regime_id = form.contractRegime
+  data.tipo_execucao_id = form.executionType
+  data.modo_disputa_id = form.disputeMode
+  data.julgamento_id = form.judgmentCriteria
+  data.numero = form.editalNumber
+  data.periodico = form.isPeriodic
+  data.portal_compra_id = form.purchasingPortal
+  data.numero_portal_compra = form.licitationNumber
+  data.numero_p_a = form.administrativeProcessNumber
+  data.pregoeiro = form.pregoeiro
+  data.descricao_completa_objeto = form.completeObjectDescription
+  data.descricao_simplificada_objeto = form.simplifiedObjectDescription
+  data.inicio_acolhimento_proposta = form.startProposalReception
+  data.limite_acolhimento_proposta = form.limitProposalReception
+  data.abertura_proposta = form.openingProposal
+  data.data_disputa = form.disputeDateTime
+  data.clientes = form.contractingAuthorities.map((client) => client.value)
+  data.arquivo = form.archive
+  data.anexos.add = form.otherAttachments.add
+  data.anexos.remove = form.otherAttachments.remove
+  return data
 }
 
 // Filters Process Options
-const showContractRegime = computed(
-  () =>
-    form.value.licitationType !== 'Leilão' && form.value.licitationType !== null
-)
-const showExecutionType = computed(() =>
-  ['Execução de obras', 'Serviços de engenharia'].includes(
-    String(form.value.contractRegime)
+const showContractRegime = computed(() => {
+  const modality = options.processModality.find(
+    (element) => form.value.licitationType === element.value
   )
-)
-const showDisputeMode = computed(() =>
-  ['Pregão', 'Concorrência'].includes(String(form.value.licitationType))
-)
-const showJudgmentCriteria = computed(() =>
-  ['Pregão', 'Concorrência'].includes(String(form.value.licitationType))
-)
-const comprasnet = computed(() => form.value.purchasingPortal === 'Comprasnet')
-const multipleContractings = computed(() =>
-  ['Pregão SRP', 'Concorrência'].includes(String(form.value.licitationType))
-)
+  return modality?.text !== 'Leilão' && form.value.licitationType
+})
+const showExecutionType = computed(() => {
+  const executionSelected = options.contractRegimes.find(
+    (element) => element.value === form.value.contractRegime
+  )
+  return ['Execução de obras', 'Serviços de engenharia'].includes(
+    String(executionSelected?.text)
+  )
+})
+const showDisputeMode = computed(() => {
+  const modality = options.processModality.find(
+    (element) => form.value.licitationType === element.value
+  )
+  return ['Pregão', 'Pregão SRP', 'Concorrência', 'Concorrência SRP'].includes(
+    String(modality?.text)
+  )
+})
+const showJudgmentCriteria = computed(() => {
+  const modality = options.processModality.find(
+    (element) => form.value.licitationType === element.value
+  )
+  return ['Pregão', 'Pregão SRP', 'Concorrência', 'Concorrência SRP'].includes(
+    String(modality?.text)
+  )
+})
+const comprasnet = computed(() => {
+  const purchasingType = options.purchasingPortals.find(
+    (element) => form.value.purchasingPortal === element.value
+  )
+  return ['Comprasnet'].includes(String(purchasingType?.text))
+})
+const multipleContractings = computed(() => {
+  const modality = options.processModality.find(
+    (element) => form.value.licitationType === element.value
+  )
+  return ['Pregão SRP', 'Concorrência'].includes(String(modality?.text))
+})
+
+//interfaces
+type OptionType = {
+  value: string
+  text: string
+}
+
+interface OptionsObject {
+  [key: string]: OptionType[]
+}
 
 // Options
-const licitationTypes = ref([
-  { name: 'Pregão SRP', value: 'Pregão SRP' },
-  { name: 'Pregão', value: 'Pregão' },
-  { name: 'Concorrência', value: 'Concorrência' },
-  { name: 'Concorrência SRP', value: 'Concorrência SRP' },
-  { name: 'Diálogo competitivo', value: 'Diálogo competitivo' },
-  { name: 'Credenciamento', value: 'Credenciamento' },
-  { name: 'Leilão', value: 'Leilão' }
-])
-
-const contractRegimes = ref([
-  { name: 'Fornecimento', value: 'Fornecimento' },
-  { name: 'Serviço', value: 'Serviço' },
-  { name: 'Fornecimento e serviço', value: 'Fornecimento e serviço' },
-  { name: 'Execução de obras', value: 'Execução de obras' },
-  { name: 'Serviços de engenharia', value: 'Serviços de engenharia' }
-])
-
-const executionTypes = ref([
-  { name: 'Preço unitário', value: 'Preço unitário' },
-  { name: 'Preço global', value: 'Preço global' }
-])
-
-const disputeModes = ref([
-  { name: 'Aberto', value: 'Aberto' },
-  { name: 'Fechado', value: 'Fechado' },
-  { name: 'Randômico', value: 'Randômico' }
-])
-
-const judgmentCriteria = ref([
-  { name: 'Menor preço por item', value: 'Menor preço por item' },
-  { name: 'Menor preço por grupo', value: 'Menor preço por grupo' },
-  {
-    name: 'Menor preço por item e por grupo',
-    value: 'Menor preço por item e por grupo'
-  },
-  { name: 'Maior desconto', value: 'Maior desconto' }
-])
-
-const periodicOptions = ref([
-  { name: 'Sim', value: 'true' },
-  { name: 'Não', value: 'false' }
-])
-
-const purchasingPortals = ref([
-  { name: 'Comprasnet', value: 'Comprasnet' },
-  { name: 'e-licititações (BB)', value: 'e-licititações (BB)' },
-  { name: 'SIGA', value: 'SIGA' }
-])
-
-const contractingAuthorities = ref<[{ value: any; sigla: any; uasg: any }]>([
-  { value: '', sigla: '', uasg: '' }
-])
+const options = reactive<OptionsObject>({
+  processModality: [] as OptionType[],
+  contractRegimes: [] as OptionType[],
+  executionTypes: [] as OptionType[],
+  disputeModes: [] as OptionType[],
+  judgmentCriteria: [] as OptionType[],
+  periodicOptions: [
+    { text: 'Sim', value: 'true' },
+    { text: 'Não', value: '' }
+  ],
+  purchasingPortals: [] as OptionType[],
+  contractingAuthorities: [] as OptionType[],
+  clients: [] as OptionType[]
+})
 // end options
 
 const onContractingAuthorityChange = (index: number) => {
-  const selectedAuthority = contractingAuthorities.value.find(
-    (authority) =>
-      authority.value === form.value.contractingAuthorities[index].value
+  const selectedAuthority = options.clients.find(
+    (client) => client.value === form.value.contractingAuthorities[index].value
   )
 
   if (selectedAuthority) {
-    form.value.contractingAuthorities[index].sigla = selectedAuthority.sigla
+    form.value.contractingAuthorities[index].sigla =
+      selectedAuthority.text.split('- ')[1]
     if (comprasnet.value) {
-      form.value.contractingAuthorities[index].uasg = selectedAuthority.uasg
+      form.value.contractingAuthorities[index].uasg = 'Aleatório'
     }
   }
 }
 
 const addContractingAuthority = () => {
   form.value.contractingAuthorities.push({
-    value: null,
-    sigla: null,
-    uasg: null
+    value: '',
+    sigla: '',
+    uasg: ''
   })
 }
 
@@ -580,13 +734,68 @@ const onLicitationTypeChange = () => {
   if (!multipleContractings.value) {
     form.value.contractingAuthorities = [
       {
-        value: null,
-        sigla: null,
-        uasg: null
+        value: '',
+        sigla: '',
+        uasg: ''
       }
     ]
   }
 }
+
+//File upload handlers
+const selectFile = (event: FileUploadSelectEvent) => {
+  form.value.otherAttachments.add = event.files
+}
+
+const clearFiles = () => {
+  form.value.otherAttachments.add = []
+}
+
+const removeFile = (event: FileUploadRemoveEvent) => {
+  form.value.otherAttachments.add = event.files
+}
+
+const selectArchive = (event: FileUploadSelectEvent) => {
+  form.value.archive = event.files
+}
+const removeArchive = () => {
+  form.value.archive = []
+}
+
+const deletefiles = (path: string) => {
+  form.value.otherAttachments.remove.push(path)
+}
+
+const handlePopulateOptions = async () => {
+  await Promise.allSettled([
+    services.Option.getContestModes(),
+    services.Option.getProcessModality(),
+    services.Option.getHiringRegime(),
+    services.Option.getExecutionTypes(),
+    services.Option.getContestModes(),
+    services.Option.getJudgingCriteria(),
+    services.Option.getPurchasingPortal(),
+    services.Option.getClients()
+  ]).then((results) => {
+    results.forEach((option) => {
+      if (option.status == 'fulfilled') {
+        const key: string = option.value.option
+        options[key] = option.value.data
+      } else {
+        toast.add({
+          severity: 'error',
+          summary: 'Error ao carregar opções',
+          detail: option.reason,
+          life: 3000
+        })
+      }
+    })
+  })
+}
+
+onMounted(async () => {
+  await handlePopulateOptions()
+})
 </script>
 
 <style>
@@ -607,6 +816,18 @@ const onLicitationTypeChange = () => {
 }
 .p-error {
   @apply text-red-400 !important;
+}
+.btn-select-files {
+  @apply text-primary-800 hover:bg-gray-200 !important;
+}
+.btn-clear-files {
+  @apply hover:bg-red-200 !important;
+}
+.p-badge.p-component.p-badge-warning.p-fileupload-file-badge {
+  @apply hidden;
+}
+.p-button.p-button-text.p-fileupload-file-remove {
+  @apply hover:bg-gray-200 !important;
 }
 </style>
 
