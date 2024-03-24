@@ -1,4 +1,5 @@
 export interface Publications {
+  processo: { tipo_processo_id: string }
   publicacoes: PublicationProtocol[]
 }
 

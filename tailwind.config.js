@@ -23,7 +23,7 @@ module.exports = {
             container: 'rgb(243, 246, 251)',
             'container-header': 'rgb(214, 220, 229)',
             'container-header-dark': 'rgb(46, 72, 94)',
-            'sub-container': 'rgb(11, 45, 72)',
+            'sub-container': 'rgb(0, 121, 142)',
             card: 'rgb(243, 246, 251)',
             stroke: 'rgb(225, 230, 235)',
             'nav-header': '#E4EAEE'

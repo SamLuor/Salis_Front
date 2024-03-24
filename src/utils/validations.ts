@@ -223,6 +223,11 @@ const schemaCreateMeansPublication = z.object({
 const schemaUpdateMeansPublication = schemaCreateMeansPublication.partial()
 
 const schemaCreatePublication = z.object({
+  processo: z.object({
+    tipo_processo_id: z
+      .string({ required_error: 'Campo obrigatorio' })
+      .min(1, { message: 'Campo obrigatório' })
+  }),
   publicacoes: z.array(
     z.object({
       date: z.date({
@@ -242,6 +247,76 @@ const schemaCreatePublication = z.object({
 
 const schemaUpdatePublication = schemaCreatePublication.partial()
 
+const schemaCreateEdital = z.object({
+  modalidade_id: z
+    .string({ required_error: '' })
+    .min(1, 'Modalidade é obrigatório'),
+  numero: z
+    .number({
+      required_error: '',
+      invalid_type_error: 'Apenas números são válidos'
+    })
+    .min(1, 'Número é obrigatório'),
+  periodico: z.string({
+    required_error: 'Campo obrigatório',
+    invalid_type_error: 'Selecione uma opção'
+  }),
+  portal_compra_id: z
+    .string({ required_error: '' })
+    .min(1, 'Portal de Compra é obrigatório'),
+  numero_portal_compra: z
+    .number({
+      required_error: 'Número do Portal de Compra é obrigatório',
+      invalid_type_error: 'Número do Portal de Compra é obrigatório'
+    })
+    .min(1, 'Número do Portal de Compra é obrigatório'),
+  numero_p_a: z.number({
+    required_error: 'Número do Processo Administrativo é obrigatório',
+    invalid_type_error: 'Apenas números são válidos'
+  }),
+  pregoeiro: z
+    .string({ required_error: 'Pregoeiro é obrigatório' })
+    .min(1, 'Campo obrigatório'),
+  descricao_completa_objeto: z
+    .string({ required_error: '' })
+    .min(1, 'Descrição Completa do Objeto é obrigatória'),
+  descricao_simplificada_objeto: z
+    .string({ required_error: '' })
+    .min(1, 'Descrição Simplificada do Objeto é obrigatória'),
+  inicio_acolhimento_proposta: z.date({
+    required_error: 'Campo Obrigatório',
+    invalid_type_error: 'Data Invalida'
+  }),
+  limite_acolhimento_proposta: z.date({
+    required_error: 'Campo Obrigatório',
+    invalid_type_error: 'Data Invalida'
+  }),
+  abertura_proposta: z.date({
+    required_error: 'Abertura da Proposta é obrigatória',
+    invalid_type_error: 'Data Invalida'
+  }),
+  data_disputa: z.date({
+    required_error: 'Data da Disputa é obrigatória',
+    invalid_type_error: 'Data Invalida'
+  }),
+  clientes: z
+    .array(
+      z
+        .string({ required_error: 'Clientes é obrigatório' })
+        .min(1, 'Campo obrigatório')
+    )
+    .min(1, 'Campo obrigatório'),
+  arquivo: z
+    .array(z.any({ required_error: 'Arquivo é obrigatório' }), {
+      invalid_type_error: 'Campo obrigatório'
+    })
+    .min(1, 'Campo obrigatório'),
+  anexos: z.object({
+    add: z.array(z.any()),
+    remove: z.array(z.any())
+  })
+})
+
 export {
   schemaLogin,
   schemaCreateUser,
@@ -254,5 +329,6 @@ export {
   schemaCreateMeansPublication,
   schemaUpdateMeansPublication,
   schemaCreatePublication,
-  schemaUpdatePublication
+  schemaUpdatePublication,
+  schemaCreateEdital
 }

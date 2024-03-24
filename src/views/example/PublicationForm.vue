@@ -1,6 +1,20 @@
 <template>
   <div class="grid overflow-hidden">
-    <div class="w-full pl-2">
+    <div class="w-full relative">
+      <span
+        class="flex text-sm bg-gray-200 gap-1 border-none p-2 items-center rounded-md absolute right-0 cursor-pointer"
+        style="border-radius: 4px"
+        @click="visible = true"
+      >
+        Tipo de processo:
+        <span v-if="nameTypeProcess" class="font-semibold">
+          {{ nameTypeProcess }}
+        </span>
+        <span v-else>Nenhuma opção selecionada</span>
+        <i class="fa-solid fa-arrows-rotate ml-1 text-blue-600 text-base" />
+      </span>
+    </div>
+    <div class="w-full pl-2 pt-4">
       <div class="card mb-0 bg-transparent">
         <div class="px-4 container-area-form">
           <div class="section-form">
@@ -15,13 +29,13 @@
           </div>
           <form class="container-form-bussiness">
             <template
-              v-for="index in publicacoes?.length"
+              v-for="index in publicacoes.publicacoes?.length"
               :key="'publication-'.concat(String(index))"
             >
               <div class="flex flex-column gap-2 w-full">
                 <label for="ddd">Data</label>
                 <Calendar
-                  v-model="publicacoes[index - 1].date"
+                  v-model="publicacoes.publicacoes[index - 1].date"
                   show-icon
                   date-format="dd/mm/yy"
                 />
@@ -37,27 +51,32 @@
               <div class="flex flex-column gap-2 w-full">
                 <label for="numero">Arquivo</label>
                 <FileUpload
-                  v-if="!publication_id || !publicacoes[index - 1].file_path"
-                  v-model="publicacoes[index - 1].file"
+                  v-if="
+                    !publication_id ||
+                    !publicacoes.publicacoes[index - 1].file_path
+                  "
+                  v-model="publicacoes.publicacoes[index - 1].file"
                   mode="basic"
                   name="demo[]"
                   class="w-full"
                   :choose-label="'Selecione um arquivo'"
                   :max-file-size="1000000"
-                  @select="(event) => selectFile(event, index - 1)"
+                  @select="(event: any) => selectFile(event, index - 1)"
                 />
                 <span v-else class="flex gap-2">
                   <Button
                     icon="pi pi-eye"
                     class="w-full"
                     :label="
-                      publicacoes[index - 1].file_path
+                      publicacoes.publicacoes[index - 1].file_path
                         ?.split('arquivos/')
                         .join('')
                     "
                     @click="
                       () =>
-                        openDocument(String(publicacoes[index - 1].file_path))
+                        openDocument(
+                          String(publicacoes.publicacoes[index - 1].file_path)
+                        )
                     "
                   />
                   <Button
@@ -79,7 +98,7 @@
               <div class="flex flex-column gap-2 input-full w-full">
                 <label for="pessoa">Cliente</label>
                 <Dropdown
-                  v-model="publicacoes[index - 1].cliente_id"
+                  v-model="publicacoes.publicacoes[index - 1].cliente_id"
                   :options="clients_options"
                   option-label="name"
                   option-value="value"
@@ -100,7 +119,9 @@
               <div class="flex flex-column gap-2 input-full w-full">
                 <label for="pessoa">Meio de Publicação</label>
                 <Dropdown
-                  v-model="publicacoes[index - 1].meio_publicacao_id"
+                  v-model="
+                    publicacoes.publicacoes[index - 1].meio_publicacao_id
+                  "
                   :options="means_options"
                   option-label="name"
                   option-value="value"
@@ -119,7 +140,7 @@
                 }}</small>
               </div>
               <span
-                v-if="publicacoes.length > index"
+                v-if="publicacoes.publicacoes.length > index"
                 class="input-full relative flex items-center"
                 style="border: 1px solid #e2e2e2"
               >
@@ -137,7 +158,7 @@
               label="Adicionar Publicação"
               @click="
                 () =>
-                  publicacoes.push({
+                  publicacoes.publicacoes.push({
                     cliente_id: '',
                     date: '',
                     file: '',
@@ -156,9 +177,44 @@
       </div>
     </div>
   </div>
+  <Dialog
+    v-model:visible="visible"
+    modal
+    :closable="false"
+    header="Selecione o tipo do Processo"
+    :style="{ width: '50rem' }"
+  >
+    <div class="flex align-items-center gap-3 mb-2">
+      <div class="flex flex-column gap-2 input-full w-full">
+        <label for="type_process">Tipo de Processo</label>
+        <Dropdown
+          v-model="type_process"
+          :options="process_options"
+          option-label="name"
+          option-value="value"
+          empty-message="Sem tipos de processos cadastrados"
+          placeholder="Selecione um tipo de processo"
+          class="w-full"
+        />
+        <small v-if="!errors?.processo?.tipo_processo_id" id="pessoa-help"
+          >Selecione o tipo de processo.</small
+        >
+        <small v-else id="text-error" class="p-error">{{
+          errors?.processo?.tipo_processo_id?.message || '&nbsp;'
+        }}</small>
+      </div>
+    </div>
+    <div class="flex flex-row-reverse">
+      <Button
+        label="Confirmar"
+        autofocus
+        @click="confirmSelectType(type_process)"
+      />
+    </div>
+  </Dialog>
 </template>
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import {
   schemaCreatePublication,
   schemaUpdatePublication
@@ -167,12 +223,14 @@ import { useRoute } from 'vue-router'
 import services from '@/api/index'
 import { useToast } from 'primevue/usetoast'
 import router from '@/router'
-import { PublicationProtocol } from '@/@types/publication'
+import { PublicationProtocol, Publications } from '@/@types/publication'
 import Calendar from 'primevue/calendar'
 import { FileUploadSelectEvent } from 'primevue/fileupload'
 import * as zod from 'zod'
+import Dialog from 'primevue/dialog'
+import Button from 'primevue/button'
 
-const props = defineProps<{ data: PublicationProtocol[] }>()
+const props = defineProps<{ data: Publications }>()
 
 const toast = useToast()
 const route = useRoute()
@@ -181,28 +239,65 @@ const schema = publication_id
   ? schemaUpdatePublication
   : schemaCreatePublication
 
+const visible = ref<boolean>(false)
+
 const errors = ref<{ [key: string]: any }>({})
 
-const clients_options = ref([])
-const means_options = ref([])
+interface Options {
+  value: string
+  name: string
+}
 
-const publicacoes = ref<PublicationProtocol[]>(
+const clients_options = ref<Options[]>([])
+const means_options = ref<Options[]>([])
+const process_options = ref<Options[]>([])
+
+const type_process = ref('')
+
+const publicacoes = ref<Publications>(
   Array.isArray(props.data)
-    ? props.data
-    : [{ cliente_id: '', date: '', file: '', meio_publicacao_id: '' }]
+    ? {
+        processo: {
+          tipo_processo_id: ' '
+        },
+        publicacoes: props.data
+      }
+    : {
+        publicacoes: [
+          { cliente_id: '', date: '', file: '', meio_publicacao_id: '' }
+        ],
+        processo: {
+          tipo_processo_id: ''
+        }
+      }
 )
+
+const nameTypeProcess = computed(() => {
+  if (!type_process.value) return null
+
+  return process_options.value.find(
+    (element: Options) =>
+      element.value === publicacoes.value.processo.tipo_processo_id
+  )?.name
+})
+
+const confirmSelectType = (value: string) => {
+  publicacoes.value.processo.tipo_processo_id = value
+  type_process.value = value
+  visible.value = false
+}
 
 const selectFile = (event: any, index: number) => {
   const eventFileSelected = event as FileUploadSelectEvent
-  publicacoes.value[index].file = eventFileSelected.files[0]
+  publicacoes.value.publicacoes[index].file = eventFileSelected.files[0]
 }
 
 const removeFile = (index: number) => {
-  publicacoes.value[index].file_path = ''
+  publicacoes.value.publicacoes[index].file_path = ''
 }
 
 const removePublication = (index: number) => {
-  publicacoes.value.splice(index, 1)
+  publicacoes.value.publicacoes.splice(index, 1)
 }
 
 const openDocument = (path: string) => {
@@ -221,9 +316,7 @@ const openDocument = (path: string) => {
 const onFormSubmit = async () => {
   errors.value = {}
   try {
-    schema.parse({
-      publicacoes: publicacoes.value
-    })
+    schema.parse(publicacoes.value)
   } catch (err) {
     if (err instanceof zod.ZodError) {
       console.log(err.issues)
@@ -238,19 +331,26 @@ const onFormSubmit = async () => {
 
   const formData = new FormData()
 
-  publicacoes.value.forEach((item: PublicationProtocol, index: number) => {
-    if (item.id) formData.append(`publicacoes[${index}][id]`, item.id)
-    formData.append(
-      `publicacoes[${index}][date]`,
-      new Date(item.date).toDateString()
-    )
-    formData.append(`publicacoes[${index}][file]`, item.file)
-    formData.append(`publicacoes[${index}][cliente_id]`, item.cliente_id)
-    formData.append(
-      `publicacoes[${index}][meio_publicacao_id]`,
-      item.meio_publicacao_id
-    )
-  })
+  formData.append(
+    'processo[tipo_processo_id]',
+    publicacoes.value.processo.tipo_processo_id
+  )
+
+  publicacoes.value.publicacoes.forEach(
+    (item: PublicationProtocol, index: number) => {
+      if (item.id) formData.append(`publicacoes[${index}][id]`, item.id)
+      formData.append(
+        `publicacoes[${index}][date]`,
+        new Date(item.date).toDateString()
+      )
+      formData.append(`publicacoes[${index}][file]`, item.file)
+      formData.append(`publicacoes[${index}][cliente_id]`, item.cliente_id)
+      formData.append(
+        `publicacoes[${index}][meio_publicacao_id]`,
+        item.meio_publicacao_id
+      )
+    }
+  )
 
   try {
     if (!publication_id) await services.Publication.createPublication(formData)
@@ -284,7 +384,8 @@ const onFormSubmit = async () => {
 const receiveOptions = async () => {
   await Promise.allSettled([
     services.Clients.getClients(),
-    services.MeansPublication.getMeansPublications()
+    services.MeansPublication.getMeansPublications(),
+    services.Option.getProcessTypes()
   ]).then((results) => {
     results.forEach((option, index) => {
       if (option.status == 'fulfilled') {
@@ -297,6 +398,11 @@ const receiveOptions = async () => {
           means_options.value = option.value.data.map((mean: any) => ({
             name: mean.nome,
             value: mean.id
+          }))
+        } else if (index == 2) {
+          process_options.value = option.value.data.map((type: any) => ({
+            name: type.text,
+            value: type.value
           }))
         }
       } else {
@@ -313,6 +419,7 @@ const receiveOptions = async () => {
 
 onMounted(async () => {
   receiveOptions()
+  if (!props.data) visible.value = true
 })
 </script>
 
