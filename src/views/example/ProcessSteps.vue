@@ -15,7 +15,7 @@ const publication_id = route.params?.id
 const active = shallowRef(PublicationForm)
 const processData = ref<{ [key: string]: any }>({})
 const keyCurrent = ref<string>('publicacoes')
-const step = ref(2)
+const step = ref(1)
 const currentProcess = ref(0)
 
 interface ComponentsMap {
@@ -70,7 +70,11 @@ onMounted(async () => {
         />
         <component
           :is="active"
-          v-if="!publication_id || processData[keyCurrent]"
+          v-if="
+            !publication_id ||
+            processData['publicacoes'] ||
+            processData['edital']
+          "
           :id="publication_id"
           :data="processData[keyCurrent]"
         />
