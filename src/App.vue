@@ -109,13 +109,21 @@ const menu = [
         icon: 'fa-solid fa-users',
         to: '/publicacoes'
       }
-    ].filter((route) => {
+    ].filter((route: ItemMenu) => {
       return authStore.user.permissions.some(
         (role) => role.nome === route?.role || !route?.role
       )
     })
   }
 ]
+
+interface ItemMenu {
+  label: string
+  icon: string
+  to: string
+  role?: string // A propriedade 'role' é opcional
+}
+
 const containerClass = computed(() => {
   return {
     'layout-overlay': store.layoutMode === 'overlay',
