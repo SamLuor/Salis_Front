@@ -780,7 +780,7 @@ const onLicitationTypeChange = () => {
 }
 
 //File upload handlers
-const selectFile = (event: FileUploadSelectEvent) => {
+const selectFile = (event: any) => {
   form.value.otherAttachments.add = event.files
 }
 
@@ -792,7 +792,7 @@ const removeFile = (event: FileUploadRemoveEvent) => {
   form.value.otherAttachments.add = event.files
 }
 
-const selectArchive = (event: FileUploadSelectEvent) => {
+const selectArchive = (event: any) => {
   form.value.archive = event.files
 }
 
