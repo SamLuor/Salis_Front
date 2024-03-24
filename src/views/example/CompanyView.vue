@@ -35,7 +35,7 @@
               style="min-width: 12rem"
             >
               <template #body="{ data }: { data: CompanyProtocol }">
-                <div>{{ data.nome_fantasia }} - {{ data.sigla }}</div>
+                <div>{{ data?.nome_fantasia }} - {{ data?.sigla }}</div>
               </template></Column
             >
             <Column field="email" header="Email" style="min-width: 12rem" />

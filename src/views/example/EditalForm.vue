@@ -476,7 +476,7 @@ const form = ref<EditalProtocol>({
   openingProposal: null,
   disputeDateTime: null,
   fullEdition: null,
-  archive: null,
+  archive: [],
   otherAttachments: {
     current: [],
     add: [],
@@ -503,7 +503,7 @@ const formState = ref({
   abertura_proposta: '',
   data_disputa: '',
   clientes: [],
-  arquivo: '',
+  arquivo: [],
   anexos: {
     add: [],
     remove: []
