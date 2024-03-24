@@ -250,14 +250,22 @@ const schemaUpdatePublication = schemaCreatePublication.partial()
 const schemaCreateEdital = z.object({
   modalidade_id: z
     .string({ required_error: '' })
-    .min(1, 'Modalidade ID é obrigatório'),
-  numero: z.string({ required_error: '' }).min(1, 'Número é obrigatório'),
-  periodico: z.boolean({ required_error: '' }),
+    .min(1, 'Modalidade é obrigatório'),
+  numero: z
+    .number({
+      required_error: '',
+      invalid_type_error: 'Apenas números são válidos'
+    })
+    .min(1, 'Número é obrigatório'),
+  periodico: z.string({
+    required_error: 'Campo obrigatório',
+    invalid_type_error: 'Selecione uma opção'
+  }),
   portal_compra_id: z
     .string({ required_error: '' })
-    .min(1, 'Portal de Compra ID é obrigatório'),
+    .min(1, 'Portal de Compra é obrigatório'),
   numero_portal_compra: z
-    .string({
+    .number({
       required_error: 'Número do Portal de Compra é obrigatório',
       invalid_type_error: 'Número do Portal de Compra é obrigatório'
     })

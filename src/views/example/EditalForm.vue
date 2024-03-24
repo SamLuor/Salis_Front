@@ -97,9 +97,10 @@
               <h5>Dados do Edital</h5>
               <div class="p-field input-full">
                 <label for="editalNumber">Nº Edital</label>
-                <InputText
+                <InputNumber
                   id="editalNumber"
                   v-model="form.editalNumber"
+                  :use-grouping="false"
                   placeholder="Insira o número do edital"
                   class="w-full"
                 />
@@ -140,6 +141,7 @@
                 <InputNumber
                   id="licitationNumber"
                   v-model="form.licitationNumber"
+                  :use-grouping="false"
                   placeholder="Insira o número da licitação"
                   class="w-full"
                 />
@@ -169,9 +171,11 @@
                     class="w-full"
                     @change="onContractingAuthorityChange(index)"
                   />
-                  <small v-if="errors.clientes[index]" class="p-error">{{
-                    errors.clientes[index]?.message
-                  }}</small>
+                  <small
+                    v-if="Array.isArray(errors?.clientes)"
+                    class="p-error"
+                    >{{ errors.clientes[index]?.message }}</small
+                  >
                 </div>
                 <div class="p-field">
                   <label :for="`contractingAuthoritySigla-${index}`"
@@ -259,9 +263,10 @@
             </div>
             <div class="container-inputs-form">
               <h5 class="input-full">DESCRIÇÃO SIMPLIFICADA DO OBJETO</h5>
-              <div class="p-field input-full">
+              <div class="p-field flex flex-column input-full">
                 <label for="fullEdition">Edital Completo (Edital)</label>
                 <FileUpload
+                  v-if="Array.isArray(form.archive)"
                   id="archive"
                   mode="basic"
                   name="archive"
@@ -274,9 +279,15 @@
                   @select="selectArchive"
                   @clear="removeArchive"
                 />
-                <small v-if="Array.isArray(errors.arquivo)" class="p-error">{{
-                  errors.arquivo?.map((error) => error.message)
-                }}</small>
+                <span v-else class="component-download-archive">
+                  <a :href="form.archive" target="_blank">Visualizar Arquivo</a>
+                  <i
+                    v-tooltip.top="'Apagar Arquivo'"
+                    class="fa-solid fa-xmark"
+                    @click="removeArchive"
+                  />
+                </span>
+                <small class="p-error">{{ errors.arquivo?.message }}</small>
               </div>
               <div class="p-field input-full">
                 <label for="otherAttachments">Outros Anexos</label>
@@ -321,6 +332,19 @@
                     <p>Arraste e solte arquivos aqui.</p>
                   </template>
                 </FileUpload>
+                <span
+                  v-for="(archive, index) in form.otherAttachments.current"
+                  :key="archive.id"
+                  class="component-download-archive"
+                >
+                  <a :href="archive.caminho"
+                    >{{ extractNameArchive(archive.caminho) }}
+                  </a>
+                  <i
+                    class="fa-solid fa-xmark"
+                    @click="deleteFiles(archive.caminho, index)"
+                  />
+                </span>
                 <small class="p-error">{{
                   errors.anexos?.add?.map((error) => error.message + ' ')
                 }}</small>
@@ -401,6 +425,11 @@
 </template>
 <script setup lang="ts">
 import { schemaCreateEdital } from '@/utils/validations'
+import {
+  buildAccessArchives,
+  extractNameArchive,
+  destroyDomainInPath
+} from '@/utils/helpers'
 import { ref, computed, onMounted, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import * as zod from 'zod'
@@ -416,6 +445,7 @@ import InputNumber from 'primevue/inputnumber'
 
 const route = useRoute()
 const toast = useToast()
+const props = defineProps<{ id: string; data: any }>()
 const edital_id = ''
 
 const errors = ref<ErrorsEditalInterface>({} as ErrorsEditalInterface)
@@ -426,8 +456,8 @@ const form = ref<EditalProtocol>({
   executionType: '',
   disputeMode: '',
   judgmentCriteria: '',
-  editalNumber: '',
-  isPeriodic: false,
+  editalNumber: null,
+  isPeriodic: '',
   purchasingPortal: '',
   licitationNumber: null,
   contractingAuthorities: [
@@ -448,6 +478,7 @@ const form = ref<EditalProtocol>({
   fullEdition: null,
   archive: null,
   otherAttachments: {
+    current: [],
     add: [],
     remove: []
   }
@@ -489,7 +520,7 @@ const onFormSubmit = async () => {
         .string({ required_error: '' })
         .min(1, 'Regime ID é obrigatório')
     }),
-    ...(showDisputeMode.value && {
+    ...(showExecutionType.value && {
       tipo_execucao_id: z
         .string({ required_error: '' })
         .min(1, 'Tipo de Execução ID é obrigatório')
@@ -497,7 +528,9 @@ const onFormSubmit = async () => {
     ...(showDisputeMode.value && {
       modo_disputa_id: z
         .string({ required_error: '' })
-        .min(1, 'Modo de Disputa ID é obrigatório'),
+        .min(1, 'Modo de Disputa ID é obrigatório')
+    }),
+    ...(showJudgmentCriteria.value && {
       julgamento_id: z
         .string({ required_error: '' })
         .min(1, 'Julgamento ID é obrigatório')
@@ -513,7 +546,7 @@ const onFormSubmit = async () => {
         const [path, index] = current.path
         if (!isNaN(+index)) {
           acc[String(path)] = acc[String(path)] ?? []
-          acc[String(path)].push(current)
+          acc[String(path)][index] = current
         } else acc[String(path)] = current
         return acc
       }, {})
@@ -523,10 +556,8 @@ const onFormSubmit = async () => {
   const formData = onFormData(form.value)
 
   try {
-    if (!edital_id) await services.Edital.create(formData)
-    else await services.Edital.update(formData, String(edital_id))
+    await services.Edital.create(formData, props.id)
 
-    //router.push({ name: 'publications' })
     toast.add({
       severity: 'success',
       summary: !edital_id
@@ -547,6 +578,9 @@ const onFormSubmit = async () => {
 
 const onFormData = (form: EditalProtocol) => {
   const formData = new FormData()
+  if (form?.id) {
+    formData.append('id', form.id)
+  }
   formData.append('modalidade_id', form.licitationType)
   if (showContractRegime.value) {
     formData.append('regime_id', form.contractRegime)
@@ -560,8 +594,8 @@ const onFormData = (form: EditalProtocol) => {
   if (showJudgmentCriteria.value) {
     formData.append('julgamento_id', form.judgmentCriteria)
   }
-  formData.append('numero', form.editalNumber)
-  formData.append('periodico', form.isPeriodic ? 'true' : 'false')
+  formData.append('numero', String(form.editalNumber))
+  formData.append('periodico', String(form.isPeriodic))
   formData.append('portal_compra_id', form.purchasingPortal)
   formData.append('numero_portal_compra', String(form.licitationNumber))
   formData.append('numero_p_a', String(form.administrativeProcessNumber))
@@ -587,9 +621,13 @@ const onFormData = (form: EditalProtocol) => {
     'data_disputa',
     form.disputeDateTime ? form.disputeDateTime.toISOString() : ''
   )
-  if (!form.archive?.path && Array.isArray(form.archive)) {
+
+  if (typeof form.archive == 'string') {
+    formData.append('caminho_arquivo', destroyDomainInPath(form.archive))
+  } else {
     formData.append('arquivo', form.archive[0])
   }
+
   for (let index = 0; index < form.contractingAuthorities.length; index++) {
     const client = form.contractingAuthorities[index]
     if (multipleContractings.value) {
@@ -612,6 +650,7 @@ function copyFormDataToFormState(form: EditalProtocol) {
   const data: any = {
     anexos: {}
   }
+  if (form?.id) data.id = form?.id
   data.modalidade_id = form.licitationType
   data.regime_id = form.contractRegime
   data.tipo_execucao_id = form.executionType
@@ -630,7 +669,7 @@ function copyFormDataToFormState(form: EditalProtocol) {
   data.abertura_proposta = form.openingProposal
   data.data_disputa = form.disputeDateTime
   data.clientes = form.contractingAuthorities.map((client) => client.value)
-  data.arquivo = form.archive
+  data.arquivo = typeof form.archive == 'string' ? [form.archive] : form.archive
   data.anexos.add = form.otherAttachments.add
   data.anexos.remove = form.otherAttachments.remove
   return data
@@ -663,9 +702,7 @@ const showJudgmentCriteria = computed(() => {
   const modality = options.processModality.find(
     (element) => form.value.licitationType === element.value
   )
-  return ['Pregão', 'Pregão SRP', 'Concorrência', 'Concorrência SRP'].includes(
-    String(modality?.text)
-  )
+  return ['Pregão', 'Concorrência'].includes(String(modality?.text))
 })
 const comprasnet = computed(() => {
   const purchasingType = options.purchasingPortals.find(
@@ -698,8 +735,8 @@ const options = reactive<OptionsObject>({
   disputeModes: [] as OptionType[],
   judgmentCriteria: [] as OptionType[],
   periodicOptions: [
-    { text: 'Sim', value: 'true' },
-    { text: 'Não', value: '' }
+    { text: 'Sim', value: '1' },
+    { text: 'Não', value: '0' }
   ],
   purchasingPortals: [] as OptionType[],
   contractingAuthorities: [] as OptionType[],
@@ -758,12 +795,18 @@ const removeFile = (event: FileUploadRemoveEvent) => {
 const selectArchive = (event: FileUploadSelectEvent) => {
   form.value.archive = event.files
 }
+
 const removeArchive = () => {
+  if (typeof form.value.archive === 'string') {
+    form.value.otherAttachments.remove.push(form.value.archive)
+  }
   form.value.archive = []
 }
 
-const deletefiles = (path: string) => {
-  form.value.otherAttachments.remove.push(path)
+const deleteFiles = (path: string, index: number) => {
+  const pathWithoutDomain = destroyDomainInPath(path)
+  form.value.otherAttachments.remove.push(pathWithoutDomain)
+  form.value.otherAttachments.current.splice(index, 1)
 }
 
 const handlePopulateOptions = async () => {
@@ -793,8 +836,43 @@ const handlePopulateOptions = async () => {
   })
 }
 
+const populateFields = (data: any) => {
+  if (data?.id) form.value.id = data.id
+  form.value.licitationType = data.modalidade_id
+  form.value.contractRegime = data.regime_id
+  form.value.executionType = data.tipo_execucao_id
+  form.value.disputeMode = data.modo_disputa_id
+  form.value.judgmentCriteria = data.julgamento_id
+  form.value.editalNumber = +data.numero
+  form.value.isPeriodic = +data.periodico ? '1' : '0'
+  form.value.purchasingPortal = data.portal_compra_id
+  form.value.licitationNumber = +data.numero_portal_compra
+  form.value.administrativeProcessNumber = +data.numero_p_a
+  form.value.pregoeiro = data.pregoeiro
+  form.value.completeObjectDescription = data.descricao_completa_objeto
+  form.value.simplifiedObjectDescription = data.descricao_simplificada_objeto
+  form.value.startProposalReception = new Date(data.inicio_acolhimento_proposta)
+  form.value.limitProposalReception = new Date(data.limite_acolhimento_proposta)
+  form.value.openingProposal = new Date(data.abertura_proposta)
+  form.value.disputeDateTime = new Date(data.data_disputa)
+  form.value.contractingAuthorities = data.clientes.map((client: any) => ({
+    ...client,
+    value: client.id
+  }))
+  form.value.archive = buildAccessArchives(
+    services.httpConfig.getUri(),
+    data.caminho_arquivo
+  )
+  form.value.otherAttachments.current = data.anexos.map((file: any) => ({
+    ...file,
+    caminho: buildAccessArchives(services.httpConfig.getUri(), file.caminho)
+  }))
+  return data
+}
+
 onMounted(async () => {
   await handlePopulateOptions()
+  if (props.data?.id) populateFields(props.data)
 })
 </script>
 
@@ -884,6 +962,18 @@ form {
   }
   small {
     @apply text-light-gray dark:text-dark-gray;
+  }
+}
+
+.component-download-archive {
+  @apply w-full flex justify-between items-center px-2 h-8 pt-2;
+
+  a {
+    @apply hover:underline;
+  }
+
+  i {
+    @apply hover:text-lg cursor-pointer transition-all duration-200 hover:text-danger-light;
   }
 }
 

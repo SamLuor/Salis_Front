@@ -4,9 +4,9 @@ import { AxiosInstance } from 'axios'
 export default class EditalService {
   constructor(private readonly httpClient: AxiosInstance) {}
 
-  async create(data: FormData) {
+  async create(data: FormData, id: string) {
     return await this.httpClient
-      .postForm('/processo/edital', data, {
+      .postForm('/processo/edital/' + id, data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
       .then((response) => {

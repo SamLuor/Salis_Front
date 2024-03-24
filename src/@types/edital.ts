@@ -1,13 +1,14 @@
 import { FieldObject } from './generics'
 
 export interface EditalProtocol {
+  id?: string
   licitationType: string
   contractRegime: string
   executionType: string
   disputeMode: string
   judgmentCriteria: string
-  editalNumber: string
-  isPeriodic: boolean
+  editalNumber: number | null
+  isPeriodic: string
   purchasingPortal: string
   licitationNumber: number | null
   contractingAuthorities: {
@@ -31,6 +32,12 @@ export interface EditalProtocol {
 interface OtherAttachment {
   add: any[]
   remove: string[]
+  current: AttachmentCurrent[]
+}
+
+interface AttachmentCurrent {
+  id: string
+  caminho: string
 }
 
 export interface Data {
@@ -40,7 +47,7 @@ export interface Data {
   modo_disputa_id: string | null
   julgamento_id: string | null
   numero: string | null
-  periodico: boolean
+  periodico: string | null
   portal_compra_id: string | null
   numero_portal_compra: string | null
   numero_p_a: string | number

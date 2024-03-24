@@ -22,7 +22,7 @@ interface ComponentsMap {
   [key: string]: any
 }
 
-const keysData = ['publicacoes', 'desenvolvimento']
+const keysData = ['publicacoes', 'edital']
 
 const componentsOptions: ComponentsMap = {
   '0': PublicationForm,
@@ -45,7 +45,7 @@ onMounted(async () => {
 
     processData.value = {
       ...response.data,
-      desenvolvimento: 'hello',
+      edital: response.data.edital,
       publicacoes: response.data.publicacoes.map(
         (publication: PublicationProtocol) => ({
           ...publication,
@@ -70,7 +70,8 @@ onMounted(async () => {
         />
         <component
           :is="active"
-          v-if="processData[keyCurrent]"
+          v-if="!publication_id || processData[keyCurrent]"
+          :id="publication_id"
           :data="processData[keyCurrent]"
         />
       </div>

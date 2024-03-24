@@ -145,7 +145,7 @@ export default {
   @apply dark:text-dark-white70;
 }
 .menu-item-tailwind {
-  @apply text-dark-gray dark:text-dark-white70;
+  @apply text-white dark:text-dark-white70;
 }
 .menu-item-tailwind:hover {
   @apply text-dark-white70 bg-primary-principal dark:text-dark-white70 dark:bg-secondary-500;
