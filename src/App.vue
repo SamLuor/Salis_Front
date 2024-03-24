@@ -65,15 +65,6 @@ const menu = [
     label: 'Configurações',
     icon: 'pi pi-fw pi-sitemap',
     items: [
-      { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', to: '/formlayout' },
-      { label: 'Input', icon: 'pi pi-fw pi-check-square', to: '/input' },
-      { label: 'Float Label', icon: 'pi pi-fw pi-bookmark', to: '/floatlabel' },
-      {
-        label: 'Invalid State',
-        icon: 'pi pi-fw pi-exclamation-circle',
-        to: '/invalidstate'
-      },
-      { label: 'Button', icon: 'pi pi-fw pi-mobile', to: '/button' },
       {
         label: 'Usuários',
         icon: 'pi pi-fw pi-users',
@@ -89,8 +80,7 @@ const menu = [
       {
         label: 'Cargos',
         icon: 'fa-solid fa-briefcase',
-        to: '/cargos',
-        role: 'gerenciar cargos'
+        to: '/cargos'
       },
       {
         label: 'Clientes',
@@ -105,7 +95,9 @@ const menu = [
         role: 'gerenciar meios de publicação'
       }
     ].filter((route) => {
-      return authStore.user.permissions.some((role) => role.nome === route.role)
+      return authStore.user.permissions.some(
+        (role) => role.nome === route.role || !route?.role
+      )
     })
   },
   {
@@ -115,11 +107,12 @@ const menu = [
       {
         label: 'Processos',
         icon: 'fa-solid fa-users',
-        to: '/publicacoes',
-        role: 'gerenciar publicação'
+        to: '/publicacoes'
       }
     ].filter((route) => {
-      return authStore.user.permissions.some((role) => role.nome === route.role)
+      return authStore.user.permissions.some(
+        (role) => role.nome === route?.role || !route?.role
+      )
     })
   }
 ]

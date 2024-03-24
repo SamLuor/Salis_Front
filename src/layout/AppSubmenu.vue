@@ -151,7 +151,7 @@ export default {
   @apply text-dark-white70 bg-primary-principal dark:text-dark-white70 dark:bg-secondary-500;
 }
 .layout-menu li a.router-link-exact-active {
-  @apply text-primary-600 dark:text-secondary-500 hover:text-primary-options-text-color;
+  @apply text-secondary-300 dark:text-secondary-500 hover:text-primary-options-text-color;
 }
 .layout-menu li a.router-link-exact-active:hover {
   @apply dark:text-dark-white70;
