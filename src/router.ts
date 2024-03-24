@@ -49,32 +49,20 @@ const router = createRouter({
           path: 'empresas',
           name: 'company',
           redirect: '',
-          meta: {
-            role: 'gerenciar empresas'
-          },
           children: [
             {
               path: '',
               name: 'company',
-              meta: {
-                role: 'gerenciar empresas'
-              },
               component: CompanyViewVue
             },
             {
               path: 'empresa/:id',
               name: 'company-show',
-              meta: {
-                role: 'gerenciar empresas'
-              },
               component: CompanyFormVue
             },
             {
               path: 'empresa-form',
               name: 'company-form',
-              meta: {
-                role: 'gerenciar empresas'
-              },
               component: CompanyFormVue
             }
           ]
@@ -98,25 +86,16 @@ const router = createRouter({
         {
           path: 'cargos',
           name: 'positions',
-          meta: {
-            role: 'gerenciar cargos'
-          },
           component: PositionViewVue
         },
         {
           path: 'cargos-form',
           name: 'position-form',
-          meta: {
-            role: 'gerenciar cargos'
-          },
           component: PositionFormVue
         },
         {
           path: 'cargos/:id',
           name: 'position-show',
-          meta: {
-            role: 'gerenciar cargos'
-          },
           component: PositionFormVue
         },
         {
@@ -170,25 +149,16 @@ const router = createRouter({
         {
           path: 'publicacoes',
           name: 'publications',
-          meta: {
-            role: 'gerenciar meios de publicação'
-          },
           component: ProcessViewVue
         },
         {
           path: 'publicacoes-form',
           name: 'publications-form',
-          meta: {
-            role: 'gerenciar publicação'
-          },
           component: ProcessStepsVue
         },
         {
           path: 'publicacoes-show/:id',
           name: 'publications-show',
-          meta: {
-            role: 'gerenciar publicação'
-          },
           component: ProcessStepsVue
         }
       ]
