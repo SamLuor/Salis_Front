@@ -48,24 +48,17 @@ const router = createRouter({
         {
           path: 'empresas',
           name: 'company',
-          redirect: '',
-          children: [
-            {
-              path: '',
-              name: 'company',
-              component: CompanyViewVue
-            },
-            {
-              path: 'empresa/:id',
-              name: 'company-show',
-              component: CompanyFormVue
-            },
-            {
-              path: 'empresa-form',
-              name: 'company-form',
-              component: CompanyFormVue
-            }
-          ]
+          component: CompanyViewVue
+        },
+        {
+          path: 'empresa/:id',
+          name: 'company-show',
+          component: CompanyFormVue
+        },
+        {
+          path: 'empresa-form',
+          name: 'company-form',
+          component: CompanyFormVue
         },
         /* {
           path: 'empresas/:id',

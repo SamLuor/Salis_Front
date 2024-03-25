@@ -7,7 +7,7 @@
           <Button
             class="action"
             icon="pi pi-plus"
-            label="Criar Usuário"
+            label="Criar Empresa"
             @click="createCompany"
           />
         </h5>
