@@ -53,7 +53,7 @@ export default class PublicationService {
     const store = usePublicationStore()
 
     await this.httpConfig
-      .post('/processo/publicacao/destroy/' + data.id)
+      .post('/processo/publicacao/destroy/' + { processos: [data.id] })
       .then((response) => {
         store.deletePublication(data?.id ?? '')
         return response.data

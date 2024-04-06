@@ -13,6 +13,7 @@ interface ProcessState {
   company: Empresa
   publications: Publicacoes
   term_reference: Termo_Referencia
+  status: number
 }
 
 const useProcessStore = defineStore({
@@ -23,7 +24,8 @@ const useProcessStore = defineStore({
       company: {} as Empresa,
       edital: {} as Edital,
       publications: [] as Publicacoes,
-      term_reference: {} as Termo_Referencia
+      term_reference: {} as Termo_Referencia,
+      status: 0
     }
   },
   getters: {
@@ -34,10 +36,19 @@ const useProcessStore = defineStore({
   actions: {
     setProcess(process: Processo) {
       this.process = process
-      this.setEdital(process.edital)
-      this.setCompany(process.empresa)
-      this.setPublications(process.publicacoes)
-      this.setTermReference(process.termo_referencia)
+      if (process.empresa) this.setCompany(process.empresa)
+      if (process.publicacoes) {
+        this.setPublications(process.publicacoes)
+        this.status = 0
+      }
+      if (process.edital) {
+        this.setEdital(process.edital)
+        this.status = 1
+      }
+      if (process.termo_referencia) {
+        this.setTermReference(process.termo_referencia)
+        this.status = 2
+      }
     },
     setEdital(edital: Edital) {
       this.edital = edital

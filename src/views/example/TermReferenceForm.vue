@@ -623,7 +623,7 @@ const changeTabView = (index: number) => {
 
 const showRPA = computed(() => {
   return ['Pregão SRP', 'Concorrência SRP'].includes(
-    storeProcess.edital.modalidade.nome
+    storeProcess?.edital?.modalidade.nome
   )
 })
 
@@ -652,7 +652,7 @@ const addItem = (indexGroup?: number) => {
       target.items.push(JSON.parse(JSON.stringify(newItem)))
     }
   } else {
-    itensGroups.value.push(newItem)
+    itensGroups.value.push(JSON.parse(JSON.stringify(newItem)))
   }
 }
 
@@ -871,7 +871,7 @@ const populateFields = () => {
 }
 
 onMounted(() => {
-  populateFields()
+  if (!isNaN(+storeProcess.term_reference?.id)) populateFields()
   populateOptions()
 })
 </script>

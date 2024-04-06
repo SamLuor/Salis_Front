@@ -17,8 +17,8 @@ const publication_id = route.params?.id
 const active = shallowRef(PublicationForm)
 const processStore = useProcessStore()
 const keyCurrent = ref<string>('publicacoes')
-const step = ref(2)
-const currentProcess = ref(2)
+const step = ref(0)
+const currentProcess = ref(0)
 const loading = ref<boolean>(false)
 
 interface ComponentsMap {
@@ -45,6 +45,8 @@ onMounted(async () => {
     loading.value = true
     try {
       await services.Publication.getPublication(publication_id as string)
+      selectStatus(processStore.status)
+      step.value = processStore.status + 1
     } catch (err) {
       toast.add({ severity: 'error', detail: (err as Error).message })
     } finally {
