@@ -20,6 +20,7 @@ import MeansPublicationViewVue from './views/example/MeansPublicationView.vue'
 import MeansPublicationFormVue from './views/example/MeansPublicationForm.vue'
 import ProcessViewVue from './views/example/ProcessView.vue'
 import ProcessStepsVue from './views/example/ProcessSteps.vue'
+import SetorProduto from './views/example/SetorProduto.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -98,6 +99,11 @@ const router = createRouter({
             role: 'gerenciar clientes'
           },
           component: ClientsViewVue
+        },
+        {
+          path: 'setor_produto',
+          name: 'setor_produto',
+          component: SetorProduto
         },
         {
           path: 'clientes-form',

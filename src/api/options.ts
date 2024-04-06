@@ -159,4 +159,40 @@ export default class OptionService {
         handleError(err, message)
       })
   }
+
+  async getUnitMeasure(type: 'servico' | 'material') {
+    return await this.httpConfig
+      .get('/option/unidade-medidas', { params: { tipo: type } })
+      .then((response) => {
+        return { ...response.data, option: 'unitMeasure' }
+      })
+      .catch((err) => {
+        const { message } = err.response.data
+        handleError(err, message)
+      })
+  }
+
+  async getSetorProduto() {
+    return await this.httpConfig
+      .get('/option/setor-produtos')
+      .then((response) => {
+        return { ...response.data, option: 'setorProduto' }
+      })
+      .catch((err) => {
+        const { message } = err.response.data
+        handleError(err, message)
+      })
+  }
+
+  async getSubSeguinteComercial() {
+    return await this.httpConfig
+      .get('/option/subseguinte-comerciais')
+      .then((response) => {
+        return { ...response.data, option: 'subSeguinteComercial' }
+      })
+      .catch((err) => {
+        const { message } = err.response.data
+        handleError(err, message)
+      })
+  }
 }

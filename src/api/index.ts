@@ -12,6 +12,9 @@ import ClientService from './clients'
 import MeansPublicationService from './means_publication'
 import PublicationService from './publication'
 import EditalService from './edital'
+import ProductService from './product'
+import TermReferenceService from './term_reference'
+import SetorProdutoService from './setor_produto'
 
 httpConfig.interceptors.request.use((config) => {
   const dataProcessor = SecureDataProcessor.dataProcessor
@@ -54,5 +57,8 @@ export default {
   MeansPublication: new MeansPublicationService(httpConfig),
   Publication: new PublicationService(httpConfig),
   Edital: new EditalService(httpConfig),
+  Products: new ProductService(httpConfig),
+  TermReference: new TermReferenceService(httpConfig),
+  SetorProduct: new SetorProdutoService(httpConfig),
   httpConfig
 }

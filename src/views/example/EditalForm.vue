@@ -413,7 +413,7 @@
 
             <div class="input-full flex flex-row-reverse">
               <Button
-                :label="edital_id ? 'Avançar para Próxima Tarefa' : 'Criar'"
+                :label="edital_id ? 'Atualizar' : 'Criar'"
                 @click="onFormSubmit"
               />
             </div>
@@ -431,22 +431,18 @@ import {
   destroyDomainInPath
 } from '@/utils/helpers'
 import { ref, computed, onMounted, reactive } from 'vue'
-import { useRoute } from 'vue-router'
 import * as zod from 'zod'
 import services from '@/api/index'
 import { useToast } from 'primevue/usetoast'
 import { EditalProtocol, ErrorsEditalInterface } from '@/@types/edital'
-import {
-  FileUploadRemoveEvent,
-  FileUploadSelectEvent
-} from 'primevue/fileupload'
+import { FileUploadRemoveEvent } from 'primevue/fileupload'
 import z from 'zod'
 import InputNumber from 'primevue/inputnumber'
+import useProcessStore from '@/store/process'
 
-const route = useRoute()
 const toast = useToast()
-const props = defineProps<{ id: string; data: any }>()
-const edital_id = ''
+const storeProcess = useProcessStore()
+const edital_id = storeProcess.edital?.id
 
 const errors = ref<ErrorsEditalInterface>({} as ErrorsEditalInterface)
 
@@ -556,7 +552,7 @@ const onFormSubmit = async () => {
   const formData = onFormData(form.value)
 
   try {
-    await services.Edital.create(formData, props.id)
+    await services.Edital.create(formData, storeProcess.process.id)
 
     toast.add({
       severity: 'success',
@@ -702,7 +698,12 @@ const showJudgmentCriteria = computed(() => {
   const modality = options.processModality.find(
     (element) => form.value.licitationType === element.value
   )
-  return ['Pregão', 'Concorrência'].includes(String(modality?.text))
+
+  console.log(['Pregão', 'Concorrência'].includes(String(modality?.text)))
+
+  return ['Pregão', 'Pregão SRP', 'Concorrência', 'Concorrência SRP'].includes(
+    String(modality?.text)
+  )
 })
 const comprasnet = computed(() => {
   const purchasingType = options.purchasingPortals.find(
@@ -872,7 +873,7 @@ const populateFields = (data: any) => {
 
 onMounted(async () => {
   await handlePopulateOptions()
-  if (props.data?.id) populateFields(props.data)
+  if (storeProcess.edital) populateFields(storeProcess.edital)
 })
 </script>
 

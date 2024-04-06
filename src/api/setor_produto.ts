@@ -1,17 +1,20 @@
 import { handleError } from '@/utils/handleErrors'
-import usePublicationStore from '@/store/publication'
-import useProcessStore from '@/store/process'
 
 import type { PublicationProtocol } from '@/@types/publication'
 import type { AxiosInstance } from 'axios'
+import useSetorProdutoStore from '@/store/setor_produto'
+import { SetorProduto } from '@/@types/setor_produto'
 
-export default class PublicationService {
+export default class SetorProdutoService {
   constructor(private readonly httpConfig: AxiosInstance) {}
 
-  async createPublication(data: FormData) {
+  async createSetorProduto(data: any) {
+    const store = useSetorProdutoStore()
     return await this.httpConfig
-      .post('/processo/publicacao', data)
+      .post('/setor-produto', data)
       .then((response) => {
+        store.setSetorProdutos([...store.setorProdutos, response.data.data])
+
         return response
       })
       .catch((err) => {
@@ -20,13 +23,13 @@ export default class PublicationService {
       })
   }
 
-  async getPublications() {
-    const store = usePublicationStore()
+  async getSetorProdutos() {
+    const store = useSetorProdutoStore()
 
     return await this.httpConfig
-      .get('/processo')
+      .get('/setor-produto')
       .then((response) => {
-        store.setPublication(response.data.data)
+        store.setSetorProdutos(response.data.data)
         return response.data
       })
       .catch((err) => {
@@ -35,12 +38,12 @@ export default class PublicationService {
       })
   }
 
-  async getPublication(id: string) {
-    const store = useProcessStore()
+  async getSetorProduto(id: string) {
+    const store = useSetorProdutoStore()
     return await this.httpConfig
-      .get('/processo/' + id)
+      .get('setor-produto/' + id)
       .then((response) => {
-        store.setProcess(response.data.data)
+        store.setSetorProduto(response.data.data)
         return response.data
       })
       .catch((err) => {
@@ -49,13 +52,13 @@ export default class PublicationService {
       })
   }
 
-  async deletePublication(data: PublicationProtocol) {
-    const store = usePublicationStore()
+  async deleteSetorProduto(data: SetorProduto) {
+    const store = useSetorProdutoStore()
 
     await this.httpConfig
-      .post('/processo/publicacao/destroy/' + data.id)
+      .post('setor-produto/destroy/' + data.id)
       .then((response) => {
-        store.deletePublication(data?.id ?? '')
+        store.deleteSetorProduto(data?.id ?? '')
         return response.data
       })
       .catch((err) => {
@@ -64,13 +67,12 @@ export default class PublicationService {
       })
   }
 
-  async updatePublication(data: FormData, id: string) {
-    const store = usePublicationStore()
-    data.append('processo[id]', id)
+  async updateSetorProduto(data: any, id: string) {
+    const store = useSetorProdutoStore()
     await this.httpConfig
-      .post('processo/publicacao')
+      .patch('/setor-produto/' + id, data)
       .then((response) => {
-        store.updatePublication(response.data.data)
+        store.updateSetorProduto(response.data.data)
         return response.data
       })
       .catch((err) => {

@@ -6,8 +6,8 @@ export interface Publications {
 export interface PublicationProtocol {
   index?: number
   id?: string
-  date: string
-  file: string
+  date: string | Date
+  file?: string
   file_path?: string
   cliente_id: string
   meio_publicacao_id: string
