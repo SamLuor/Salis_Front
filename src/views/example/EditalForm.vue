@@ -553,6 +553,9 @@ const onFormSubmit = async () => {
 
   try {
     await services.Edital.create(formData, storeProcess.process.id)
+    if (!form.value?.id) {
+      storeProcess.status = 2
+    }
 
     toast.add({
       severity: 'success',
@@ -698,8 +701,6 @@ const showJudgmentCriteria = computed(() => {
   const modality = options.processModality.find(
     (element) => form.value.licitationType === element.value
   )
-
-  console.log(['Pregão', 'Concorrência'].includes(String(modality?.text)))
 
   return ['Pregão', 'Pregão SRP', 'Concorrência', 'Concorrência SRP'].includes(
     String(modality?.text)
@@ -873,7 +874,7 @@ const populateFields = (data: any) => {
 
 onMounted(async () => {
   await handlePopulateOptions()
-  if (storeProcess.edital) populateFields(storeProcess.edital)
+  if (storeProcess.edital?.id) populateFields(storeProcess.edital)
 })
 </script>
 
