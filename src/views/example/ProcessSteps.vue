@@ -1,22 +1,25 @@
 <script setup lang="ts">
-import { shallowRef, ref, onMounted } from 'vue'
+import { shallowRef, ref, onMounted, onUnmounted } from 'vue'
 import PublicationForm from './PublicationForm.vue'
 import InDevelopment from './InDevelopment.vue'
 import EditalForm from './EditalForm.vue'
 import TabsSteps from '@/components/TabsSteps/TabsSteps.vue'
 import { useRoute } from 'vue-router'
 import services from '@/api/index'
-import { PublicationProtocol } from '@/@types/publication'
 import TermReferenceForm from './TermReferenceForm.vue'
+import useProcessStore from '@/store/process'
+import { useToast } from 'primevue/usetoast'
 
 const route = useRoute()
+const toast = useToast()
 
 const publication_id = route.params?.id
 const active = shallowRef(PublicationForm)
-const processData = ref<{ [key: string]: any }>({})
+const processStore = useProcessStore()
 const keyCurrent = ref<string>('publicacoes')
-const step = ref(1)
-const currentProcess = ref(0)
+const step = ref(2)
+const currentProcess = ref(2)
+const loading = ref<boolean>(false)
 
 interface ComponentsMap {
   [key: string]: any
@@ -39,21 +42,19 @@ const selectStatus = (status: number) => {
 
 onMounted(async () => {
   if (publication_id) {
-    const response = await services.Publication.getPublication(
-      publication_id as string
-    )
-
-    processData.value = {
-      ...response.data,
-      edital: response.data.edital,
-      publicacoes: response.data.publicacoes.map(
-        (publication: PublicationProtocol) => ({
-          ...publication,
-          date: new Date(publication.date)
-        })
-      )
+    loading.value = true
+    try {
+      await services.Publication.getPublication(publication_id as string)
+    } catch (err) {
+      toast.add({ severity: 'error', detail: (err as Error).message })
+    } finally {
+      loading.value = false
     }
   }
+})
+
+onUnmounted(() => {
+  processStore.clearStore()
 })
 </script>
 
@@ -68,16 +69,10 @@ onMounted(async () => {
           :current="currentProcess"
           @change-status="selectStatus"
         />
-        <component
-          :is="active"
-          v-if="
-            !publication_id ||
-            processData['publicacoes'] ||
-            processData['edital']
-          "
-          :id="publication_id"
-          :data="processData[keyCurrent]"
-        />
+        <component :is="active" v-if="!loading" />
+        <div v-else class="w-full h-full flex items-center justify-center">
+          <i class="pi pi-spinner pi-spin" />
+        </div>
       </div>
     </div>
   </div>

@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { isCEP, isCNPJ, isCPF, isPhone, isDDD } from 'brazilian-values'
+import { isCEP, isCNPJ, isPhone, isDDD } from 'brazilian-values'
 
 const schemaLogin = z.object({
   email: z
@@ -317,6 +317,106 @@ const schemaCreateEdital = z.object({
   })
 })
 
+const schemaProductItem = z
+  .object({
+    nome: z.string({ invalid_type_error: 'Apenas caracteres' }).optional(),
+    produto_id: z
+      .string({ invalid_type_error: 'Digite um id válido' })
+      .optional(),
+    descricao_simplificada: z
+      .string({
+        required_error: 'Campo obrigatório',
+        invalid_type_error: 'Apenas caracteres'
+      })
+      .min(1, { message: 'Campo obrigatório' }),
+    descricao_completa: z
+      .string({
+        required_error: 'Campo obrigatório',
+        invalid_type_error: 'Apenas caracteres'
+      })
+      .min(1, { message: 'Campo obrigatório' }),
+    unidade_medida_id: z
+      .string({
+        required_error: 'Selecione uma unidade',
+        invalid_type_error: 'Selecione uma unidade válida'
+      })
+      .min(1, { message: 'Selecione uma unidade' })
+  })
+  .refine(
+    (value) => {
+      return (
+        (value.produto_id && value.produto_id.length > 0) ||
+        (value.nome && value.nome.length > 0)
+      )
+    },
+    {
+      message: 'Fornecer ou o ID do produto ou o nome do produto',
+      path: ['produto_id']
+    }
+  )
+
+const itemProductSchema = z
+  .object({
+    numero: z.number({ invalid_type_error: 'Número é obrigatório' }),
+    quantidade: z.number({ invalid_type_error: 'Quantidade é obrigatório' }),
+    produto_item_id: z
+      .string({ invalid_type_error: 'Item de produto não válido' })
+      .min(1, { message: 'Um item de produto deve ser selecionado' }),
+    grupo: z.number().optional().nullable()
+  })
+  .refine(
+    (data) =>
+      ('grupo' in data && typeof data.grupo === 'number') || !('grupo' in data),
+    {
+      message: 'Se o grupo estiver presente, ele deve ser preenchido.',
+      path: ['grupo']
+    }
+  )
+
+const schemaTermReference = z.object({
+  setor_produtos: z
+    .array(
+      z.string({
+        invalid_type_error: 'Selecione um ou mais setores de produtos'
+      })
+    )
+    .min(1, { message: 'Selecione um ou mais setores de produtos' }),
+  subseguinte_comerciais: z
+    .array(
+      z.string({
+        invalid_type_error: 'Selecione um ou mais subseguintes comerciais'
+      })
+    )
+    .min(1, { message: 'Selecione um ou mais subseguintes comerciais' }),
+  validade_proposta: z.date({
+    invalid_type_error: 'Selecione uma data'
+  }),
+  prazo_entrega: z.date({
+    invalid_type_error: 'Selecione uma data'
+  }),
+  prazo_garantia_produto: z.date({
+    invalid_type_error: 'Selecione uma data'
+  }),
+  validade_assinatura_arp: z.number().optional(),
+  itens: z.array(itemProductSchema),
+  arquivo: z.any()
+})
+
+const schemaSetorProduto = z.object({
+  id: z.string().optional().nullable(),
+  nome: z
+    .string({ required_error: 'Obrigatório' })
+    .min(3, { message: 'O nome deve ter pelo menos 3 caracteres' }),
+  empresas: z
+    .array(
+      z.string({
+        required_error: 'Deve ser vinculado a uma ou mais empresas'
+      })
+    )
+    .min(1, { message: 'Deve ser vinculado a uma ou mais empresas' })
+    .nonempty({ message: 'Deve ser vinculado a uma ou mais empresas' })
+})
+
 export {
   schemaLogin,
   schemaCreateUser,
@@ -330,5 +430,8 @@ export {
   schemaUpdateMeansPublication,
   schemaCreatePublication,
   schemaUpdatePublication,
-  schemaCreateEdital
+  schemaCreateEdital,
+  schemaProductItem,
+  schemaTermReference,
+  schemaSetorProduto
 }

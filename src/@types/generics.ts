@@ -1,5 +1,5 @@
-export interface GenericResponse {
-  data: any
+export interface GenericResponse<T> {
+  data: T
   message: string
 }
 

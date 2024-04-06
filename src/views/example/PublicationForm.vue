@@ -68,9 +68,9 @@
                     icon="pi pi-eye"
                     class="w-full"
                     :label="
-                      publicacoes.publicacoes[index - 1].file_path
-                        ?.split('arquivos/')
-                        .join('')
+                      extractNameArchive(
+                        String(publicacoes.publicacoes[index - 1].file_path)
+                      )
                     "
                     @click="
                       () =>
@@ -229,8 +229,10 @@ import { FileUploadSelectEvent } from 'primevue/fileupload'
 import * as zod from 'zod'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
+import useProcessStore from '@/store/process'
+import { buildAccessArchives, extractNameArchive } from '@/utils/helpers'
 
-const props = defineProps<{ data: Publications }>()
+const processStore = useProcessStore()
 
 const toast = useToast()
 const route = useRoute()
@@ -255,12 +257,20 @@ const process_options = ref<Options[]>([])
 const type_process = ref('')
 
 const publicacoes = ref<Publications>(
-  Array.isArray(props.data)
+  Array.isArray(processStore.publications)
     ? {
         processo: {
-          tipo_processo_id: ' '
+          tipo_processo_id: processStore.process.tipo_processo_id
         },
-        publicacoes: props.data
+        publicacoes: processStore.publications.map((publication) => ({
+          cliente_id: publication.cliente_id,
+          date: new Date(publication.date),
+          file_path: buildAccessArchives(
+            services.httpConfig.getUri(),
+            publication.file_path
+          ),
+          meio_publicacao_id: publication.meio_publicacao_id
+        }))
       }
     : {
         publicacoes: [
@@ -301,13 +311,8 @@ const removePublication = (index: number) => {
 }
 
 const openDocument = (path: string) => {
-  const api = services.httpConfig
-    .getUri()
-    .split('/api')
-    .join('/' + path)
-
   const link = document.createElement('a')
-  link.href = api
+  link.href = path
   link.download = path.split('arquivos/').join('')
   link.target = '_blank'
   link.click()
@@ -319,7 +324,6 @@ const onFormSubmit = async () => {
     schema.parse(publicacoes.value)
   } catch (err) {
     if (err instanceof zod.ZodError) {
-      console.log(err.issues)
       errors.value = err.issues.reduce((acc: any, current) => {
         const key = current.path.join('-')
         acc[key] = current
@@ -343,7 +347,9 @@ const onFormSubmit = async () => {
         `publicacoes[${index}][date]`,
         new Date(item.date).toDateString()
       )
-      formData.append(`publicacoes[${index}][file]`, item.file)
+      if (item.file) {
+        formData.append(`publicacoes[${index}][file]`, item.file)
+      }
       formData.append(`publicacoes[${index}][cliente_id]`, item.cliente_id)
       formData.append(
         `publicacoes[${index}][meio_publicacao_id]`,
@@ -419,7 +425,7 @@ const receiveOptions = async () => {
 
 onMounted(async () => {
   receiveOptions()
-  if (!props.data) visible.value = true
+  if (!processStore.process.id) visible.value = true
 })
 </script>
 

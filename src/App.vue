@@ -83,6 +83,11 @@ const menu = [
         to: '/cargos'
       },
       {
+        label: 'Setor de Produtos',
+        icon: 'fa-solid fa-briefcase',
+        to: '/setor_produto'
+      },
+      {
         label: 'Clientes',
         icon: 'fa-solid fa-users',
         to: '/clientes',
