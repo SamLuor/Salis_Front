@@ -8,7 +8,7 @@
       sort-mode="single"
       :sort-order="1"
       scrollable
-      scroll-height="52.4vh"
+      scroll-height="48.4vh"
       :global-filter-fields="['numero', 'grupo']"
     >
       <template #header>
@@ -36,6 +36,11 @@
       <Column
         field="descricao"
         header="Descrição Simplificada"
+        body-class="text-center"
+      />
+      <Column
+        field="unidade_medida"
+        header="Unidade Medida"
         body-class="text-center"
       />
       <Column field="quantidade" header="Quantidade" body-class="text-center" />
@@ -116,6 +121,7 @@ import type { BaseItemProtocol } from '@/@types/process'
 import { useConfirm } from 'primevue/useconfirm'
 import ConfirmDialogBase from '@/components/ConfirmDialogBase.vue'
 import { FilterMatchMode } from 'primevue/api'
+import { TermReferenceProtocol } from '@/@types/term_reference'
 
 const storeProcess = useProcessStore()
 const toast = useToast()
@@ -159,6 +165,9 @@ const deleteItem = ({
     accept: async () => {
       try {
         await services.Products.deleteProductItemListed(data.id)
+        listProductsItem.value = listProductsItem.value.filter(
+          (item) => item.id !== data.id
+        )
         toast.add({
           severity: 'success',
           summary: 'Apagado com sucesso',
@@ -180,8 +189,8 @@ const deleteItem = ({
   })
 }
 
-const separateGroupItens = () => {
-  storeProcess.term_reference.grupos.forEach((group) => {
+const separateGroupItens = (data: TermReferenceProtocol) => {
+  data.grupos.forEach((group) => {
     group.itens.forEach((item) => {
       listProductsItem.value.push({
         id: item.id,
@@ -189,28 +198,32 @@ const separateGroupItens = () => {
         numero: item.numero,
         descricao: item.produto_item.descricao_simplificada.toUpperCase(),
         descricao_completa: item.produto_item.descricao_completa.toUpperCase(),
+        unidade_medida: item.produto_item.unidade_medida.nome.toUpperCase(),
         quantidade: item.quantidade,
-        valor: 0
+        valor: item.valor
       })
     })
   })
-  storeProcess.term_reference.itens.forEach((item) => {
+  data.itens.forEach((item) => {
     listProductsItem.value.push({
       id: item.id,
       grupo: 'Itens',
       numero: item.numero,
       descricao: item.produto_item.descricao_simplificada.toUpperCase(),
       descricao_completa: item.produto_item.descricao_completa.toUpperCase(),
+      unidade_medida: item.produto_item.unidade_medida.nome.toUpperCase(),
       quantidade: item.quantidade,
-      valor: 0
+      valor: item.valor
     })
   })
 }
 
 onMounted(async () => {
   if (storeProcess.term_reference?.id) {
-    await services.Products.getListProductsItens(storeProcess.term_reference.id)
-    separateGroupItens()
+    const response = await services.Products.getListProductsItens(
+      storeProcess.term_reference.id
+    )
+    separateGroupItens(response.data)
   } else
     toast.add({
       severity: 'error',
