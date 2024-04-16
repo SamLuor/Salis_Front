@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { Nullable } from 'primevue/ts-helpers'
-import InputText, { InputTextProps } from 'primevue/inputtext'
+import MultiSelect, { MultiSelectProps } from 'primevue/multiselect'
 
 interface Props {
   label: string
@@ -13,10 +12,10 @@ interface Props {
   helper?: string
   invalid: boolean
   required?: boolean
-  inputProps?: InputTextProps
+  inputProps?: MultiSelectProps
 }
 
-const model = defineModel<Nullable<string>>()
+const model = defineModel<string[]>()
 defineProps<Props>()
 </script>
 
@@ -28,10 +27,12 @@ defineProps<Props>()
       >{{ label }}
       <span v-if="required" class="text-red-400 font-bold">*</span>
     </label>
-    <InputText
+    <MultiSelect
       v-model="model"
-      :name="name"
-      v-bind="inputProps"
+      v-bind="{
+        ...inputProps,
+        inputProps: { ...inputProps?.inputProps, name: name }
+      }"
       :class="['input', { classInput: classInput }, { invalid: invalid }]"
     />
     <small v-if="!error && helper" class="helper">{{ helper }}</small>

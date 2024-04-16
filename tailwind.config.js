@@ -5,16 +5,7 @@
 
 module.exports = {
   darkMode: 'class',
-  content: [
-    './src/**/*.html',
-    './src/**/*.vue',
-    './src/**/*.jsx',
-    './src/**/*.tsx',
-    './src/**/*.js',
-    './src/**/*.ts',
-    './src/**/*.css',
-    './src/**/*.scss'
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx,vue}'],
   theme: {
     extend: {
       colors: {

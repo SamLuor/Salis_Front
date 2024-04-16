@@ -95,60 +95,83 @@
             <!-- Dados Edital -->
             <div class="container-inputs-form">
               <h5>Dados do Edital</h5>
-              <div class="p-field input-full">
-                <label for="editalNumber">Nº Edital</label>
-                <InputNumber
-                  id="editalNumber"
-                  v-model="form.editalNumber"
-                  :use-grouping="false"
-                  placeholder="Insira o número do edital"
-                  class="w-full"
-                />
-                <small class="p-error">{{ errors.numero?.message }}</small>
-              </div>
-              <div class="p-field">
-                <label for="isPeriodic">Edital é periódico? (anualmente)</label>
-                <Dropdown
-                  id="isPeriodic"
-                  v-model="form.isPeriodic"
-                  :options="options.periodicOptions"
-                  option-label="text"
-                  option-value="value"
-                  placeholder="Selecione"
-                  class="w-full"
-                />
-                <small class="p-error">{{ errors.periodico?.message }}</small>
-              </div>
-              <div class="p-field">
-                <label for="purchasingPortal">Portal de Compras</label>
-                <Dropdown
-                  id="purchasingPortal"
-                  v-model="form.purchasingPortal"
-                  :options="options.purchasingPortals"
-                  option-label="text"
-                  option-value="value"
-                  placeholder="Selecione um portal de compras"
-                  class="w-full"
-                />
-                <small class="p-error">{{
-                  errors.portal_compra_id?.message
-                }}</small>
-              </div>
-              <div class="p-field input-full">
-                <label for="licitationNumber"
-                  >Nº da Licitação no Portal de Compras</label
-                >
-                <InputNumber
-                  id="licitationNumber"
-                  v-model="form.licitationNumber"
-                  :use-grouping="false"
-                  placeholder="Insira o número da licitação"
-                  class="w-full"
-                />
-                <small class="p-error">{{
-                  errors.numero_portal_compra?.message
-                }}</small>
-              </div>
+              <InputMaskBase
+                v-model="form.editalNumber"
+                label="N° Edital"
+                helper="Insira o número do edital"
+                class-base="input-full"
+                :error="errors.numero?.message"
+                :invalid="!!errors.numero"
+                :input-props="{ mask: '999/9999', placeholder: 'xxx/xxxx' }"
+              />
+              <DropdownBase
+                v-model="form.isPeriodic"
+                label="Edital é periódico? (anualmente)"
+                helper="Selecione a opção correspondente."
+                :error="errors.periodico?.message"
+                :invalid="!!errors.periodico"
+                :input-props="{
+                  options: options.periodicOptions,
+                  optionLabel: 'text',
+                  optionValue: 'value'
+                }"
+              />
+              <DropdownBase
+                v-model="form.purchasingPortal"
+                label="Portal de Compras"
+                helper="Selecione um portal de compras."
+                :error="errors.portal_compra_id?.message"
+                :invalid="!!errors.portal_compra_id"
+                :input-props="{
+                  options: options.purchasingPortals,
+                  optionLabel: 'text',
+                  optionValue: 'value'
+                }"
+              />
+              <InputNumberBase
+                v-model="form.licitationNumber"
+                label="Nº da Licitação no Portal de Compras"
+                helper="Insira o número da licitação."
+                class-base="input-full"
+                :invalid="!!errors.numero_portal_compra"
+                :error="errors.numero_portal_compra?.message"
+                :input-props="{ useGrouping: false }"
+              />
+              <DropdownBase
+                v-model="form.client_gestor.value"
+                label="Órgão Gestor"
+                helper="Selecione um órgão gestor."
+                :error="errors?.cliente_gestor_id?.message"
+                :invalid="!!errors?.cliente_gestor_id?.message"
+                :input-props="{
+                  options: options.clients,
+                  optionLabel: 'text',
+                  optionValue: 'value'
+                }"
+                :events="{
+                  change() {
+                    onChangeGestor()
+                  }
+                }"
+              />
+              <InputTextBase
+                v-model="form.client_gestor.sigla"
+                label="Sigla Órgão Contratante"
+                helper="Sigla será preenchida automaticamente."
+                :error="''"
+                :invalid="false"
+                :input-props="{ readonly: true }"
+              />
+              <InputTextBase
+                v-if="comprasnet"
+                v-model="form.client_gestor.uasg"
+                label="UASG"
+                helper="UASG será preenchida automaticamente."
+                class-base="input-full"
+                :error="''"
+                :invalid="false"
+                :input-props="{ readonly: true }"
+              />
               <template
                 v-for="(authority, index) in form.contractingAuthorities"
                 :key="index"
@@ -157,39 +180,40 @@
                   Dados Contratante/Participante
                   <span :hidden="!multipleContractings">{{ index + 1 }}</span>
                 </h5>
-                <div class="p-field">
-                  <label :for="`contractingAuthority-${index}`"
-                    >Órgão Contratante/Participante</label
-                  >
-                  <Dropdown
-                    :id="`contractingAuthority-${index}`"
-                    v-model="authority.value"
-                    :options="options.clients"
-                    option-label="text"
-                    option-value="value"
-                    placeholder="Selecione um órgão"
-                    class="w-full"
-                    @change="onContractingAuthorityChange(index)"
-                  />
-                  <small
-                    v-if="Array.isArray(errors?.clientes)"
-                    class="p-error"
-                    >{{ errors.clientes[index]?.message }}</small
-                  >
-                </div>
-                <div class="p-field">
-                  <label :for="`contractingAuthoritySigla-${index}`"
-                    >Sigla Órgão Contratante</label
-                  >
-                  <InputText
-                    :id="`contractingAuthoritySigla-${index}`"
-                    v-model="authority.sigla"
-                    placeholder="Sigla será preenchida automaticamente"
-                    class="w-full"
-                    readonly
-                  />
-                </div>
-
+                <DropdownBase
+                  v-model="authority.value"
+                  label="Órgão Contratante/Participante"
+                  helper="Selecione um órgão"
+                  :error="
+                    Array.isArray(errors?.clientes)
+                      ? errors?.clientes[index]?.message
+                      : ''
+                  "
+                  :invalid="
+                    !!(
+                      Array.isArray(errors?.clientes) &&
+                      errors?.clientes[index]?.message
+                    )
+                  "
+                  :input-props="{
+                    options: options.clients,
+                    optionLabel: 'text',
+                    optionValue: 'value'
+                  }"
+                  :events="{
+                    change() {
+                      onContractingAuthorityChange(index)
+                    }
+                  }"
+                />
+                <InputTextBase
+                  v-model="authority.sigla"
+                  label="Sigla Órgão Contratante"
+                  helper="Sigla será preenchida automaticamente."
+                  :error="''"
+                  :invalid="false"
+                  :input-props="{ readonly: true }"
+                />
                 <!-- Campo UASG -->
                 <div v-if="comprasnet" class="p-field input-full">
                   <label :for="`uasg-${index}`">UASG</label>
@@ -209,86 +233,56 @@
                 icon="fa-solid fa-plus"
                 @click="addContractingAuthority"
               />
-              <div class="p-field">
-                <label for="administrativeProcessNumber"
-                  >Nº Processo Administrativo</label
-                >
-                <InputNumber
-                  id="administrativeProcessNumber"
-                  v-model="form.administrativeProcessNumber"
-                  :use-grouping="false"
-                  placeholder="Insira o número do processo administrativo"
-                  class="w-full"
-                />
-                <small class="p-error">{{ errors.numero_p_a?.message }}</small>
-              </div>
-              <div class="p-field">
-                <label for="pregoeiro">Pregoeiro (A)</label>
-                <InputText
-                  id="pregoeiro"
-                  v-model="form.pregoeiro"
-                  placeholder="Insira o pregoeiro"
-                  class="w-full"
-                />
-                <small class="p-error">{{ errors.pregoeiro?.message }}</small>
-              </div>
-              <div class="p-field input-full">
-                <label for="completeObjectDescription">
-                  Descrição Completa do Objeto
-                </label>
-                <Textarea
-                  id="completeObjectDescription"
-                  v-model="form.completeObjectDescription"
-                  placeholder="Insira a descrição completa do objeto"
-                  class="w-full"
-                />
-                <small class="p-error">{{
-                  errors.descricao_completa_objeto?.message
-                }}</small>
-              </div>
-              <div class="p-field input-full">
-                <label for="simplifiedObjectDescription">
-                  Descrição Simplificada do Objeto
-                </label>
-                <InputText
-                  id="simplifiedObjectDescription"
-                  v-model="form.simplifiedObjectDescription"
-                  placeholder="Insira a descrição simplificada do objeto"
-                  class="w-full"
-                />
-                <small class="p-error">{{
-                  errors.descricao_simplificada_objeto?.message
-                }}</small>
-              </div>
+              <InputNumberBase
+                v-model="form.administrativeProcessNumber"
+                label="Nº Processo Administrativo"
+                helper="Insira o número do processo administrativo."
+                :invalid="!!errors.numero_p_a"
+                :error="errors.numero_p_a?.message"
+                :input-props="{ useGrouping: false }"
+              />
+              <InputTextBase
+                v-model="form.pregoeiro"
+                label="Pregoeiro (A)"
+                helper="Digite o(a) pregoeiro."
+                :invalid="!!errors.pregoeiro"
+                :error="errors.pregoeiro?.message"
+              />
+              <TextareaBase
+                v-model="form.completeObjectDescription"
+                label="Descrição Completa do Objeto"
+                helper="Insira a descrição completa do objeto."
+                class-base="input-full"
+                class-input="w-full"
+                :invalid="!!errors.descricao_completa_objeto"
+                :error="errors.descricao_completa_objeto?.message"
+                :input-props="{ autoResize: true }"
+              />
+              <InputTextBase
+                v-model="form.simplifiedObjectDescription"
+                label="Descrição Simplificada do Objeto"
+                helper="Insira a descrição simplificada do objeto."
+                class-base="input-full"
+                :invalid="!!errors.descricao_simplificada_objeto"
+                :error="errors.descricao_simplificada_objeto?.message"
+              />
             </div>
             <div class="container-inputs-form">
               <h5 class="input-full">DESCRIÇÃO SIMPLIFICADA DO OBJETO</h5>
-              <div class="p-field flex flex-column input-full">
-                <label for="fullEdition">Edital Completo (Edital)</label>
-                <FileUpload
-                  v-if="Array.isArray(form.archive)"
-                  id="archive"
-                  mode="basic"
-                  name="archive"
-                  class="w-full"
-                  custom-upload
-                  :multiple="false"
-                  :choose-label="'Buscar anexo'"
-                  :upload-label="'Upload'"
-                  :cancel-label="'Cancelar'"
-                  @select="selectArchive"
-                  @clear="removeArchive"
-                />
-                <span v-else class="component-download-archive">
-                  <a :href="form.archive" target="_blank">Visualizar Arquivo</a>
-                  <i
-                    v-tooltip.top="'Apagar Arquivo'"
-                    class="fa-solid fa-xmark"
-                    @click="removeArchive"
-                  />
-                </span>
-                <small class="p-error">{{ errors.arquivo?.message }}</small>
-              </div>
+              <FileUploadBase
+                v-model:file="form.archive"
+                v-model:file-path="form.file_path"
+                label="Edital Completo (Edital)"
+                :error="errors.arquivo?.message"
+                :invalid="!!errors.arquivo?.message"
+                :file-props="{
+                  mode: 'basic',
+                  multiple: false,
+                  customUpload: true,
+                  chooseLabel: 'Buscar Anexo',
+                  cancelLabel: 'Cancelar'
+                }"
+              />
               <div class="p-field input-full">
                 <label for="otherAttachments">Outros Anexos</label>
                 <FileUpload
@@ -328,6 +322,51 @@
                       </div>
                     </div>
                   </template>
+                  <template #content="{ files, removeFileCallback }">
+                    <div v-if="files.length > 0">
+                      <h5>A enviar</h5>
+                      <div class="flex flex-wrap p-0 sm:p-5 gap-5">
+                        <div
+                          v-for="(file, index) of files"
+                          :key="file.name + file.type + file.size"
+                          class="card m-0 px-6 flex flex-column border-1 surface-border align-items-center gap-3"
+                        >
+                          <div>
+                            <img
+                              role="presentation"
+                              :alt="file.name"
+                              :src="file.objectURL"
+                              width="100"
+                              height="50"
+                            />
+                          </div>
+                          <span
+                            style="
+                              display: flex;
+                              flex-direction: column;
+                              align-items: center;
+                              gap: 0.5rem;
+                            "
+                          >
+                            <label>Nome do arquivo</label>
+                            <InputText
+                              v-if="form.otherAttachments.add[index]"
+                              v-model="form.otherAttachments.add[index].name"
+                              placeholder="Dê um nome para o arquivo."
+                            />
+                          </span>
+                          <Badge value="Pendente" severity="warning" />
+                          <Button
+                            icon="pi pi-times"
+                            outlined
+                            rounded
+                            severity="danger"
+                            @click="removeFileCallback(index)"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </template>
                   <template #empty>
                     <p>Arraste e solte arquivos aqui.</p>
                   </template>
@@ -337,8 +376,8 @@
                   :key="archive.id"
                   class="component-download-archive"
                 >
-                  <a :href="archive.caminho"
-                    >{{ extractNameArchive(archive.caminho) }}
+                  <a :href="archive.caminho" target="_blank"
+                    >{{ archive.nome }}
                   </a>
                   <i
                     class="fa-solid fa-xmark"
@@ -353,62 +392,56 @@
             <!-- Datas -->
             <div class="container-inputs-form">
               <h5 class="input-full">Datas</h5>
-              <div class="p-field">
-                <label for="startProposalReception"
-                  >Inicio Acolhimento da Proposta</label
-                >
-                <Calendar
-                  id="startProposalReception"
-                  v-model="form.startProposalReception"
-                  placeholder="Insira a data e hora de início do acolhimento da proposta"
-                  class="w-full"
-                  :show-time="true"
-                />
-                <small class="p-error">{{
-                  errors.inicio_acolhimento_proposta?.message
-                }}</small>
-              </div>
-              <div class="p-field">
-                <label for="limitProposalReception"
-                  >Limite Acolhimento da Proposta</label
-                >
-                <Calendar
-                  id="limitProposalReception"
-                  v-model="form.limitProposalReception"
-                  placeholder="Insira a data e hora do limite do acolhimento da proposta"
-                  class="w-full"
-                  :show-time="true"
-                />
-                <small class="p-error">{{
-                  errors.limite_acolhimento_proposta?.message
-                }}</small>
-              </div>
-              <div class="p-field">
-                <label for="openingProposal">Abertura da Proposta</label>
-                <Calendar
-                  id="openingProposal"
-                  v-model="form.openingProposal"
-                  placeholder="Insira a data e hora da abertura da proposta"
-                  class="w-full"
-                  :show-time="true"
-                />
-                <small class="p-error">{{
-                  errors.abertura_proposta?.message
-                }}</small>
-              </div>
-              <div class="p-field">
-                <label for="disputeDateTime">Data e Hora da Disputa</label>
-                <Calendar
-                  id="disputeDateTime"
-                  v-model="form.disputeDateTime"
-                  placeholder="Insira a data e hora da disputa"
-                  class="w-full"
-                  :show-time="true"
-                />
-                <small class="p-error">{{
-                  errors.data_disputa?.message
-                }}</small>
-              </div>
+              <CalendarBase
+                id="startProposalReception"
+                v-model="form.startProposalReception"
+                label="Inicio Acolhimento da Proposta"
+                helper="Insira a data e hora de início do acolhimento da proposta."
+                :invalid="!!errors.inicio_acolhimento_proposta"
+                :error="errors.inicio_acolhimento_proposta?.message"
+                :input-props="{
+                  showIcon: true,
+                  dateFormat: 'dd/mm/yy',
+                  showTime: true
+                }"
+              />
+              <CalendarBase
+                id="limitProposalReception"
+                v-model="form.limitProposalReception"
+                label="Limite Acolhimento da Proposta"
+                helper="Insira a data e hora do limite do acolhimento da proposta."
+                :invalid="!!errors.limite_acolhimento_proposta"
+                :error="errors.limite_acolhimento_proposta?.message"
+                :input-props="{
+                  showIcon: true,
+                  dateFormat: 'dd/mm/yy',
+                  showTime: true
+                }"
+              />
+              <CalendarBase
+                v-model="form.openingProposal"
+                label="Abertura da Proposta"
+                helper="Insira a data e hora da abertura da proposta."
+                :invalid="!!errors.abertura_proposta"
+                :error="errors.abertura_proposta?.message"
+                :input-props="{
+                  showIcon: true,
+                  dateFormat: 'dd/mm/yy',
+                  showTime: true
+                }"
+              />
+              <CalendarBase
+                v-model="form.disputeDateTime"
+                label="Data e Hora da Disputa"
+                helper="Insira a data e hora da disputa."
+                :invalid="!!errors.data_disputa"
+                :error="errors.data_disputa?.message"
+                :input-props="{
+                  showIcon: true,
+                  dateFormat: 'dd/mm/yy',
+                  showTime: true
+                }"
+              />
             </div>
 
             <div class="input-full flex flex-row-reverse">
@@ -435,10 +468,19 @@ import * as zod from 'zod'
 import services from '@/api/index'
 import { useToast } from 'primevue/usetoast'
 import { EditalProtocol, ErrorsEditalInterface } from '@/@types/edital'
-import { FileUploadRemoveEvent } from 'primevue/fileupload'
+import {
+  FileUploadRemoveEvent,
+  FileUploadSelectEvent
+} from 'primevue/fileupload'
 import z from 'zod'
-import InputNumber from 'primevue/inputnumber'
 import useProcessStore from '@/store/process'
+import CalendarBase from '@/components/Forms/components/CalendarBase.vue'
+import InputMaskBase from '@/components/Forms/components/InputMaskBase.vue'
+import DropdownBase from '@/components/Forms/components/DropdownBase.vue'
+import InputNumberBase from '@/components/Forms/components/InputNumberBase.vue'
+import TextareaBase from '@/components/Forms/components/TextareaBase.vue'
+import FileUploadBase from '@/components/Forms/components/FileUploadBase.vue'
+import InputTextBase from '@/components/Forms/components/InputTextBase.vue'
 
 const toast = useToast()
 const storeProcess = useProcessStore()
@@ -452,7 +494,7 @@ const form = ref<EditalProtocol>({
   executionType: '',
   disputeMode: '',
   judgmentCriteria: '',
-  editalNumber: null,
+  editalNumber: '',
   isPeriodic: '',
   purchasingPortal: '',
   licitationNumber: null,
@@ -477,7 +519,13 @@ const form = ref<EditalProtocol>({
     current: [],
     add: [],
     remove: []
-  }
+  },
+  client_gestor: {
+    value: '',
+    sigla: '',
+    uasg: ''
+  },
+  file_path: null
 })
 
 const formState = ref({
@@ -530,6 +578,11 @@ const onFormSubmit = async () => {
       julgamento_id: z
         .string({ required_error: '' })
         .min(1, 'Julgamento ID é obrigatório')
+    }),
+    ...(!form.value.file_path && {
+      arquivo: z
+        .any()
+        .refine((val) => val?.name, { message: 'Anexo é obrigatório' })
     })
   })
 
@@ -599,6 +652,7 @@ const onFormData = (form: EditalProtocol) => {
   formData.append('numero_portal_compra', String(form.licitationNumber))
   formData.append('numero_p_a', String(form.administrativeProcessNumber))
   formData.append('pregoeiro', form.pregoeiro)
+  formData.append('cliente_gestor_id', form.client_gestor.value)
   formData.append('descricao_completa_objeto', form.completeObjectDescription)
   formData.append(
     'descricao_simplificada_objeto',
@@ -621,10 +675,10 @@ const onFormData = (form: EditalProtocol) => {
     form.disputeDateTime ? form.disputeDateTime.toISOString() : ''
   )
 
-  if (typeof form.archive == 'string') {
-    formData.append('caminho_arquivo', destroyDomainInPath(form.archive))
+  if (typeof form.file_path == 'string') {
+    formData.append('caminho_arquivo', form.file_path)
   } else {
-    formData.append('arquivo', form.archive[0])
+    formData.append('arquivo', form.archive)
   }
 
   for (let index = 0; index < form.contractingAuthorities.length; index++) {
@@ -637,7 +691,8 @@ const onFormData = (form: EditalProtocol) => {
     }
   }
   form.otherAttachments.add.forEach((attachment, index) => {
-    formData.append(`anexos[add][${index}]`, attachment)
+    formData.append(`anexos[add][${index}][nome]`, attachment.name)
+    formData.append(`anexos[add][${index}][file]`, attachment.file)
   })
   form.otherAttachments.remove.forEach((attachment, index) => {
     formData.append(`anexos[remove][${index}]`, attachment)
@@ -667,6 +722,7 @@ function copyFormDataToFormState(form: EditalProtocol) {
   data.limite_acolhimento_proposta = form.limitProposalReception
   data.abertura_proposta = form.openingProposal
   data.data_disputa = form.disputeDateTime
+  data.cliente_gestor_id = form.client_gestor.value
   data.clientes = form.contractingAuthorities.map((client) => client.value)
   data.arquivo = typeof form.archive == 'string' ? [form.archive] : form.archive
   data.anexos.add = form.otherAttachments.add
@@ -685,6 +741,7 @@ const showExecutionType = computed(() => {
   const executionSelected = options.contractRegimes.find(
     (element) => element.value === form.value.contractRegime
   )
+
   return ['Execução de obras', 'Serviços de engenharia'].includes(
     String(executionSelected?.text)
   )
@@ -760,6 +817,19 @@ const onContractingAuthorityChange = (index: number) => {
   }
 }
 
+const onChangeGestor = () => {
+  const selectedGestor = options.clients.find(
+    (client) => client.value === form.value.client_gestor.value
+  )
+
+  if (selectedGestor) {
+    form.value.client_gestor.sigla = selectedGestor.text.split('- ')[1]
+    if (comprasnet.value) {
+      form.value.client_gestor.uasg = 'Aleatório'
+    }
+  }
+}
+
 const addContractingAuthority = () => {
   form.value.contractingAuthorities.push({
     value: '',
@@ -782,16 +852,36 @@ const onLicitationTypeChange = () => {
 }
 
 //File upload handlers
-const selectFile = (event: any) => {
-  form.value.otherAttachments.add = event.files
+const selectFile = (event: FileUploadSelectEvent) => {
+  const files = event.files
+    .filter((file: any) => {
+      const valid = form.value.otherAttachments.add.every(
+        (fileIN) => fileIN.id !== file.objectURL
+      )
+      return valid
+    })
+    .map((file: any) => ({
+      name: file.name || '',
+      file: file,
+      id: file.objectURL
+    }))
+
+  form.value.otherAttachments.add = [
+    ...form.value.otherAttachments.add,
+    ...files
+  ]
 }
 
 const clearFiles = () => {
   form.value.otherAttachments.add = []
 }
 
-const removeFile = (event: FileUploadRemoveEvent) => {
-  form.value.otherAttachments.add = event.files
+const removeFile = (event: any) => {
+  const files = form.value.otherAttachments.add.filter(
+    (file) => file.id !== event.file.objectURL
+  )
+
+  form.value.otherAttachments.add = files
 }
 
 const selectArchive = (event: any) => {
@@ -839,18 +929,21 @@ const handlePopulateOptions = async () => {
 }
 
 const populateFields = (data: any) => {
+  console.log(data)
   if (data?.id) form.value.id = data.id
   form.value.licitationType = data.modalidade_id
   form.value.contractRegime = data.regime_id
   form.value.executionType = data.tipo_execucao_id
   form.value.disputeMode = data.modo_disputa_id
   form.value.judgmentCriteria = data.julgamento_id
-  form.value.editalNumber = +data.numero
+  form.value.file_path = data.caminho_arquivo
+  form.value.editalNumber = data.numero
   form.value.isPeriodic = +data.periodico ? '1' : '0'
   form.value.purchasingPortal = data.portal_compra_id
   form.value.licitationNumber = +data.numero_portal_compra
   form.value.administrativeProcessNumber = +data.numero_p_a
   form.value.pregoeiro = data.pregoeiro
+  form.value.client_gestor.value = data?.gestor
   form.value.completeObjectDescription = data.descricao_completa_objeto
   form.value.simplifiedObjectDescription = data.descricao_simplificada_objeto
   form.value.startProposalReception = new Date(data.inicio_acolhimento_proposta)
@@ -861,10 +954,7 @@ const populateFields = (data: any) => {
     ...client,
     value: client.id
   }))
-  form.value.archive = buildAccessArchives(
-    services.httpConfig.getUri(),
-    data.caminho_arquivo
-  )
+  form.value.archive = null
   form.value.otherAttachments.current = data.anexos.map((file: any) => ({
     ...file,
     caminho: buildAccessArchives(services.httpConfig.getUri(), file.caminho)
@@ -953,7 +1043,7 @@ form {
   }
 }
 .container-inputs-form {
-  @apply grid grid-cols-2 gap-4 pb-4;
+  @apply grid grid-cols-2 gap-4 gap-y-6 pb-4;
 
   h5 {
     @apply text-light-black70 dark:text-dark-white70 text-lg mb-1 font-semibold;

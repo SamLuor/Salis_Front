@@ -60,7 +60,7 @@ const useProcessStore = defineStore({
       this.publications = publications
     },
     setTermReference(term_reference: Termo_Referencia) {
-      const data = {
+      /*  const data = {
         id: term_reference.id,
         arquivo: term_reference.caminho_arquivo,
         caminho_arquivo: term_reference.caminho_arquivo,
@@ -97,9 +97,9 @@ const useProcessStore = defineStore({
           unidade_medida: item.produto_item.unidade_medida_id,
           quantidade: +item.quantidade
         })
-      })
+      }) */
 
-      this.term_reference = data
+      this.term_reference = term_reference
     },
     clearStore() {
       this.edital = {} as Edital

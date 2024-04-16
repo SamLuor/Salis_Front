@@ -1,3 +1,5 @@
+import { BaseItem, Group } from './term_reference'
+
 export interface Edital {
   id: string
   processo_id: string
@@ -43,6 +45,31 @@ export interface Edital {
     email: string
   }>
   anexos: Array<any>
+}
+
+export interface BaseItemProtocol {
+  id: string
+  numero: string
+  quantidade: number
+  produto_item_id: string
+  termo_referencia_id: string
+  grupo_id: any
+  produto_item: {
+    id: string
+    descricao_simplificada: string
+    descricao_completa: string
+    produto_id: string
+    unidade_medida_id: string
+    produto: {
+      id: string
+      nome: string
+    }
+    unidade_medida: {
+      id: string
+      nome: string
+    }
+  }
+  valor: number
 }
 
 export interface Termo_Referencia {
@@ -119,6 +146,19 @@ export interface Termo_Referencia {
       }
     }
   }>
+}
+
+export interface Termo_Referencia_Form {
+  id?: string
+  arquivo: any
+  caminho_arquivo: string
+  setor_produtos: string[]
+  subseguinte_comerciais: string[]
+  validade_proposta: Date | null
+  prazo_entrega: Date | null
+  prazo_garantia_produto: Date | null
+  validade_assinatura_arp?: number | null
+  validade_publicacao_arp?: number | null
 }
 
 export interface Empresa {

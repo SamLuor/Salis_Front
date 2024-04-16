@@ -1,6 +1,7 @@
 import type { AxiosInstance } from 'axios'
 import { handleError } from '@/utils/handleErrors'
 import useProcessStore from '@/store/process'
+import { BaseItem, Group } from '@/@types/term_reference'
 
 export default class TermReferenceService {
   constructor(private readonly httpConfig: AxiosInstance) {}
@@ -27,6 +28,19 @@ export default class TermReferenceService {
       .postForm('/processo/termo-referencia/' + id, data)
       .then((response) => {
         store.setTermReference(response.data.data)
+        return response.data
+      })
+      .catch((err) => {
+        const { message } = err.response.data
+        handleError(err, message)
+      })
+  }
+
+  async createTermReferenceItem(id: string, data: any) {
+    data.termo_referencia_id = id
+    return await this.httpConfig
+      .post('/termo-referencia-item', data)
+      .then((response) => {
         return response.data
       })
       .catch((err) => {

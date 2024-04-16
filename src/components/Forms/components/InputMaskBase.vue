@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Nullable } from 'primevue/ts-helpers'
-import InputText, { InputTextProps } from 'primevue/inputtext'
+import { InputMaskMerged } from '@/@types/custom'
+import InputMask from 'primevue/inputmask'
 
 interface Props {
   label: string
@@ -13,22 +13,22 @@ interface Props {
   helper?: string
   invalid: boolean
   required?: boolean
-  inputProps?: InputTextProps
+  inputProps?: InputMaskMerged
 }
 
-const model = defineModel<Nullable<string>>()
+const model = defineModel<string>()
 defineProps<Props>()
 </script>
 
 <template>
-  <div :class="`base-input ${classBase || ''}`">
+  <div :class="'base-input '.concat(String(classBase || ''))">
     <label
       :class="['label', { classLabel: classLabel }, { invalid: invalid }]"
       :for="name"
       >{{ label }}
       <span v-if="required" class="text-red-400 font-bold">*</span>
     </label>
-    <InputText
+    <InputMask
       v-model="model"
       :name="name"
       v-bind="inputProps"

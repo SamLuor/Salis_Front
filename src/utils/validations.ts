@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { isCEP, isCNPJ, isPhone, isDDD } from 'brazilian-values'
+import { isCEP, isCNPJ, isDDD } from 'brazilian-values'
 
 const schemaLogin = z.object({
   email: z
@@ -80,7 +80,6 @@ const schemaUpdateUser = z.object({
 const schemaCreateCompany = z.object({
   razao_social: z.string({ required_error: 'Obrigatório' }),
   nome_fantasia: z.string({ required_error: 'Obrigatório' }),
-  sigla: z.string({ required_error: 'Obrigatório' }),
   cnpj: z
     .string({ required_error: 'Obrigatório' })
     .refine((value) => isCNPJ(value), { message: 'CNPJ inválido' }),
@@ -93,7 +92,6 @@ const schemaUpdateCompany = z.object({
   id: z.string({ required_error: 'Obrigatório' }),
   razao_social: z.string({ required_error: 'Obrigatório' }).optional(),
   nome_fantasia: z.string({ required_error: 'Obrigatório' }).optional(),
-  sigla: z.string({ required_error: 'Obrigatório' }).optional(),
   cnpj: z
     .string({ required_error: 'Obrigatório' })
     .refine((value) => isCNPJ(value), { message: 'CNPJ inválido' })
@@ -122,52 +120,6 @@ const schemaPosition = z.object({
     .nonempty({ message: 'Deve ser vinculado a uma ou mais permissões' })
 })
 
-const schemaTelefone = z.object({
-  id: z.string().optional(),
-  ddd: z
-    .number({
-      required_error: 'Campo obrigatório',
-      invalid_type_error: 'Aceita apenas números'
-    })
-    .refine((value) => isDDD(String(value)), { message: 'DDD inválido' }),
-  numero: z
-    .string()
-    .refine((value) => isPhone(value), { message: 'Telefone inválido' }),
-  pessoa: z
-    .string({
-      required_error: 'Campo obrigatório',
-      invalid_type_error: 'Aceita apenas caracteres'
-    })
-    .min(1, { message: 'Campo obrigatório' })
-})
-
-const schemaEndereco = z.object({
-  id: z.string().optional(),
-  cep: z.string().refine((value) => isCEP(value), { message: 'CEP inválido' }),
-  logradouro: z
-    .string({
-      required_error: 'Campo obrigatório',
-      invalid_type_error: 'Aceita apenas caracteres'
-    })
-    .min(1, { message: 'Campo obrigatório' }),
-  bairro: z
-    .string({
-      required_error: 'Campo obrigatório',
-      invalid_type_error: 'Aceita apenas caracteres'
-    })
-    .min(1, { message: 'Campo obrigatório' }),
-  numero: z.number({
-    required_error: 'Campo obrigatório',
-    invalid_type_error: 'Aceita apenas números'
-  }),
-  complemento: z
-    .string({
-      required_error: 'Campo obrigatório',
-      invalid_type_error: 'Aceita apenas caracteres'
-    })
-    .optional()
-})
-
 const schemaCreateClient = z.object({
   id: z.string().optional(),
   razao_social: z.string({
@@ -194,8 +146,6 @@ const schemaCreateClient = z.object({
       invalid_type_error: 'Digite um Email válido'
     })
     .email(),
-  enderecos: schemaEndereco.array().min(1),
-  telefones: schemaTelefone.array().min(1),
   empresas: z
     .array(z.string({ required_error: 'Campo obrigatório' }), {
       required_error: 'Campo obrigatório'
@@ -227,23 +177,48 @@ const schemaCreatePublication = z.object({
     tipo_processo_id: z
       .string({ required_error: 'Campo obrigatorio' })
       .min(1, { message: 'Campo obrigatório' })
-  }),
-  publicacoes: z.array(
+  })
+})
+
+const schemaPublication = z
+  .array(
     z.object({
       date: z.date({
         required_error: 'Campo obrigatório',
         invalid_type_error: 'Data invalida'
       }),
-      file: z.any().refine((file) => file?.size > 0, 'Campo obrigatório'),
+      file: z.any().optional(),
       cliente_id: z
         .string({ required_error: 'Campo obrigatório' })
         .min(1, { message: 'Campo obrigatório' }),
       meio_publicacao_id: z
         .string({ required_error: 'Campo obrigatorio' })
-        .min(1, { message: 'Campo obrigatório' })
+        .min(1, { message: 'Campo obrigatório' }),
+      file_path: z.string().nullable().optional()
     })
   )
-})
+  .refine((val) => {
+    const errors: any[] = [] // Array to store individual errors
+
+    val.forEach((element, index) => {
+      if (
+        (element.file_path && element.file?.name) ||
+        (!element.file_path && !element.file?.name)
+      ) {
+        errors.push({
+          message: 'O arquivo é obrigatório',
+          path: ['file', index]
+        })
+      }
+    })
+
+    if (errors.length > 0) {
+      // Throw a single ZodError with all collected errors
+      throw new z.ZodError(errors)
+    }
+
+    return true // Explicitly return true for successful validation
+  })
 
 const schemaUpdatePublication = schemaCreatePublication.partial()
 
@@ -252,7 +227,7 @@ const schemaCreateEdital = z.object({
     .string({ required_error: '' })
     .min(1, 'Modalidade é obrigatório'),
   numero: z
-    .number({
+    .string({
       required_error: '',
       invalid_type_error: 'Apenas números são válidos'
     })
@@ -299,17 +274,15 @@ const schemaCreateEdital = z.object({
     required_error: 'Data da Disputa é obrigatória',
     invalid_type_error: 'Data Invalida'
   }),
+  cliente_gestor_id: z
+    .string({ required_error: 'Gestor é obrigatório' })
+    .min(1, 'Campo obrigatório'),
   clientes: z
     .array(
       z
         .string({ required_error: 'Clientes é obrigatório' })
         .min(1, 'Campo obrigatório')
     )
-    .min(1, 'Campo obrigatório'),
-  arquivo: z
-    .array(z.any({ required_error: 'Arquivo é obrigatório' }), {
-      invalid_type_error: 'Campo obrigatório'
-    })
     .min(1, 'Campo obrigatório'),
   anexos: z.object({
     add: z.array(z.any()),
@@ -355,23 +328,22 @@ const schemaProductItem = z
     }
   )
 
-const itemProductSchema = z
-  .object({
-    numero: z.number({ invalid_type_error: 'Número é obrigatório' }),
-    quantidade: z.number({ invalid_type_error: 'Quantidade é obrigatório' }),
-    produto_item_id: z
-      .string({ invalid_type_error: 'Item de produto não válido' })
-      .min(1, { message: 'Um item de produto deve ser selecionado' }),
-    grupo: z.number().optional().nullable()
-  })
-  .refine(
-    (data) =>
-      ('grupo' in data && typeof data.grupo === 'number') || !('grupo' in data),
-    {
-      message: 'Se o grupo estiver presente, ele deve ser preenchido.',
-      path: ['grupo']
-    }
-  )
+const itemProductSchema = z.object({
+  numero: z.number({
+    invalid_type_error: 'Número é obrigatório',
+    required_error: 'Campo é obrigatório.'
+  }),
+  quantidade: z.number({
+    invalid_type_error: 'Quantidade é obrigatório',
+    required_error: 'Campo é obrigatório.'
+  }),
+  produto_item_id: z
+    .string({
+      invalid_type_error: 'Item de produto não válido',
+      required_error: 'Campo é obrigatório.'
+    })
+    .min(1, { message: 'Um item de produto deve ser selecionado' })
+})
 
 const schemaTermReference = z.object({
   setor_produtos: z
@@ -398,7 +370,6 @@ const schemaTermReference = z.object({
     invalid_type_error: 'Selecione uma data'
   }),
   validade_assinatura_arp: z.number().optional(),
-  itens: z.array(itemProductSchema),
   arquivo: z.any()
 })
 
@@ -417,6 +388,72 @@ const schemaSetorProduto = z.object({
     .nonempty({ message: 'Deve ser vinculado a uma ou mais empresas' })
 })
 
+const schemaUnitMeasure = z.object({
+  nome: z
+    .string({
+      invalid_type_error: 'Apenas caracteres',
+      required_error: 'Campo obrigatório'
+    })
+    .min(2, { message: 'No mínimo um caractere' }),
+  tipo: z.string({ invalid_type_error: 'Apenas caracteres' }).refine(
+    (value) => {
+      return value === 'servico' || value === 'material'
+    },
+    {
+      message: 'Valor inválido. Escolha entre "servicos" ou "material".'
+    }
+  ),
+  empresas: z
+    .array(
+      z.string({
+        invalid_type_error: 'Apenas caracteres',
+        required_error: 'Campo obrigatório'
+      }),
+      { required_error: 'Campo obrigatório' }
+    )
+    .min(1, 'Selecione no mínimo uma empresa')
+})
+
+const addressesSchema = z
+  .array(
+    z.object({
+      cep: z
+        .string()
+        .min(8, { message: 'CEP deve ter 8 caracteres.' })
+        .max(8, { message: 'CEP deve ter 8 caracteres.' })
+        .refine((value) => isCEP(value), {
+          message: 'Digite um cep válido'
+        }),
+      logradouro: z
+        .string()
+        .min(3, { message: 'Logradouro não pode estar vazio.' }),
+      cidade: z.string().min(3, { message: 'Cidade não pode estar vazio.' }),
+      bairro: z.string().min(2, { message: 'Bairro não pode estar vazio.' }),
+      numero: z.string().min(2, { message: 'Número não pode estar vazio.' }),
+      complemento: z.string().optional()
+    })
+  )
+  .min(1, { message: 'Cadastre pelo menos um endereço.' })
+
+const contactsSchema = z
+  .array(
+    z.object({
+      ddd: z
+        .number({ invalid_type_error: 'Campo Obrigatório' })
+        .refine((val) => isDDD(String(val)), {
+          message: 'DDD deve conter exatamente 2 dígitos numéricos'
+        }),
+      numero: z
+        .number({ invalid_type_error: 'Campo Obrigatório.' })
+        .refine((num) => String(num).length >= 8 && String(num).length <= 9, {
+          message:
+            'Número inválido, digite um número válido com 8 ou 9 dígitos.'
+        }),
+      pessoa: z.string().min(1, { message: 'Nome da pessoa é obrigatório' })
+    })
+  )
+  .min(1, { message: 'Cadastre pelo menos um contato.' })
+
 export {
   schemaLogin,
   schemaCreateUser,
@@ -433,5 +470,10 @@ export {
   schemaCreateEdital,
   schemaProductItem,
   schemaTermReference,
-  schemaSetorProduto
+  schemaSetorProduto,
+  itemProductSchema,
+  schemaUnitMeasure,
+  addressesSchema,
+  contactsSchema,
+  schemaPublication
 }

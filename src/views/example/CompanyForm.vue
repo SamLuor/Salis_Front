@@ -11,83 +11,46 @@
               <h4 class="header">Informações da Empresa</h4>
               <p class="description">
                 Estas informações são para cadastra dados da empresa, todos os
-                dados das empresas cadastradas serão visiveis a partir de
+                dados das empresas cadastradas serão visíveis a partir de
                 permissões liberadas para os usuários.
               </p>
             </div>
           </div>
           <form class="container-form-bussiness">
-            <div class="flex flex-column gap-2 input-full w-full">
-              <label for="username">Razão Social</label>
-              <InputText
-                id="razao_social"
-                v-bind="razao_social"
-                aria-describedby="razao_social-help"
-              />
-              <small v-if="!errors.razao_social" id="razao_social-help"
-                >Digite a razão social da empresa.</small
-              >
-              <small v-else id="text-error" class="p-error">{{
-                errors.razao_social || '&nbsp;'
-              }}</small>
-            </div>
-            <div class="flex flex-column gap-2 input-full w-full">
-              <label for="username">Nome Fantasia</label>
-              <InputText
-                id="nome_fantasia"
-                v-bind="nome_fantasia"
-                aria-describedby="nome_fantasia-help"
-              />
-              <small v-if="!errors.nome_fantasia" id="nome_fantasia-help"
-                >Digite o nome fantasia da empresa.</small
-              >
-              <small v-else id="text-error" class="p-error">{{
-                errors.nome_fantasia || '&nbsp;'
-              }}</small>
-            </div>
-            <div class="flex flex-column gap-2 w-full">
-              <label for="username">Sigla</label>
-              <InputText
-                id="sigla"
-                v-bind="sigla"
-                aria-describedby="sigla-help"
-              />
-              <small v-if="!errors.sigla" id="sigla-help"
-                >Digite a sigla da empresa.</small
-              >
-              <small v-else id="text-error" class="p-error">{{
-                errors.sigla || '&nbsp;'
-              }}</small>
-            </div>
-            <div class="flex flex-column gap-2 w-full">
-              <label for="username">CNPJ</label>
-              <InputMask
-                id="CNPJ"
-                v-bind="cnpj"
-                mask="99.999.999/9999-99"
-                aria-describedby="CNPJ-help"
-              />
-              <small v-if="!errors.cnpj" id="CNPJ-help"
-                >Digite o CNPJ da empresa.</small
-              >
-              <small v-else id="text-error" class="p-error">{{
-                errors.cnpj || '&nbsp;'
-              }}</small>
-            </div>
-            <div class="flex flex-column gap-2 input-full w-full">
-              <label for="username">Email</label>
-              <InputText
-                id="Email"
-                v-bind="email"
-                aria-describedby="Email-help"
-              />
-              <small v-if="!errors.email" id="Email-help"
-                >Digite o email da empresa.</small
-              >
-              <small v-else id="text-error" class="p-error">{{
-                errors.email || '&nbsp;'
-              }}</small>
-            </div>
+            <InputTextBase
+              label="Razão Social"
+              helper="Digite a razão social da empresa."
+              class-base="input-full"
+              :required="true"
+              :input-props="razao_social"
+              :invalid="!!errors?.razao_social"
+              :error="errors?.razao_social"
+            />
+            <InputTextBase
+              label="Nome Fantasia"
+              helper="Digite o nome fantasia da empresa."
+              class-base="input-full"
+              :required="true"
+              :input-props="nome_fantasia"
+              :invalid="!!errors?.nome_fantasia"
+              :error="errors?.nome_fantasia"
+            />
+            <InputMaskBase
+              label="CNPJ"
+              helper="Digite o CNPJ da empresa."
+              :required="true"
+              :input-props="{ ...cnpj, mask: '99.999.999/9999-99' }"
+              :error="errors?.cnpj"
+              :invalid="!!errors?.cnpj"
+            />
+            <InputTextBase
+              label="Email"
+              helper="Digite o email da empresa."
+              :required="true"
+              :error="errors?.email"
+              :invalid="!!errors?.email"
+              :input-props="{ ...email, type: 'email' }"
+            />
             <div class="input-full file-upload">
               <FileUpload
                 name="demo[]"
@@ -160,21 +123,17 @@
                 errors.logo_img_path || '&nbsp;'
               }}</small>
             </div>
-            <div class="flex flex-column gap-2 input-full w-full">
-              <label for="username">Frase</label>
-              <Textarea
-                id="Frase"
-                v-bind="frase"
-                style="resize: vertical; min-height: 100px"
-                aria-describedby="Frase-help"
-              />
-              <small v-if="!errors.frase" id="Frase-help"
-                >Digite a frase da empresa.</small
-              >
-              <small v-else id="text-error" class="p-error">{{
-                errors.frase || '&nbsp;'
-              }}</small>
-            </div>
+            <TextareaBase
+              label="Frase"
+              helper="Digite a frase da empresa"
+              class-base="input-full"
+              :required="true"
+              :invalid="!!errors.frase"
+              :error="errors.frase"
+              :input-props="{ ...frase, autoResize: true }"
+            />
+            <AddressesForm :enderecos="enderecos" :errors="errorsAddress" />
+            <ContactsForm :contatos="contatos" :errors="errorsContact" />
             <div class="input-full flex flex-row-reverse">
               <Button
                 :label="company_id ? 'Atualizar' : 'Criar'"
@@ -190,20 +149,35 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import FileUpload from 'primevue/fileupload'
-import InputMask from 'primevue/inputmask'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { schemaCreateCompany, schemaUpdateCompany } from '@/utils/validations'
 import { useRoute } from 'vue-router'
 import services from '@/api/index'
 import { useToast } from 'primevue/usetoast'
-import { CompanyProtocol } from '@/@types/company'
 import router from '@/router'
+import AddressesForm from '@/components/Forms/components/AddressesForm.vue'
+import { Address, ErrorsAddress } from '@/@types/addresses'
+import {
+  deepClone,
+  validitySchemaArray,
+  createStructureAddressFormData,
+  createStructureContactFormData
+} from '@/utils/helpers'
+import { AddressInitial, ContactInitial } from '@/utils/constants'
+import { addressesSchema, contactsSchema } from '@/utils/validations'
+import ContactsForm from '@/components/Forms/components/ContactsForm.vue'
+import { Contact, ErrorsContact } from '@/@types/contacts'
+import InputTextBase from '@/components/Forms/components/InputTextBase.vue'
+import InputMaskBase from '@/components/Forms/components/InputMaskBase.vue'
+import TextareaBase from '@/components/Forms/components/TextareaBase.vue'
 
 const file = ref<any>(null)
 const toast = useToast()
 const route = useRoute()
 const company_id = route.params?.id
+const errorsAddress = ref<ErrorsAddress[]>([])
+const errorsContact = ref<ErrorsContact[]>([])
 const schema = company_id ? schemaUpdateCompany : schemaCreateCompany
 const { defineComponentBinds, handleSubmit, errors, setFieldValue } = useForm({
   validationSchema: toTypedSchema(schema)
@@ -211,13 +185,26 @@ const { defineComponentBinds, handleSubmit, errors, setFieldValue } = useForm({
 
 const razao_social = defineComponentBinds('razao_social')
 const nome_fantasia = defineComponentBinds('nome_fantasia')
-const sigla = defineComponentBinds('sigla')
 const cnpj = defineComponentBinds('cnpj')
 const email = defineComponentBinds('email')
 const logo_img_path = defineComponentBinds('logo_img_path')
 const frase = defineComponentBinds('frase')
 
+const enderecos = ref<Address[]>([deepClone(AddressInitial)])
+const contatos = ref<Contact[]>([deepClone(ContactInitial)])
+
 const onFormSubmit = handleSubmit(async (values) => {
+  errorsAddress.value = []
+
+  errorsAddress.value = validitySchemaArray(
+    addressesSchema,
+    enderecos.value
+  ) as ErrorsAddress[]
+
+  errorsContact.value = validitySchemaArray(contactsSchema, contatos.value)
+
+  if (errorsAddress.value.length || errorsContact.value.length) return
+
   const formData = new FormData()
   const isCreate = 'id' in values
 
@@ -225,6 +212,9 @@ const onFormSubmit = handleSubmit(async (values) => {
   for (const key of Object.keys(values)) {
     formData.append(key, values[key as keyof typeof values] as string | Blob)
   }
+
+  createStructureContactFormData(formData, contatos.value)
+  createStructureAddressFormData(formData, enderecos.value)
 
   try {
     if (!company_id) await services.Company.createCompany(formData)
@@ -266,6 +256,18 @@ onMounted(async () => {
     setFieldValue('email', response.data.email)
     setFieldValue('logo_img_path', response.data.logo_img_path)
     setFieldValue('frase', response.data.frase)
+
+    enderecos.value = response.data.enderecos.map((endereco: any) => ({
+      ...endereco,
+      logradouro: endereco.logradouro?.split(' - ')[0],
+      cidade: endereco.logradouro?.split(' - ')[1]
+    }))
+
+    contatos.value = response.data.telefones.map((contact: any) => ({
+      ...contact,
+      ddd: +contact.ddd,
+      numero: +contact.numero
+    }))
   }
 })
 </script>

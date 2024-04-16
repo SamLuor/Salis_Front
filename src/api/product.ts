@@ -61,4 +61,43 @@ export default class ProductService implements ProductServices {
         handleError(err, message)
       })
   }
+
+  async getListProductsItens(id: string) {
+    return await this.httpConfig
+      .get('/termo-referencia/' + id)
+      .then((response) => {
+        return response.data
+      })
+      .catch((err) => {
+        const { message } = err.response.data
+        handleError(err, message)
+      })
+  }
+
+  async updateValueProductItem(id: string, value: number) {
+    return await this.httpConfig
+      .post(`/termo-referencia-item/${id}/update-valor`, {
+        _method: 'put',
+        valor: value
+      })
+      .then((response) => {
+        return response.data
+      })
+      .catch((err) => {
+        const { message } = err.response.data
+        handleError(err, message)
+      })
+  }
+
+  async deleteProductItemListed(id: string) {
+    return await this.httpConfig
+      .post('termo-referencia-item/destroy', { termo_referencia_itens: [id] })
+      .then((response) => {
+        return response.data
+      })
+      .catch((err) => {
+        const { message } = err.response.data
+        handleError(err, message)
+      })
+  }
 }

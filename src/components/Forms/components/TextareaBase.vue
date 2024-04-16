@@ -1,15 +1,18 @@
 <script setup lang="ts">
+import { cn } from '@/utils/helpers'
 import Textarea, { type TextareaProps } from 'primevue/textarea'
 
 interface Props {
   label: string
   name?: string
+  classBase?: string
   classInput?: string
   classLabel?: string
   classError?: string
   error: string | undefined
   helper?: string
   invalid: boolean
+  required?: boolean
   inputProps?: TextareaProps
 }
 
@@ -18,16 +21,17 @@ defineProps<Props>()
 </script>
 
 <template>
-  <div class="base-input">
+  <div :class="`base-input ${classBase || ''}`">
     <label
       :class="['label', { classLabel: classLabel }, { invalid: invalid }]"
       :for="name"
-      >{{ label }}</label
-    >
+      >{{ label }}
+      <span v-if="required" class="text-red-400 font-bold">*</span>
+    </label>
     <Textarea
       v-model="model"
       v-bind="inputProps"
-      :class="['input', { classInput: classInput }, { invalid: invalid }]"
+      :class="['input', classInput || '', { invalid: invalid }]"
     />
     <small v-if="!error && helper" class="helper">{{ helper }}</small>
     <small v-else :class="['error', { classError: classError }]">{{

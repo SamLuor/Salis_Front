@@ -15,6 +15,8 @@ import EditalService from './edital'
 import ProductService from './product'
 import TermReferenceService from './term_reference'
 import SetorProdutoService from './setor_produto'
+import UnitMeasureService from './unit_measure'
+import { ThirdPartyServices } from './thirdParty'
 
 httpConfig.interceptors.request.use((config) => {
   const dataProcessor = SecureDataProcessor.dataProcessor
@@ -60,5 +62,7 @@ export default {
   Products: new ProductService(httpConfig),
   TermReference: new TermReferenceService(httpConfig),
   SetorProduct: new SetorProdutoService(httpConfig),
+  UnitMeasure: new UnitMeasureService(httpConfig),
+  ThirdParty: new ThirdPartyServices(),
   httpConfig
 }

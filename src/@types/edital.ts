@@ -5,9 +5,10 @@ export interface EditalProtocol {
   licitationType: string
   contractRegime: string
   executionType: string
+  file_path: string | null
   disputeMode: string
   judgmentCriteria: string
-  editalNumber: number | null
+  editalNumber: string
   isPeriodic: string
   purchasingPortal: string
   licitationNumber: number | null
@@ -16,6 +17,11 @@ export interface EditalProtocol {
     sigla: string
     uasg: string
   }[]
+  client_gestor: {
+    value: string
+    sigla: string
+    uasg: string
+  }
   administrativeProcessNumber: number | null
   pregoeiro: string
   completeObjectDescription: string
@@ -29,8 +35,14 @@ export interface EditalProtocol {
   otherAttachments: OtherAttachment
 }
 
+interface FileType {
+  name: string
+  file: any
+  id: string
+}
+
 interface OtherAttachment {
-  add: any[]
+  add: FileType[]
   remove: string[]
   current: AttachmentCurrent[]
 }
@@ -38,6 +50,7 @@ interface OtherAttachment {
 interface AttachmentCurrent {
   id: string
   caminho: string
+  nome: string
 }
 
 export interface Data {
@@ -90,6 +103,7 @@ export interface ErrorsEditalInterface {
   abertura_proposta: FieldObject
   data_disputa: FieldObject
   clientes: FieldObject[]
+  cliente_gestor_id: FieldObject
   arquivo: FieldObject
   anexos: Anexos
 }
