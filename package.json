@@ -36,6 +36,8 @@
     "@types/prismjs": "^1.26.0",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
+    "@vue/language-core": "^2.0.13",
+    "@vue/typescript": "^1.8.20",
     "@vitejs/plugin-vue": "^2.3.3",
     "@vue/eslint-config-prettier": "^8.0.0",
     "@vue/eslint-config-typescript": "^11.0.3",

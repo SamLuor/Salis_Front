@@ -102,7 +102,7 @@ const removeFile = () => {
 }
 </style>
 
-<style scoped>
+<style scoped lang="scss">
 .component-download-archive {
   @apply flex gap-10 items-center pl-2 mb-2;
 
