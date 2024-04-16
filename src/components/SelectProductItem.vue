@@ -61,7 +61,7 @@ const selectedProduct = ref<ProductItemProtocol>({} as ProductItemProtocol)
 defineProps<Props>()
 </script>
 
-<style setup>
+<style setup lang="scss">
 .modal-options-itens {
   @apply flex flex-col justify-between h-full;
 

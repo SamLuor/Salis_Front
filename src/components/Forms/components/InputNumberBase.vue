@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Nullable } from 'primevue/ts-helpers'
 import { type InputNumberProps } from 'primevue/inputnumber'
 
 interface Props {
@@ -16,7 +15,7 @@ interface Props {
   inputProps?: InputNumberProps
 }
 
-const model = defineModel<Nullable<number>>()
+const model = defineModel<number>()
 defineProps<Props>()
 </script>
 
