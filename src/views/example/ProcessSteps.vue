@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { shallowRef, ref, onMounted, onUnmounted } from 'vue'
+import { shallowRef, ref, onMounted, onUnmounted, watch } from 'vue'
 import PublicationForm from './PublicationForm.vue'
 import EditalForm from './EditalForm.vue'
 import TabsSteps from '@/components/TabsSteps/TabsSteps.vue'
@@ -9,23 +9,22 @@ import TermReferenceForm from './TermReferenceForm.vue'
 import useProcessStore from '@/store/process'
 import { useToast } from 'primevue/usetoast'
 import ListProducts from './ListProducts.vue'
+import useOptionsStore from '@/store/options'
+import { useStepProcessStore } from '@/store/steps_process'
 
 const route = useRoute()
 const toast = useToast()
 
 const publication_id = route.params?.id
+const storeStepsProcess = useStepProcessStore()
 const active = shallowRef(PublicationForm)
 const processStore = useProcessStore()
-const keyCurrent = ref<string>('publicacoes')
-const step = ref(0)
-const currentProcess = ref(0)
+const optionsStore = useOptionsStore()
 const loading = ref<boolean>(false)
 
 interface ComponentsMap {
   [key: string]: any
 }
-
-const keysData = ['publicacoes', 'edital']
 
 const componentsOptions: ComponentsMap = {
   '0': PublicationForm,
@@ -35,10 +34,15 @@ const componentsOptions: ComponentsMap = {
 }
 
 const selectStatus = (status: number) => {
-  currentProcess.value = status
   active.value = componentsOptions[status]
-  keyCurrent.value = keysData[status]
 }
+
+watch(
+  () => storeStepsProcess.currentAccess,
+  (newValue) => {
+    selectStatus(newValue ?? 0)
+  }
+)
 
 onMounted(async () => {
   if (publication_id) {
@@ -46,7 +50,8 @@ onMounted(async () => {
     try {
       await services.Publication.getPublication(publication_id as string)
       selectStatus(processStore.status)
-      step.value = processStore.status + 1
+      storeStepsProcess.changeAccessGranted(processStore.status + 1)
+      storeStepsProcess.changeCurrentAccess(processStore.status)
     } catch (err) {
       toast.add({ severity: 'error', detail: (err as Error).message })
     } finally {
@@ -57,6 +62,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   processStore.clearStore()
+  optionsStore.clearOptions()
 })
 </script>
 
@@ -67,8 +73,9 @@ onUnmounted(() => {
         <h5 class="header-page">Processos</h5>
         <TabsSteps
           v-if="publication_id"
-          :status-process="step"
-          :current="currentProcess"
+          v-model:status="storeStepsProcess.currentAccess"
+          :status-process="storeStepsProcess.accessGranted"
+          :current="storeStepsProcess.currentAccess"
           @change-status="selectStatus"
         />
         <component :is="active" v-if="!loading" />

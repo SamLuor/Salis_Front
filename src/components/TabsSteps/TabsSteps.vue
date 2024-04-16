@@ -29,6 +29,8 @@ const statuses = [
   }
 ]
 
+const statusModel = defineModel<number>('status', { required: true })
+
 const changeStatus = (status: number) => {
   emit('changeStatus', status)
 }
@@ -39,9 +41,10 @@ const changeStatus = (status: number) => {
     <CardStep
       v-for="status in statuses"
       :key="'status'.concat(String(status))"
+      v-model:status="statusModel"
       :is-completed="statusProcess >= status.status"
-      :is-current="status.status === props.current"
-      :status="status.status"
+      :is-current="status.status === statusModel"
+      :num-status="status.status"
       :description="status.description"
       :header="status.header"
       :icon="status.icon"

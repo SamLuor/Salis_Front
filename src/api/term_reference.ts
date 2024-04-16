@@ -2,15 +2,18 @@ import type { AxiosInstance } from 'axios'
 import { handleError } from '@/utils/handleErrors'
 import useProcessStore from '@/store/process'
 import { BaseItem, Group } from '@/@types/term_reference'
+import { useStepProcessStore } from '@/store/steps_process'
 
 export default class TermReferenceService {
   constructor(private readonly httpConfig: AxiosInstance) {}
 
   async createTermReference(data: FormData, id: string) {
     const store = useProcessStore()
+    const storeTabs = useStepProcessStore()
     return await this.httpConfig
       .postForm('/processo/termo-referencia/' + id, data)
       .then((response) => {
+        storeTabs.changeAccessGranted(3)
         store.setTermReference(response.data.data)
         return response.data
       })
