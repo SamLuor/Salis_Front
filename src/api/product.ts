@@ -8,6 +8,7 @@ import type {
   GetProductResponse,
   GetProductItemResponse
 } from '@/@types/products'
+import { GetResponseTermReference } from '@/@types/term_reference'
 
 export default class ProductService implements ProductServices {
   constructor(private readonly httpConfig: AxiosInstance) {}
@@ -62,7 +63,7 @@ export default class ProductService implements ProductServices {
       })
   }
 
-  async getListProductsItens(id: string) {
+  async getListProductsItens(id: string): Promise<GetResponseTermReference> {
     return await this.httpConfig
       .get('/termo-referencia/' + id)
       .then((response) => {
