@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const props = defineProps({
-  status: {
+  numStatus: {
     type: Number,
     required: true
   },
@@ -27,6 +27,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['changeStatus'])
+
+const status = defineModel<number>('status', { required: true })
 </script>
 
 <template>
@@ -37,7 +39,9 @@ const emit = defineEmits(['changeStatus'])
     }"
     @click="
       () => {
-        if (isCompleted) emit('changeStatus', props.status)
+        if (isCompleted) {
+          status = props.numStatus
+        }
       }
     "
   >

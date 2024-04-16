@@ -118,12 +118,17 @@
             </div>
             <div class="input-full flex flex-row-reverse gap-2 mt-4">
               <Button
-                :label="
-                  !storeProcess.term_reference.id ? 'Salvar' : 'Atualizar'
-                "
+                :label="!storeProcess.term_reference.id ? 'Salvar' : 'Salvar'"
                 @click="requireConfirmation($event)"
               />
-              <Button severity="secondary" label="Próximo" outlined text />
+              <Button
+                severity="secondary"
+                label="Próximo"
+                outlined
+                text
+                :disabled="storeStepProcess.accessGranted! <= 2"
+                @click="() => (storeStepProcess.currentAccess = 3)"
+              />
               <ConfirmPopup group="headless">
                 <template
                   #container="{ message, acceptCallback, rejectCallback }"
@@ -167,21 +172,24 @@ import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 
 import useProcessStore from '@/store/process'
+import { useStepProcessStore } from '@/store/steps_process'
+import useOptionsStore from '@/store/options'
 
 import services from '@/api'
 
 import { validityForm } from '@/utils/helpers'
 import { schemaTermReference } from '@/utils/validations'
 import { Termo_Referencia, Termo_Referencia_Form } from '@/@types/process'
+
 import RegisterItem from '@/components/RegisterItem.vue'
 import MultiSelectBase from '@/components/Forms/components/MultiSelectBase.vue'
-import useOptionsStore from '@/store/options'
 import CalendarBase from '@/components/Forms/components/CalendarBase.vue'
 import InputNumberBase from '@/components/Forms/components/InputNumberBase.vue'
 import FileUploadBase from '@/components/Forms/components/FileUploadBase.vue'
 
 const storeProcess = useProcessStore()
 const storeOptions = useOptionsStore()
+const storeStepProcess = useStepProcessStore()
 
 const toast = useToast()
 const confirm = useConfirm()
@@ -216,7 +224,7 @@ const requireConfirmation = (event: any) => {
     group: 'headless',
     message: 'Deseja salvar termo de referência?',
     accept: () => {
-      console.log('Accept')
+      onFormSubmit()
     },
     reject: () => {
       onFormSubmit()

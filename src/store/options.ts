@@ -144,6 +144,23 @@ const useOptionsStore = defineStore({
     },
     setJudgingCriteria(criteriosJulgamento: Options[]) {
       this.criterios_julgamento = criteriosJulgamento
+    },
+    clearOptions() {
+      this.usuarios = []
+      this.unidades_medidas = []
+      this.tipos_processo = []
+      this.tipos_execucao = []
+      this.subseguintes_comerciais = []
+      this.setores_produtos = []
+      this.regimes_contratacao = []
+      this.permissoes = []
+      this.modos_disputa = []
+      this.modalidades_processo = []
+      this.meios_publicacao = []
+      this.empresa = []
+      this.criterios_julgamento = []
+      this.clientes = []
+      this.cargos = []
     }
   }
 })
