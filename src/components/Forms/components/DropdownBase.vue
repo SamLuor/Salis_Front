@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import Dropdown, { type DropdownProps } from 'primevue/dropdown'
+import Dropdown, { DropdownEmits, type DropdownProps } from 'primevue/dropdown'
 
 interface Props {
   label: string
   name?: string
+  classBase?: string
   classInput?: string
   classLabel?: string
   classError?: string
   error: string | undefined
   helper?: string
   invalid: boolean
+  required?: boolean
   inputProps?: DropdownProps
+  events?: Partial<DropdownEmits>
 }
 
 const model = defineModel<string>()
@@ -18,16 +21,21 @@ defineProps<Props>()
 </script>
 
 <template>
-  <div class="base-input">
+  <div :class="`base-input ${classBase || ''}`">
     <label
       :class="['label', { classLabel: classLabel }, { invalid: invalid }]"
       :for="name"
-      >{{ label }}</label
-    >
+      >{{ label }}
+      <span v-if="required" class="text-red-400 font-bold">*</span>
+    </label>
     <Dropdown
       v-model="model"
-      v-bind="inputProps"
+      v-bind="{
+        ...inputProps,
+        inputProps: { ...inputProps?.inputProps, name: name }
+      }"
       :class="['input', { classInput: classInput }, { invalid: invalid }]"
+      @change="events?.change"
     />
     <small v-if="!error && helper" class="helper">{{ helper }}</small>
     <small v-else :class="['error', { classError: classError }]">{{

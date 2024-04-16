@@ -1,3 +1,6 @@
+import { Address } from './addresses'
+import { Contact } from './contacts'
+
 export interface ClientProtocol {
   index?: number
   id?: string
@@ -6,8 +9,8 @@ export interface ClientProtocol {
   sigla: string
   cnpj: string
   email: string
-  enderecos: Endereco[]
-  telefones: Telefone[]
+  enderecos: Address[]
+  telefones: Contact[]
   empresas: string[]
 }
 

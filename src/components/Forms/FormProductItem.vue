@@ -3,9 +3,10 @@
     <DropdownBase
       v-model="form.produto_id"
       label="Produto"
+      helper="Selecione um produto existente ou crie um"
+      :required="true"
       :invalid="false"
       :error="errors?.produto_id?.message || errors?.nome?.message"
-      helper="Selecione um produto existente ou crie um"
       :input-props="{
         options: optionsProdutos,
         optionLabel: 'text',
@@ -23,40 +24,62 @@
       v-model="form.descricao_simplificada"
       label="Descrição Simplificada"
       helper="Descreva de forma simplificada o item do produto"
+      :required="true"
       :invalid="false"
       :error="errors?.descricao_simplificada?.message"
     />
     <TextareaBase
       v-model="form.descricao_completa"
       :invalid="false"
+      :required="true"
       :error="errors?.descricao_completa?.message"
       helper="Descreva de forma completa o item do produto"
       label="Descrição Completa"
       :input-props="{ style: { resize: 'none' } }"
     />
-    <DropdownBase
-      v-model="form.unidade_medida_id"
-      label="Unidade Medida"
-      :invalid="false"
-      helper="Selecione a unidade medida correta"
-      :error="errors?.unidade_medida_id?.message"
-      :input-props="{
-        options: optionsUnidades,
-        optionLabel: 'text',
-        optionValue: 'value',
-        loading: false
-      }"
-    />
+    <div class="unit-measure">
+      <DropdownBase
+        v-model="form.unidade_medida_id"
+        label="Unidade Medida"
+        class="w-full"
+        :invalid="false"
+        :required="true"
+        helper="Selecione a unidade medida correta"
+        :error="errors?.unidade_medida_id?.message"
+        :input-props="{
+          options: storeOptions.unidades_medidas,
+          optionLabel: 'text',
+          optionValue: 'value',
+          loading: false
+        }"
+      />
+      <Button
+        v-tooltip.left="'Criar unidade de medida'"
+        icon="pi pi-plus"
+        @click="() => (visible = true)"
+      />
+    </div>
     <div class="container-actions">
       <Button label="Voltar" text @click="emit('eventBack', 0)" />
       <Button label="Criar e Selecionar" type="submit" />
     </div>
   </form>
+  <Dialog
+    v-model:visible="visible"
+    header="Criar Unidade Medida"
+    modal
+    :draggable="false"
+    style="min-width: 500px"
+    content-style="min-width: 400px"
+  >
+    <FormUnitMeasure :type="typeMeasure" @close="() => (visible = false)" />
+  </Dialog>
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, reactive, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
+import useOptionsStore from '@/store/options'
 
 import services from '@/api'
 import { ProductItem } from '@/utils/constants'
@@ -72,19 +95,21 @@ import type {
   ProductItemPayload,
   ErrorProductItemPayload
 } from '@/@types/products'
+import FormUnitMeasure from './FormUnitMeasure.vue'
 
 interface Props {
   typeMeasure: 'servico' | 'material'
-  index: number[] | null
 }
 
 const props = defineProps<Props>()
 
 const toast = useToast()
+const storeOptions = useOptionsStore()
 const emit = defineEmits(['eventBack', 'eventCreate', 'eventClose'])
 
 const loadingSearch = ref<boolean>(false)
 const loadingCreate = ref<boolean>(false)
+const visible = ref<boolean>(false)
 
 const form = ref<ProductItemPayload>({ ...ProductItem })
 const errors = ref<ErrorProductItemPayload>({} as ErrorProductItemPayload)
@@ -94,8 +119,8 @@ interface Options {
   value: string
 }
 
-const optionsProdutos = ref<Options[]>([{ text: 'hello', value: 'hello' }])
-const optionsUnidades = ref<Options[]>([{ text: 'mt²', value: 'mt²' }])
+const optionsProdutos = ref<Options[]>([])
+const optionsUnidades = ref<Options[]>([])
 
 let searchTimeout: NodeJS.Timeout | null = null // Variável para armazenar o timeout
 
@@ -166,7 +191,7 @@ const onFormSubmit = async (data: ProductItemPayload) => {
 
   try {
     const response = await services.Products.createProductItem(body)
-    emit('eventCreate', response.data, props.index)
+    emit('eventCreate', response.data)
     emit('eventClose')
   } catch (err) {
     toast.add({
@@ -190,12 +215,18 @@ onUnmounted(() => {
 
 <style>
 .formProductItem {
-  @apply flex flex-col gap-6 bg-transparent p-0 overflow-y-scroll max-h-[400px] relative pb-2 !important;
+  @apply flex flex-col gap-6 bg-transparent p-0 pr-2 overflow-y-scroll max-h-[400px] relative pb-2 !important;
+}
+.p-dialog-content {
+  @apply rounded-b-lg !important;
 }
 </style>
 
 <style scoped lang="scss">
 .container-actions {
   @apply flex justify-end gap-2 w-full pb-8 pt-4 px-6 bg-background-light-white70 fixed bottom-0 left-0;
+}
+div.unit-measure {
+  @apply flex gap-2 items-center;
 }
 </style>

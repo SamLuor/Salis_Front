@@ -28,143 +28,74 @@
             </div>
           </div>
           <form class="container-form-bussiness">
-            <template
-              v-for="index in publicacoes.publicacoes?.length"
+            <div
+              v-for="(publication, index) in publicacoes.publicacoes"
               :key="'publication-'.concat(String(index))"
+              class="container-inputs"
             >
-              <div class="flex flex-column gap-2 w-full">
-                <label for="ddd">Data</label>
-                <Calendar
-                  v-model="publicacoes.publicacoes[index - 1].date"
-                  show-icon
-                  date-format="dd/mm/yy"
-                />
-                <small
-                  v-if="!errors[`publicacoes-${index - 1}-date`]"
-                  id="ddd-help"
-                  >Selecione a data da publicação.</small
-                >
-                <small v-else id="text-error" class="p-error">{{
-                  errors[`publicacoes-${index - 1}-date`].message || '&nbsp;'
-                }}</small>
-              </div>
-              <div class="flex flex-column gap-2 w-full">
-                <label for="numero">Arquivo</label>
-                <FileUpload
-                  v-if="
-                    !publication_id ||
-                    !publicacoes.publicacoes[index - 1].file_path
-                  "
-                  v-model="publicacoes.publicacoes[index - 1].file"
-                  mode="basic"
-                  name="demo[]"
-                  class="w-full"
-                  :choose-label="'Selecione um arquivo'"
-                  :max-file-size="1000000"
-                  @select="(event: any) => selectFile(event, index - 1)"
-                />
-                <span v-else class="flex gap-2">
-                  <Button
-                    icon="pi pi-eye"
-                    class="w-full"
-                    :label="
-                      extractNameArchive(
-                        String(publicacoes.publicacoes[index - 1].file_path)
-                      )
-                    "
-                    @click="
-                      () =>
-                        openDocument(
-                          String(publicacoes.publicacoes[index - 1].file_path)
-                        )
-                    "
-                  />
-                  <Button
-                    v-tooltip.top="'Retirar arquivo'"
-                    icon="fa-solid fa-trash"
-                    class="bg-red-300"
-                    @click="() => removeFile(index - 1)"
-                  />
-                </span>
-                <small
-                  v-if="!errors[`publicacoes-${index - 1}-file`]"
-                  id="numero-help"
-                  >Escolha um arquivo.</small
-                >
-                <small v-else id="text-error" class="p-error">{{
-                  errors[`publicacoes-${index - 1}-file`].message || '&nbsp;'
-                }}</small>
-              </div>
-              <div class="flex flex-column gap-2 input-full w-full">
-                <label for="pessoa">Cliente</label>
-                <Dropdown
-                  v-model="publicacoes.publicacoes[index - 1].cliente_id"
-                  :options="clients_options"
-                  option-label="name"
-                  option-value="value"
-                  empty-message="Sem clientes cadastrados"
-                  placeholder="Selecione um cliente"
-                  class="w-full"
-                />
-                <small
-                  v-if="!errors[`publicacoes-${index - 1}-cliente_id`]"
-                  id="pessoa-help"
-                  >Selecione um cliente.</small
-                >
-                <small v-else id="text-error" class="p-error">{{
-                  errors[`publicacoes-${index - 1}-cliente_id`].message ||
-                  '&nbsp;'
-                }}</small>
-              </div>
-              <div class="flex flex-column gap-2 input-full w-full">
-                <label for="pessoa">Meio de Publicação</label>
-                <Dropdown
-                  v-model="
-                    publicacoes.publicacoes[index - 1].meio_publicacao_id
-                  "
-                  :options="means_options"
-                  option-label="name"
-                  option-value="value"
-                  empty-message="Sem meios de publicação cadastrados"
-                  placeholder="Selecione um meio de publicação"
-                  class="w-full"
-                />
-                <small
-                  v-if="!errors[`publicacoes-${index - 1}-meio_publicacao_id`]"
-                  id="pessoa-help"
-                  >Selecione um meio de publicação.</small
-                >
-                <small v-else id="text-error" class="p-error">{{
-                  errors[`publicacoes-${index - 1}-meio_publicacao_id`]
-                    .message || '&nbsp;'
-                }}</small>
-              </div>
-              <span
-                v-if="publicacoes.publicacoes.length > index"
-                class="input-full relative flex items-center"
-                style="border: 1px solid #e2e2e2"
-              >
-                <Badge
-                  value="X"
-                  class="absolute bg-red-400"
-                  style="top: -0.7rem; right: -5px"
-                  @click="removePublication(index - 1)"
-                />
-              </span>
-            </template>
+              <i
+                v-if="index > 0"
+                v-tooltip.top="'Remover endereço'"
+                class="pi pi-times xmark-remove"
+                @click="removePublication(index)"
+              />
+              <FileUploadBase
+                v-model:file="publication.file"
+                v-model:file-path="publication.file_path"
+                label="Arquivo"
+                helper="Escolha um arquivo"
+                class-base="input-full"
+                :error="errorsPublications[index]?.file?.message"
+                :invalid="!!errorsPublications[index]?.file"
+                :file-props="{
+                  multiple: false,
+                  mode: 'basic',
+                  customUpload: true,
+                  chooseLabel: 'Escolher Arquivo'
+                }"
+              />
+              <CalendarBase
+                v-model="publication.date"
+                label="Data"
+                helper="Selecione a data da publicação."
+                :invalid="!!errorsPublications[index]?.date"
+                :error="errorsPublications[index]?.date?.message"
+                :input-props="{ showIcon: true, dateFormat: 'dd/mm/yy' }"
+              />
+              <DropdownBase
+                v-model="publication.cliente_id"
+                label="Cliente"
+                helper="Selecione um cliente."
+                :error="errorsPublications[index]?.cliente_id?.message"
+                :invalid="!!errorsPublications[index]?.cliente_id"
+                :input-props="{
+                  options: optionsStore.clientes,
+                  optionLabel: 'text',
+                  optionValue: 'value',
+                  emptyMessage: 'Sem clientes cadastrados'
+                }"
+              />
+              <DropdownBase
+                v-model="publication.meio_publicacao_id"
+                class-base="w-full input-full"
+                label="Meio de Publicação"
+                helper="Selecione um meio de publicação."
+                :error="errorsPublications[index]?.meio_publicacao_id?.message"
+                :invalid="!!errorsPublications[index]?.meio_publicacao_id"
+                :input-props="{
+                  options: optionsStore.meios_publicacao,
+                  optionLabel: 'text',
+                  optionValue: 'value',
+                  emptyMessage: 'Sem meios de publicação cadastrados'
+                }"
+              />
+              <hr class="w-full border-gray-300 input-full" />
+            </div>
             <Button
-              class="input-full py-[10px]"
+              class="input-full btn-add-publication"
               icon="pi pi-plus"
               label="Adicionar Publicação"
-              @click="
-                () =>
-                  publicacoes.publicacoes.push({
-                    cliente_id: '',
-                    date: '',
-                    file: '',
-                    meio_publicacao_id: ''
-                  })
-              "
+              @click="addPublication"
             />
             <div class="input-full flex flex-row-reverse">
               <Button
@@ -180,29 +111,25 @@
   <Dialog
     v-model:visible="visible"
     modal
-    :closable="false"
+    :closable="true"
     header="Selecione o tipo do Processo"
     :style="{ width: '50rem' }"
   >
     <div class="flex align-items-center gap-3 mb-2">
-      <div class="flex flex-column gap-2 input-full w-full">
-        <label for="type_process">Tipo de Processo</label>
-        <Dropdown
-          v-model="type_process"
-          :options="process_options"
-          option-label="name"
-          option-value="value"
-          empty-message="Sem tipos de processos cadastrados"
-          placeholder="Selecione um tipo de processo"
-          class="w-full"
-        />
-        <small v-if="!errors?.processo?.tipo_processo_id" id="pessoa-help"
-          >Selecione o tipo de processo.</small
-        >
-        <small v-else id="text-error" class="p-error">{{
-          errors?.processo?.tipo_processo_id?.message || '&nbsp;'
-        }}</small>
-      </div>
+      <DropdownBase
+        v-model="type_process"
+        class-base="w-full"
+        label="Tipo de Processo"
+        helper="Selecione o tipo de processo."
+        :error="errors?.processo?.tipo_processo_id?.message"
+        :invalid="!!errors?.processo?.tipo_processo_id"
+        :input-props="{
+          options: optionsStore.tipos_processo,
+          optionLabel: 'text',
+          optionValue: 'value',
+          emptyMessage: 'Sem tipos de processos cadastrados'
+        }"
+      />
     </div>
     <div class="flex flex-row-reverse">
       <Button
@@ -215,80 +142,45 @@
 </template>
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import {
-  schemaCreatePublication,
-  schemaUpdatePublication
-} from '@/utils/validations'
+import { schemaCreatePublication, schemaPublication } from '@/utils/validations'
 import { useRoute } from 'vue-router'
 import services from '@/api/index'
 import { useToast } from 'primevue/usetoast'
 import router from '@/router'
-import { PublicationProtocol, Publications } from '@/@types/publication'
-import Calendar from 'primevue/calendar'
-import { FileUploadSelectEvent } from 'primevue/fileupload'
-import * as zod from 'zod'
+import { Publications, ErrorsPublication } from '@/@types/publication'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
 import useProcessStore from '@/store/process'
-import { buildAccessArchives, extractNameArchive } from '@/utils/helpers'
+import { deepClone, validityForm, validitySchemaArray } from '@/utils/helpers'
+import { PublicationsInitial } from '@/utils/constants'
+import FileUploadBase from '@/components/Forms/components/FileUploadBase.vue'
+import CalendarBase from '@/components/Forms/components/CalendarBase.vue'
+import DropdownBase from '@/components/Forms/components/DropdownBase.vue'
+import useOptionsStore from '@/store/options'
+import { Publicacoes } from '@/@types/process'
 
 const processStore = useProcessStore()
+const optionsStore = useOptionsStore()
 
 const toast = useToast()
 const route = useRoute()
 const publication_id = route.params?.id
-const schema = publication_id
-  ? schemaUpdatePublication
-  : schemaCreatePublication
 
 const visible = ref<boolean>(false)
 
 const errors = ref<{ [key: string]: any }>({})
-
-interface Options {
-  value: string
-  name: string
-}
-
-const clients_options = ref<Options[]>([])
-const means_options = ref<Options[]>([])
-const process_options = ref<Options[]>([])
+const errorsPublications = ref<ErrorsPublication[]>([])
 
 const type_process = ref('')
 
-const publicacoes = ref<Publications>(
-  Array.isArray(processStore.publications)
-    ? {
-        processo: {
-          tipo_processo_id: processStore.process.tipo_processo_id
-        },
-        publicacoes: processStore.publications.map((publication) => ({
-          cliente_id: publication.cliente_id,
-          date: new Date(publication.date),
-          file_path: buildAccessArchives(
-            services.httpConfig.getUri(),
-            publication.file_path
-          ),
-          meio_publicacao_id: publication.meio_publicacao_id
-        }))
-      }
-    : {
-        publicacoes: [
-          { cliente_id: '', date: '', file: '', meio_publicacao_id: '' }
-        ],
-        processo: {
-          tipo_processo_id: ''
-        }
-      }
-)
+const publicacoes = ref<Publications>(deepClone(PublicationsInitial))
 
 const nameTypeProcess = computed(() => {
   if (!type_process.value) return null
 
-  return process_options.value.find(
-    (element: Options) =>
-      element.value === publicacoes.value.processo.tipo_processo_id
-  )?.name
+  return optionsStore.tipos_processo.find(
+    (element) => element.value === publicacoes.value.processo.tipo_processo_id
+  )?.text
 })
 
 const confirmSelectType = (value: string) => {
@@ -297,41 +189,26 @@ const confirmSelectType = (value: string) => {
   visible.value = false
 }
 
-const selectFile = (event: any, index: number) => {
-  const eventFileSelected = event as FileUploadSelectEvent
-  publicacoes.value.publicacoes[index].file = eventFileSelected.files[0]
-}
-
-const removeFile = (index: number) => {
-  publicacoes.value.publicacoes[index].file_path = ''
+const addPublication = () => {
+  publicacoes.value.publicacoes.push(
+    deepClone(PublicationsInitial.publicacoes[0])
+  )
 }
 
 const removePublication = (index: number) => {
   publicacoes.value.publicacoes.splice(index, 1)
 }
 
-const openDocument = (path: string) => {
-  const link = document.createElement('a')
-  link.href = path
-  link.download = path.split('arquivos/').join('')
-  link.target = '_blank'
-  link.click()
-}
-
 const onFormSubmit = async () => {
-  errors.value = {}
-  try {
-    schema.parse(publicacoes.value)
-  } catch (err) {
-    if (err instanceof zod.ZodError) {
-      errors.value = err.issues.reduce((acc: any, current) => {
-        const key = current.path.join('-')
-        acc[key] = current
-        return acc
-      }, {})
-    }
+  errors.value = validityForm(schemaCreatePublication, publicacoes.value)
+
+  errorsPublications.value = validitySchemaArray(
+    schemaPublication,
+    publicacoes.value.publicacoes
+  )
+
+  if (Object.keys(errors.value).length || errorsPublications.value.length)
     return
-  }
 
   const formData = new FormData()
 
@@ -340,23 +217,21 @@ const onFormSubmit = async () => {
     publicacoes.value.processo.tipo_processo_id
   )
 
-  publicacoes.value.publicacoes.forEach(
-    (item: PublicationProtocol, index: number) => {
-      if (item.id) formData.append(`publicacoes[${index}][id]`, item.id)
-      formData.append(
-        `publicacoes[${index}][date]`,
-        new Date(item.date).toDateString()
-      )
-      if (item.file) {
-        formData.append(`publicacoes[${index}][file]`, item.file)
-      }
-      formData.append(`publicacoes[${index}][cliente_id]`, item.cliente_id)
-      formData.append(
-        `publicacoes[${index}][meio_publicacao_id]`,
-        item.meio_publicacao_id
-      )
+  publicacoes.value.publicacoes.forEach((item, index: number) => {
+    if (item.id) formData.append(`publicacoes[${index}][id]`, item.id)
+    formData.append(
+      `publicacoes[${index}][date]`,
+      new Date(item.date).toDateString()
+    )
+    if (item.file) {
+      formData.append(`publicacoes[${index}][file]`, item.file)
     }
-  )
+    formData.append(`publicacoes[${index}][cliente_id]`, item.cliente_id)
+    formData.append(
+      `publicacoes[${index}][meio_publicacao_id]`,
+      item.meio_publicacao_id
+    )
+  })
 
   try {
     if (!publication_id) await services.Publication.createPublication(formData)
@@ -388,44 +263,34 @@ const onFormSubmit = async () => {
 }
 
 const receiveOptions = async () => {
-  await Promise.allSettled([
-    services.Clients.getClients(),
-    services.MeansPublication.getMeansPublications(),
+  await Promise.all([
+    services.Option.getClients(),
+    services.Option.getPublicationMeans(),
     services.Option.getProcessTypes()
-  ]).then((results) => {
-    results.forEach((option, index) => {
-      if (option.status == 'fulfilled') {
-        if (index == 0) {
-          clients_options.value = option.value.data.map((client: any) => ({
-            name: client.razao_social,
-            value: client.id
-          }))
-        } else if (index == 1) {
-          means_options.value = option.value.data.map((mean: any) => ({
-            name: mean.nome,
-            value: mean.id
-          }))
-        } else if (index == 2) {
-          process_options.value = option.value.data.map((type: any) => ({
-            name: type.text,
-            value: type.value
-          }))
-        }
-      } else {
-        toast.add({
-          severity: 'error',
-          summary: 'Error ao carregar opções',
-          detail: option.reason,
-          life: 3000
-        })
-      }
-    })
-  })
+  ])
+}
+
+const populateFields = (data: Publicacoes, typeProcess: string) => {
+  publicacoes.value.publicacoes = data.map((item) => ({
+    id: item.id,
+    file: null,
+    date: new Date(item.date),
+    cliente_id: item.cliente_id,
+    file_path: item.file_path,
+    meio_publicacao_id: item.meio_publicacao_id
+  }))
+  publicacoes.value.processo.tipo_processo_id = typeProcess
+  type_process.value = typeProcess
 }
 
 onMounted(async () => {
   receiveOptions()
   if (!processStore.process.id) visible.value = true
+  if (processStore.publications?.length)
+    populateFields(
+      processStore.publications,
+      processStore.process.tipo_processo_id
+    )
 })
 </script>
 
@@ -448,6 +313,9 @@ onMounted(async () => {
 .p-error {
   @apply text-red-400 !important;
 }
+.btn-add-publication {
+  @apply py-6 max-h-[15px] !important;
+}
 </style>
 
 <style scoped lang="scss">
@@ -468,7 +336,7 @@ onMounted(async () => {
   }
 }
 .container-form-bussiness {
-  @apply grid grid-cols-2 gap-6 py-6 col-start-2 col-end-4 bg-background-light-white dark:bg-background-dark-blue70 rounded-lg shadow-sm p-4 max-h-[70vh] overflow-y-scroll;
+  @apply flex flex-col gap-6 py-6 col-start-2 col-end-4 bg-background-light-white dark:bg-background-dark-blue70 rounded-lg shadow-sm p-4 max-h-[70vh] overflow-y-scroll;
 
   label {
     @apply text-light-black70 dark:text-dark-white70;
@@ -487,5 +355,14 @@ onMounted(async () => {
   .header-page {
     @apply flex justify-between items-center dark:text-dark-white70;
   }
+}
+.xmark-remove {
+  @apply absolute right-0 -top-2 text-red-500 cursor-pointer duration-300 ease-in-out;
+}
+.xmark-remove:hover {
+  transform: scale(1.1);
+}
+.container-inputs {
+  @apply grid grid-cols-2 gap-x-2 gap-y-6 relative;
 }
 </style>

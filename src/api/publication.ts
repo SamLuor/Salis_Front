@@ -66,9 +66,10 @@ export default class PublicationService {
 
   async updatePublication(data: FormData, id: string) {
     const store = usePublicationStore()
+
     data.append('processo[id]', id)
     await this.httpConfig
-      .post('processo/publicacao')
+      .postForm('processo/publicacao', data)
       .then((response) => {
         store.updatePublication(response.data.data)
         return response.data

@@ -1,14 +1,22 @@
 import type { AxiosInstance } from 'axios'
 import { handleError } from '@/utils/handleErrors'
-import { UnitMeasureServices } from '@/@types/unit_measure'
+import { UnitMeasure, UnitMeasureServices } from '@/@types/unit_measure'
+import useOptionsStore from '@/store/options'
 
 export default class UnitMeasureService implements UnitMeasureServices {
   constructor(private readonly httpConfig: AxiosInstance) {}
 
-  async createUnitMeasure(data: any) {
+  async createUnitMeasure(data: UnitMeasure) {
+    const storeOptions = useOptionsStore()
+
     return await this.httpConfig
       .post('/unidade-medida', data)
       .then((response) => {
+        const { id, nome } = response.data.data as UnitMeasure
+        storeOptions.setUnitMeasure([
+          ...storeOptions.unidades_medidas,
+          { text: String(nome), value: String(id) }
+        ])
         return response.data
       })
       .catch((err) => {

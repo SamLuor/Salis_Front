@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { shallowRef, ref, onMounted, onUnmounted } from 'vue'
 import PublicationForm from './PublicationForm.vue'
-import InDevelopment from './InDevelopment.vue'
 import EditalForm from './EditalForm.vue'
 import TabsSteps from '@/components/TabsSteps/TabsSteps.vue'
 import { useRoute } from 'vue-router'
@@ -9,6 +8,7 @@ import services from '@/api/index'
 import TermReferenceForm from './TermReferenceForm.vue'
 import useProcessStore from '@/store/process'
 import { useToast } from 'primevue/usetoast'
+import ListProducts from './ListProducts.vue'
 
 const route = useRoute()
 const toast = useToast()
@@ -31,7 +31,7 @@ const componentsOptions: ComponentsMap = {
   '0': PublicationForm,
   '1': EditalForm,
   '2': TermReferenceForm,
-  '3': InDevelopment
+  '3': ListProducts
 }
 
 const selectStatus = (status: number) => {

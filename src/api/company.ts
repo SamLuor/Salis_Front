@@ -65,8 +65,9 @@ export default class CompanyService {
 
   async updateCompany(data: FormData, id: string) {
     const store = useCompanyStore()
+    data.append('_method', 'PUT')
     await this.httpConfig
-      .put('/empresa/' + id, data)
+      .postForm('/empresa/' + id, data)
       .then((response) => {
         store.updateCompany(response.data.data)
         return response.data
